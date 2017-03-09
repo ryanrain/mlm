@@ -1,6 +1,6 @@
 import { LetraModel } from '../models/letra.model';
 
-export class Castillano {
+export class AlfabetoCastillano {
 
     alfabeto: LetraModel[] = [];
     // alfabetoCastillano = [];

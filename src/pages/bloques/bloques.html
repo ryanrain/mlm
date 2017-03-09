@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Icono Casita
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding [ngClass]="{
+            woohoo:(woohoo) 
+          }">
+  
+  <div><button (click)="nuevosBloques()">Nuevos Bloques</button></div>
+
+  <div class="bloque" *ngFor="let silaba of silabasAlAzar">{{silaba}}</div>
+
+</ion-content>
