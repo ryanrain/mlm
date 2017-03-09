@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
 
-import { ElegirImagen } from '../pages/elegirImagen/elegirImagen';
+import { HomePage } from '../pages/home/home';
 
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage = ElegirImagen;
+  rootPage = HomePage;
 
   constructor(platform: Platform) {
     platform.ready().then(() => {

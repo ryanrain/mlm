@@ -3,13 +3,16 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ElegirImagen } from '../pages/elegirImagen/elegirImagen';
-import { Castillano } from '../alfabetos/castillano';
+import { Bloques } from '../pages/bloques/bloques';
+import { AlfabetoCastillano } from '../alfabetos/alfabeto.castillano';
+import { SilabasCastillano } from '../silabas/silabas.castillano';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ElegirImagen
+    ElegirImagen,
+    Bloques
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -18,8 +21,9 @@ import { Castillano } from '../alfabetos/castillano';
   entryComponents: [
     MyApp,
     HomePage,
-    ElegirImagen
+    ElegirImagen,
+    Bloques
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Castillano]
+  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, AlfabetoCastillano, SilabasCastillano]
 })
 export class AppModule {}
