@@ -1,0 +1,15 @@
+page-elegir-imagen {
+    font-size: 0;
+    ion-content {
+        text-align: center;
+    }
+    #letra-principal {
+        font-size: 200px;
+    }
+    .opcion {
+        display: inline-block;
+        width: 33%;
+        font-size: 50px;        
+    }
+}
+// how to get rid of background image on .header-md:after ?
