@@ -1,3 +1,19 @@
+@keyframes tapped-animation {
+  0% {
+      background: rebeccapurple;
+  }
+  100% {
+      background:transparent;
+  }
+}
+@-webkit-keyframes tapped-animation {
+  0% {
+      background: rebeccapurple;
+  }
+  100% {
+      background:transparent;
+  }
+}
 page-elegir-imagen {
     font-size: 0;
     ion-content {
@@ -9,7 +25,11 @@ page-elegir-imagen {
     .opcion {
         display: inline-block;
         width: 33%;
-        font-size: 50px;        
+        font-size: 50px;
+    }
+    .woohoo {
+        animation: tapped-animation 0.3s ease-out;
+        -webkit-animation: tapped-animation 0.3s ease-out; 
     }
 }
 // how to get rid of background image on .header-md:after ?
