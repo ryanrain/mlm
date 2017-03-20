@@ -15,11 +15,12 @@
 //   }
 // }
 $duracionSubir: 3s;
+$tamanoGrande: 35vh;
 page-elegir-imagen {
     text-align: center;
-    @media (min-width:700px) {
-        height: 700px;
-    }
+    // @media (min-width:700px) {
+    //     height: 700px;
+    // }
     // #vertical-container {
     //     display: flex;
     //     flex-direction: column;
@@ -28,15 +29,11 @@ page-elegir-imagen {
     // }
     #letra-principal {
         height: calc(100vh - 34vw);
-        display: flex;
-        justify-content: center;
-        // align-items: center;
-        align-items: flex-start;
         @media (min-width:700px) {
-            height: 700px;
+            height: calc(100vh - (700px / 3));
         }
         div {
-            font-size: 35vh;
+            font-size: $tamanoGrande;
             line-height: 70vh;
             position: absolute; 
             left:0;
@@ -48,7 +45,7 @@ page-elegir-imagen {
     .arriba #letra-principal {
         div {
             font-size: 5rem;
-            line-height: 2em;
+            line-height: (50vh/2/2); // a little less than the space left 
             left: 30%;
             width: 0%;
             transition: $duracionSubir all;
@@ -64,7 +61,11 @@ page-elegir-imagen {
             border-radius: 20px;
             position: absolute;
             width: (100% / 3);
-            top:calc(100vh - 34vw);
+            // top:calc(100vh - 34vw);
+            // @media (min-width:700px) {
+            //     top: calc(100vh - (700px / 3));
+            // }
+            bottom: 0;
             &:first-child {
                 left:0;
             }
@@ -72,18 +73,21 @@ page-elegir-imagen {
                 left:(100% / 3);
             }
             &:last-child {
-                left:(200% / 3);
+                left:(2 * 100% / 3);
             }
         }
     }
     .arriba #imagenes-letra {
         .woohoo {
             position: absolute;
-            top: 10rem;
-            width: 90%;
-            left:5%;
+            bottom: calc(34vw + (35vh/2) );
+            width: $tamanoGrande;
+            left:calc((100vw - #{$tamanoGrande}) / 2);
+            @media (min-width:700px) {
+                bottom: 40%;
+                left: calc((700px - #{$tamanoGrande}) / 2);
+            }
             box-shadow: 0 0 50px yellow, 0 0 30px yellow inset;
-            
             animation: tapped-animation $duracionSubir linear;
             -webkit-animation: tapped-animation $duracionSubir linear; 
             transition: all 3s;            
