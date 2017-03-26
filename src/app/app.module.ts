@@ -1,5 +1,9 @@
 import { NgModule, ErrorHandler } from '@angular/core';
+
+import {DndModule} from 'ng2-dnd';
+
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ElegirImagen } from '../pages/elegirImagen/elegirImagen';
@@ -15,7 +19,8 @@ import { SilabasCastillano } from '../silabas/silabas.castillano';
     Bloques
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    DndModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
