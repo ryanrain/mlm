@@ -8,5 +8,22 @@ bloques {
     .woohoo {
         background: rebeccapurple;
     }
+    .col.lugar {
+      padding: 20px;
+      &:first-child{
+        text-align: right;
+      }
+    }
+    .droppable {
+      border: 2px dashed gray;
+      height:150px;
+      width:150px;
+      display: inline-block;
+    }
+    .cubo {
+      background: orchid;
+      display: inline-block;
+      padding: 10px;
+      margin: 20px;
+    }
 }
-// how to get rid of background image on .header-md:after ?
