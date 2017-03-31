@@ -1,7 +1,5 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 
-import {DndModule} from 'ng2-dnd';
-
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 
 import { MyApp } from './app.component';
@@ -19,8 +17,7 @@ import { SilabasCastillano } from '../silabas/silabas.castillano';
     Bloques
   ],
   imports: [
-    IonicModule.forRoot(MyApp),
-    DndModule.forRoot()
+    IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -29,6 +26,10 @@ import { SilabasCastillano } from '../silabas/silabas.castillano';
     ElegirImagen,
     Bloques
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, AlfabetoCastillano, SilabasCastillano]
+  providers: [
+    {provide: ErrorHandler, useClass: IonicErrorHandler}, 
+    AlfabetoCastillano, 
+    SilabasCastillano
+  ]
 })
 export class AppModule {}

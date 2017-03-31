@@ -1,4 +1,16 @@
+$blockSize: 25%;
 bloques {
+    .scroll-content {
+      display: flex;
+      flex-direction: column;
+    }
+    .lugares {
+      flex: 0 0 30%;
+      align-items: flex-end;
+    }
+    .block-area { 
+      flex: 0 0 70%;
+    }
     .bloque {
         display: inline-block;
         padding: 1em;
@@ -9,21 +21,25 @@ bloques {
         background: rebeccapurple;
     }
     .col.lugar {
-      padding: 20px;
+      // padding: 20px;
       &:first-child{
         text-align: right;
       }
     }
     .droppable {
-      border: 2px dashed gray;
-      height:150px;
-      width:150px;
+      border: 2px dashed lightgray;
+      width:$blockSize * 2 + 10%;
+      padding-bottom: $blockSize * 2 + 10%; // programmers for the win
       display: inline-block;
+      &.drop-target {
+        border-color: green;
+      }
     }
     .cubo {
       background: orchid;
       display: inline-block;
-      padding: 10px;
-      margin: 20px;
+      width: $blockSize;
+      padding-bottom: calc(#{$blockSize} - 1em);
+      position: absolute;
     }
 }
