@@ -1,18 +1,80 @@
 export class SilabasCastillano {
 
-    listaSilabas:string[] = [];
+    listaSilabas:string[] = [
+        'ca',
+        'sa',
+        'bo',
+        'ta',
+        'ma',
+        'co',
+        'che',
+        'cu',
+        'do',
+        'na',
+        'fo',
+        'go',
+        'va',
+        'de',
+        'o',
+        'lla',
+        'pi',
+        'pa',
+        'to',
+        'ña',
+        'ni',
+        'u',
+        'llo',
+        'po',
+        'ro',
+        'so',
+        'la',
+        'ga',
+        'da'     
+    ];
 
-    constructor() {
-        let silabasCastillano = [
-            'ma',
-            'ca',
-            'sa',
-            'po',
-            'cu',
-            'to'      
-        ];
-        for(let silaba of silabasCastillano) {
-            this.listaSilabas.push( silaba );
-        }
-    }
+    listaPalabras:string[] = [
+        'oso',
+        'uvas',
+        'uva',
+        'silla',
+        'luna',
+        'dedo',
+        'niña',
+        'rosa',
+        'queso',
+        'foco',
+        'casa',
+        'gato',
+        'vaca',
+        'Yoyo ',
+        'boca',
+        'bota',
+        'cama',
+        'cubo',
+        'dona',
+        'foca',
+        'goma',
+        'mano',
+        'mago',
+        'lima',
+        'nena',
+        'olla',
+        'llama',
+        'pipa',
+        'pato',
+        'piña',
+        'uña',
+        'pollo',
+        'sopa',
+        'toro',
+        'roto',
+        'vaso',
+        'masa',
+        'lata',
+        'ropa',
+        'gallo',
+        'sapo',
+        'cuna',
+        'dado'
+    ];
 }
