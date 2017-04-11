@@ -1,9 +1,10 @@
 import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 
-import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/observable/zip';
 
 import {interact} from 'interactjs';
@@ -17,13 +18,12 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
   <button class="volver" (click)="volver()"><ion-icon name="home"></ion-icon></button>
 
   <ion-content [ngClass]="{woohoo:(woohoo) }" #ionContentRef>
-
     <ion-row class="row lugares">
       <ion-col class="lugar">
-        <div #droppable1 class="droppable first"></div>
+        <div #droppable1 class="droppable" id="0"></div>
       </ion-col>
       <ion-col class="lugar">
-        <div #droppable2 class="droppable second"></div>
+        <div #droppable2 class="droppable" id="1"></div>
       </ion-col>
     </ion-row>
 
@@ -31,7 +31,7 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
       <div 
         #blocks 
         *ngFor="let silaba of silables" class="cubo">
-        {{silaba}}
+        <span>{{silaba}}</span>
       </div>
     </div>
 
@@ -45,30 +45,87 @@ export class Bloques implements AfterViewInit {
   randomSilables:string[];
   word = ['','']
   silables = [];
+  blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
+  activeDropZone:number;
   
   @ViewChildren('blocks') blocksQueryList:QueryList<ElementRef>;
   @ViewChildren('droppable1, droppable2') zonasDroppables:QueryList<ElementRef>;
   @ViewChild('blockArea') blockArea:ElementRef;
 
+  wordStream:Subject<Array<string>> = new Subject();
+
   constructor(
     public navCtrl: NavController,
+    private alertCtrl: AlertController,
     public castillano: SilabasCastillano
   ) {
-    this.crearSilabas();
+    this.crearSilabas(castillano.listaSilabas);
+
+    this.wordStream
+      .filter(wordArray => { 
+        if (wordArray.indexOf('') < 0) { // complete words only
+          console.log( wordArray.join('') );
+          console.log(castillano.listaPalabras.indexOf( wordArray.join('') ));
+          // is the silable combo in the list of words?
+          if ( castillano.listaPalabras.indexOf( wordArray.join('') ) >= 0 ){
+            return true;
+          } else {
+            this.notAWord();
+          }
+        }
+      })
+      .subscribe(wordArray => {
+        let successWord = wordArray.join('');
+        console.log(successWord + ' woohoo!!!');
+        let alert = this.alertCtrl.create({
+          title: successWord,
+          message: '<img src="/assets/imagenes/' + successWord + '.png">',
+          buttons: [
+            {
+              text: 'Siguente',
+              role: 'cancel',
+              cssClass: 'primary',
+              handler: () => {
+                this.reset();
+                this.crearSilabas(castillano.listaSilabas);
+              }
+            }
+          ]
+        });
+        alert.present();
+        setTimeout(() => {
+          alert.dismiss();
+          this.reset();
+          this.crearSilabas(castillano.listaSilabas);
+        }, 8000);
+      })
+    ;
   }
  
   ngAfterViewInit () {
-    this.scatterBlocks();
+    this.blocksQueryList.changes.subscribe(blocks => {
+      this.scatterBlocks(blocks);
+    })
+    this.scatterBlocks(this.blocksQueryList); // no change event yet
     this.makeBlocksDraggable();
     this.createDropZones();
   }
 
-  scatterBlocks() {
+  reset() {
+    this.word = ['',''];
+    this.zonasDroppables.forEach((zona:ElementRef) => {
+      zona.nativeElement.classList.remove('drop-target');
+    })
+  }
+  scatterBlocks(blocks:QueryList<ElementRef>) {
     let blockAreaOffset = this.blockArea.nativeElement.offsetTop,
         blockAreaHeight = this.blockArea.nativeElement.offsetHeight,
         blockWidth = this.blockArea.nativeElement.offsetWidth / 4; // 25% width set in scss
 
-    this.blocksQueryList.forEach( cubo => {
+    blocks.forEach( cubo => {
+
+      console.log(cubo.nativeElement.innerText);
+
       let top = Math.round( Math.random() * (blockAreaHeight - blockWidth) ) + blockAreaOffset,
           left = Math.round( Math.random() * (this.blockArea.nativeElement.offsetWidth - blockWidth) );
     
@@ -76,85 +133,180 @@ export class Bloques implements AfterViewInit {
       cubo.nativeElement.style.top = top + 'px';
       cubo.nativeElement.setAttribute('data-x', left);
       cubo.nativeElement.setAttribute('data-y', top);
-      
+
+      // set random block color
+      cubo.nativeElement.style.backgroundImage
+       = 'url("/assets/cubos/cubo' + this.shuffle(this.blockColors)[0] + '.png")';
     });
   }
 
   makeBlocksDraggable() {
 
     interact.maxInteractions(Infinity);
+    let blockZIndex = 1;
     
-    // make blocks draggable
-    this.blocksQueryList.forEach( cubo => {
-      interact(cubo.nativeElement)
-        .draggable({ max: Infinity })
-        .on('dragstart', function (event) {
-            event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
-            event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
-        })
-        .on('dragmove', function (event) {
-            event.interaction.x += event.dx;
-            event.interaction.y += event.dy;
-            event.target.style.left = event.interaction.x + 'px';
-            event.target.style.top  = event.interaction.y + 'px';
-        })
-        .on('dragend', function (event) {
-            event.target.setAttribute('data-x', event.interaction.x);
-            event.target.setAttribute('data-y', event.interaction.y);
-        });
-    });
+    interact('div', { // use selector context to bubble and enable re-use upon new blocks 
+                      // http://interactjs.io/docs/#selector-contexts
+        context: this.blockArea.nativeElement
+      })
+      // interact(cubo.nativeElement)
+      .draggable({ 
+        max: Infinity,
+        restrict: { // prevent dragging them off-screen
+          restriction: '.scroll-content',
+          elementRect: { 
+            left: 0, 
+            top: 0, 
+            right: 1, 
+            bottom: 1 
+          }
+        }
+      })
+      .on('dragstart', function (event) {
+          event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
+          event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
+          event.target.style.zIndex = blockZIndex++;
+      })
+      .on('dragmove', function (event) {
+          event.interaction.x += event.dx;
+          event.interaction.y += event.dy;
+          event.target.style.left = event.interaction.x + 'px';
+          event.target.style.top  = event.interaction.y + 'px';
+      })
+      .on('dragend', function (event) {
+          event.target.setAttribute('data-x', event.interaction.x);
+          event.target.setAttribute('data-y', event.interaction.y);
+      })
+    ;
   }
+ dropzoneInteractables = [];
 
   createDropZones(){
-    // enable draggables to be dropped into this
-    this.zonasDroppables.toArray().forEach(function (droppable) {
 
-      interact(droppable.nativeElement).dropzone({
+    this.zonasDroppables.toArray().forEach((droppable, index) => {
 
-        // Require a 50% element overlap for a drop to be possible
-        overlap: 0.5,
+      this.dropzoneInteractables.push(
+        interact(droppable.nativeElement).dropzone({
 
-        // listen for drop related events:
+          // Require a 50% element overlap for a drop to be possible
+          overlap: 0.4,
 
-        ondropactivate: event => {
-          // add active dropzone feedback
-          event.target.classList.add('drop-active');
-        },
-        ondragenter: function (event) {
-          var draggableElement = event.relatedTarget,
-              dropzoneElement = event.target;
+          ondragenter: event => {
+            // var draggableElement = event.relatedTarget,
+            //     dropzoneElement = event.target;
 
-          // feedback the possibility of a drop
-          dropzoneElement.classList.add('drop-target');
-          draggableElement.classList.add('can-drop');
-          draggableElement.textContent = 'Dragged in';
-        },
-        ondragleave: function (event) {
-          // remove the drop feedback style
-          event.target.classList.remove('drop-target');
-          event.relatedTarget.classList.remove('can-drop');
-          event.relatedTarget.textContent = 'Dragged out';
-          
-          //  TODO: if dragged out remove from this.word
-          // quitarDeLugares(silaba:string) {
+            // feedback the possibility of a drop
+            event.target.classList.add('drop-target');
+            // draggableElement.classList.add('can-drop');
+            // draggableElement.textContent = 'Dragged in';
 
-        },
-        ondrop: event => {
-          // event.relatedTarget.textContent = 'Dropped';
-          this.alLugar(event);    
-        },
-        ondropdeactivate: function (event) {
-          // remove active dropzone feedback
-          event.target.classList.remove('drop-active');
-          event.target.classList.remove('drop-target');
-        }
-      });
+            event.relatedTarget.classList.add('currently-placed-block');
+
+            this.activeDropZone = parseInt(event.target.id);
+          },
+          ondragleave: event => {
+            
+            this.removeFromWord(event.relatedTarget.innerText);
+
+            // set for onDrop later
+            this.activeDropZone = 2;
+            event.target.classList.remove('drop-target');
+
+            event.relatedTarget.classList.remove('currently-placed-block');
+
+          },
+          ondrop: event => {
+            this.onDrop(event);    
+          },
+          ondropdeactivate: event => {
+            // console.log(event); // runs for each dropzone
+          }
+        })
+      );
     }, this)
+    console.log(this.dropzoneInteractables);
   }
 
-  alLugar(event) {
+  setActiveDropZone(number:number) {
+    this.activeDropZone = number;
+  }
 
-    // snap into middle of target
+  onDrop(event) {
+
+    let silable = event.relatedTarget.innerText;
+    // console.log('activeDropZone at start: ' + this.activeDropZone);
+
+    // if no block already in space, add it
+    if ( !this.fullAlready(this.activeDropZone) ) {
+      this.addToWord(silable, this.activeDropZone);
+      this.snapToTarget(event);
+    } else {
+      // allow for small movements of the block, just re-snap
+      if (this.word[this.activeDropZone] === silable){
+        this.snapToTarget(event);
+      } else {
+        // prevent 2 blocks in the same dropzone
+        this.ditchBlock(event.relatedTarget);
+      }
+    }
+  }
+
+  fullAlready(position:number){
+    console.log(position);
+    // i think i have to prevent a drop if it's not gonna make a word...
+    if(this.word[position] === '') {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  
+  ditchBlock(block){
+      block.classList.add('ditch');
+      setTimeout(() =>{
+        block.style.top = block.offsetTop + 'px';
+        block.style.left = block.offsetLeft + 'px';
+        block.setAttribute('data-x', block.offsetLeft);
+        block.setAttribute('data-y', block.offsetTop);
+        block.classList.remove('ditch');
+      },800);
+  }
+
+  notAWord(){
+
+    // shake the dropzones
+    this.zonasDroppables.forEach((zona:ElementRef) => {
+      zona.nativeElement.classList.add('shake');
+      setTimeout(function() {
+        zona.nativeElement.classList.remove('shake');
+        // and change color of dashed outline back to default        
+        zona.nativeElement.classList.remove('drop-target');            
+      }, 800);
+    });
+
+    // push blocks down
+    this.blocksQueryList.forEach(block => {
+      if (block.nativeElement.classList.contains('currently-placed-block')){
+        this.ditchBlock(block.nativeElement);
+        block.nativeElement.classList.remove('currently-placed-block')
+      }
+    });
+
+    // re-habilitate make dropzones 
+    // this.dropzoneInteractables.forEach(dropzone => {
+    //   dropzone.set({
+    //     drop: {
+    //       enabled: true
+    //     }
+    //   });
+    // });
+  
+    // empty word static var
+    this.word = ['',''];
+
+  }
+
+  snapToTarget(event) {
     let top = event.target.offsetParent.offsetTop + event.target.offsetTop + 
       ((event.target.offsetHeight - event.relatedTarget.offsetHeight) / 2),
         left = event.target.offsetParent.offsetLeft + event.target.offsetLeft + 
@@ -163,15 +315,25 @@ export class Bloques implements AfterViewInit {
     event.relatedTarget.style.top = top + 'px';
     event.relatedTarget.style.left = left + 'px';
 
-    // set data-x attributes *after* dragend event
+    // set data- attributes *after* dragend event
     setTimeout(() => {
       event.relatedTarget.setAttribute('data-y', top);
       event.relatedTarget.setAttribute('data-x', left);
     }, 10);
+  }
 
-    // this
-    //  if cubito already in dropzone, prevent further dropping
-    console.log(event);
+  addToWord(silable:string, position:number) {
+    this.word[position] = silable;
+    this.wordStream.next(this.word);
+    console.log('addToWord called ', this.word);    
+  }
+
+  removeFromWord(silable) {
+    if(this.word.indexOf(silable) >= 0) {
+      this.word[this.word.indexOf(silable)] = '';
+      // this.wordStream.next(this.word); // never gonna give a full word to pass the filter
+    }
+    console.log('removeFromWord called ', this.word);    
   }
 
 /*
@@ -189,23 +351,10 @@ if (adentroLugar(lugar:{}, currentLocation:{})) {
 }
 */
 
-  quitarDeLugares(silaba:string) {
-    console.log(silaba + ' dropped outside');
-    if(this.word.indexOf(silaba) >= 0) {
-      this.word[this.word.indexOf(silaba)] = '';
-    }
-    console.log(this.word);    
-  }
-
-  crearSilabas(){
+  crearSilabas(listaSilabas:String[]){
     this.woohoo = false;
-    this.randomSilables = this.shuffle(this.castillano.listaSilabas);
-    this.silables = this.randomSilables.slice(0,7);
-  }
-
-  esPalabra(eleccion1:string, eleccion2:string):boolean {
-    // console.log(eleccion);
-    return false;
+    this.randomSilables = this.shuffle(listaSilabas);
+    this.silables = this.randomSilables.slice(0,9);
   }
 
   shuffle(array)
