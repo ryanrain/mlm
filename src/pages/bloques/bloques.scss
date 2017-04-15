@@ -1,8 +1,27 @@
-$blockSize: 25%;
+$blockSize: 28vmin;
+$blockSizeLgScreen: 22vmin;
 bloques {
+    .content {
+        background: url('/assets/fondos/FONDO1.png');
+        background-size: cover;
+    }
     .scroll-content {
       display: flex;
       flex-direction: column;
+    }
+    .refresh {
+      left:auto;
+      right:0;
+    }
+    .bulb {
+      left:auto;
+      right:30px;
+      font-size: 26px;
+    }
+    .hint {
+      box-shadow: 0 0 10px 2px yellow, 0 0 10px 2px yellow inset;
+      border-radius: 5px;
+      background-color: rgba(yellow,0.5);
     }
     .lugares {
       flex: 0 0 30%;
@@ -27,19 +46,70 @@ bloques {
       }
     }
     .droppable {
-      border: 2px dashed lightgray;
-      width:$blockSize * 2 + 10%;
-      padding-bottom: $blockSize * 2 + 10%; // programmers for the win
+      border: 0.6vh dashed darkgreen; // 1vh dashed yellow;
       display: inline-block;
+      box-sizing: content-box;
+      width:$blockSize;
+      padding-bottom: $blockSize; // programmers for the win
+      @media (min-width:500px) {
+        width:$blockSizeLgScreen;
+        padding-bottom: $blockSizeLgScreen; 
+      }
       &.drop-target {
-        border-color: green;
+        border-color: #c3660d;
       }
     }
     .cubo {
-      background: orchid;
-      display: inline-block;
-      width: $blockSize;
-      padding-bottom: calc(#{$blockSize} - 1em);
+      background-size: cover;
       position: absolute;
+      text-align: center;
+      color:white;
+      text-shadow: 1px 1px black, -1px 1px black, 1px -1px black, -1px -1px black;
+      width: $blockSize;
+      padding-bottom: $blockSize;
+      font-size: $blockSize / 4;
+      @media (min-width:500px) {
+        width: $blockSizeLgScreen;
+        padding-bottom: $blockSizeLgScreen;
+        font-size: $blockSizeLgScreen / 4;        
+      }      
+      span {
+        position: absolute;
+        transform: rotate3d(0,1,1,-3deg);
+        width: 90%;
+        right: 0;
+        top: $blockSize * .4;
+        @media (min-width:500px) {
+          top: $blockSizeLgScreen * .4;          
+        }
+      }
     }
+    .ditch {
+      margin-top:30vh;
+      transition: 0.8s all;
+    }
+    .shake {
+      animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(4px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-8px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(8px, 0, 0);
+  }
 }

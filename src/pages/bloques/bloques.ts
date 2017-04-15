@@ -15,7 +15,9 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
   selector: 'bloques',
   // templateUrl: 'bloques.html',
   template: `
-  <button class="volver" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button bulb" (click)="hint()"><ion-icon name="bulb"></ion-icon></button>
+  <button class="nav-button refresh" (click)="newSilables()"><ion-icon name="refresh"></ion-icon></button>
 
   <ion-content [ngClass]="{woohoo:(woohoo) }" #ionContentRef>
     <ion-row class="row lugares">
@@ -36,17 +38,22 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
     </div>
 
   </ion-content>
+  <div style="display:none;" class="preloader">
+    <img *ngFor="let color of blockColors" src="/assets/cubos/cubo{{color}}.png">
+  </div>
   `
 })
 
 export class Bloques implements AfterViewInit {
 
   woohoo:boolean = false;
-  randomSilables:string[];
   word = ['','']
+  wordHint:string[];
+  updatedCurrentBlocks;
   silables = [];
   blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
   activeDropZone:number;
+  alreadyRefreshed: boolean = false;
   
   @ViewChildren('blocks') blocksQueryList:QueryList<ElementRef>;
   @ViewChildren('droppable1, droppable2') zonasDroppables:QueryList<ElementRef>;
@@ -59,18 +66,31 @@ export class Bloques implements AfterViewInit {
     private alertCtrl: AlertController,
     public castillano: SilabasCastillano
   ) {
-    this.crearSilabas(castillano.listaSilabas);
+    this.createSilables();
 
     this.wordStream
-      .filter(wordArray => { 
-        if (wordArray.indexOf('') < 0) { // complete words only
-          console.log( wordArray.join('') );
-          console.log(castillano.listaPalabras.indexOf( wordArray.join('') ));
+      .filter(attempt => { 
+        if (attempt.indexOf('') < 0) { // complete words only
+          console.log( attempt );
+
           // is the silable combo in the list of words?
-          if ( castillano.listaPalabras.indexOf( wordArray.join('') ) >= 0 ){
-            return true;
-          } else {
+          // if ( castillano.silables.indexOf( wordArray ) >= 0 ){
+          //   return true;
+          // } else {
+          //   this.notAWord();
+          // }
+
+          let inList:boolean = false;
+          castillano.words.forEach( (wordInList:string[]) => {
+            if ( attempt[0] === wordInList[0] && attempt[1] === wordInList[1] ){
+              inList = true;
+            }
+          });
+          
+          if (!inList) {
             this.notAWord();
+          } else {
+            return true;
           }
         }
       })
@@ -86,17 +106,18 @@ export class Bloques implements AfterViewInit {
               role: 'cancel',
               cssClass: 'primary',
               handler: () => {
-                this.reset();
-                this.crearSilabas(castillano.listaSilabas);
+                this.newSilables();
+                this.alreadyRefreshed = true;
               }
             }
           ]
         });
         alert.present();
         setTimeout(() => {
-          alert.dismiss();
-          this.reset();
-          this.crearSilabas(castillano.listaSilabas);
+          if(!this.alreadyRefreshed) {
+            alert.dismiss();
+            this.newSilables();
+          }
         }, 8000);
       })
     ;
@@ -105,6 +126,7 @@ export class Bloques implements AfterViewInit {
   ngAfterViewInit () {
     this.blocksQueryList.changes.subscribe(blocks => {
       this.scatterBlocks(blocks);
+      this.updatedCurrentBlocks = blocks;
     })
     this.scatterBlocks(this.blocksQueryList); // no change event yet
     this.makeBlocksDraggable();
@@ -112,19 +134,59 @@ export class Bloques implements AfterViewInit {
   }
 
   reset() {
+    
     this.word = ['',''];
+    this.woohoo = false;
+
+    // remove active class from dropzones
     this.zonasDroppables.forEach((zona:ElementRef) => {
       zona.nativeElement.classList.remove('drop-target');
     })
   }
+
+  createSilables(){
+
+    // pick a random word
+    this.wordHint = this.shuffle(this.castillano.words)[0];
+    console.log('pista: ' + this.wordHint.join('')); 
+
+    // get list of remaining unused silables 
+    let randomSilables:string[] = this.shuffle(this.castillano.silables)
+      .filter(silable => {
+        return silable !== this.wordHint[0] && silable !== this.wordHint[1];
+      })
+    ;
+
+    this.silables = this.wordHint.concat( randomSilables.slice(0,3) );
+    console.log(this.silables); 
+    
+    this.alreadyRefreshed = false;    
+  }
+
+  newSilables() {
+    this.reset();
+    this.createSilables();
+  }
+  
+  hint(){
+    let blocks:QueryList<ElementRef> = this.updatedCurrentBlocks || this.blocksQueryList;
+    blocks.forEach(block => {
+      if(this.wordHint.indexOf(block.nativeElement.innerText) >= 0) {
+        block.nativeElement.classList.add('hint');
+        setTimeout(() => {
+          block.nativeElement.classList.remove('hint');          
+        },1500);
+      }
+    })
+
+  }
+
   scatterBlocks(blocks:QueryList<ElementRef>) {
     let blockAreaOffset = this.blockArea.nativeElement.offsetTop,
         blockAreaHeight = this.blockArea.nativeElement.offsetHeight,
         blockWidth = this.blockArea.nativeElement.offsetWidth / 4; // 25% width set in scss
 
     blocks.forEach( cubo => {
-
-      console.log(cubo.nativeElement.innerText);
 
       let top = Math.round( Math.random() * (blockAreaHeight - blockWidth) ) + blockAreaOffset,
           left = Math.round( Math.random() * (this.blockArea.nativeElement.offsetWidth - blockWidth) );
@@ -137,6 +199,8 @@ export class Bloques implements AfterViewInit {
       // set random block color
       cubo.nativeElement.style.backgroundImage
        = 'url("/assets/cubos/cubo' + this.shuffle(this.blockColors)[0] + '.png")';
+
+      cubo.nativeElement.classList.remove('currently-placed-block');
     });
   }
 
@@ -224,7 +288,7 @@ export class Bloques implements AfterViewInit {
         })
       );
     }, this)
-    console.log(this.dropzoneInteractables);
+    // console.log(this.dropzoneInteractables);
   }
 
   setActiveDropZone(number:number) {
@@ -269,6 +333,7 @@ export class Bloques implements AfterViewInit {
         block.setAttribute('data-x', block.offsetLeft);
         block.setAttribute('data-y', block.offsetTop);
         block.classList.remove('ditch');
+        block.classList.remove('currently-placed-block');
       },800);
   }
 
@@ -288,7 +353,6 @@ export class Bloques implements AfterViewInit {
     this.blocksQueryList.forEach(block => {
       if (block.nativeElement.classList.contains('currently-placed-block')){
         this.ditchBlock(block.nativeElement);
-        block.nativeElement.classList.remove('currently-placed-block')
       }
     });
 
@@ -334,27 +398,6 @@ export class Bloques implements AfterViewInit {
       // this.wordStream.next(this.word); // never gonna give a full word to pass the filter
     }
     console.log('removeFromWord called ', this.word);    
-  }
-
-/*
-if (adentroLugar(lugar:{}, currentLocation:{})) {
-  add new silaba string to lugar observable
-}
-.zip(lugar1, lugar2){
-  [lugar1, lugar2].toString()
-}
-.subscribe(combinedFullWords) {
-  if(palabrasCastillano:string[].indexOf(combinedFullWords){
-    woohooitsaword(index);
-    crearSilabas();
-  }
-}
-*/
-
-  crearSilabas(listaSilabas:String[]){
-    this.woohoo = false;
-    this.randomSilables = this.shuffle(listaSilabas);
-    this.silables = this.randomSilables.slice(0,9);
   }
 
   shuffle(array)
