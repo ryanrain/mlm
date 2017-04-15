@@ -15,8 +15,8 @@ bloques {
     }
     .bulb {
       left:auto;
-      right:30px;
-      font-size: 26px;
+      right: $navButtonSize;
+      font-size: $navButtonSize - 5;
     }
     .hint {
       box-shadow: 0 0 10px 2px yellow, 0 0 10px 2px yellow inset;

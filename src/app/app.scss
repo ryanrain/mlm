@@ -25,20 +25,15 @@
         overflow-y: auto;
     }
 }
-.volver {
+$navButtonSize: 35px;
+.nav-button {
     z-index: 10;
     position: absolute;
     background: transparent;
-    font-size: 30px;
+    font-size: $navButtonSize;
     top:0;
     left:0;
-}
-button:not(.volver) {
-    background: rebeccapurple;
-    padding: 1em;
-    margin: 1em;
-    display: inline-block;
-    color: white;
+    color: darkgreen;
 }
 #libro-magico-container ion-alert {
     .alert-wrapper {
