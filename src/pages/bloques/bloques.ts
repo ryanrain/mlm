@@ -40,6 +40,7 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
   </ion-content>
   <div style="display:none;" class="preloader">
     <img *ngFor="let color of blockColors" src="/assets/cubos/cubo{{color}}.png">
+    <img [src]="wordImage">
   </div>
   `
 })
@@ -51,6 +52,12 @@ export class Bloques implements AfterViewInit {
   wordHint:string[];
   updatedCurrentBlocks;
   silables = [];
+
+  silableAudios = {};
+  audioChing = new Audio('/assets/ching.mp3');
+  wordAudio;
+  wordImage:string;
+  
   blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
   activeDropZone:number;
   alreadyRefreshed: boolean = false;
@@ -67,6 +74,7 @@ export class Bloques implements AfterViewInit {
     public castillano: SilabasCastillano
   ) {
     this.createSilables();
+    this.preloadWord(this.wordHint.join(''));
 
     this.wordStream
       .filter(attempt => { 
@@ -89,10 +97,13 @@ export class Bloques implements AfterViewInit {
       })
       .subscribe(wordArray => {
         let successWord = wordArray.join('');
-        console.log(successWord + ' woohoo!!!');
+        this.wordImage = successWord;
+        let successWordAudio = new Audio('assets/palabras/' + successWord + '.MP3')
+        this.audioChing.play();
+
         let alert = this.alertCtrl.create({
           title: successWord,
-          message: '<img src="/assets/imagenes/' + successWord + '.png">',
+          message: '<img class="success-word" src="/assets/imagenes/' + successWord + '.png">',
           buttons: [
             {
               text: 'Siguente',
@@ -105,7 +116,12 @@ export class Bloques implements AfterViewInit {
             }
           ]
         });
-        alert.present();
+        setTimeout(() => {
+          alert.present();
+        }, 500);
+        setTimeout(() => {
+          successWordAudio.play();
+        }, 1000);
         setTimeout(() => {
           if(!this.alreadyRefreshed) {
             alert.dismiss();
@@ -114,6 +130,11 @@ export class Bloques implements AfterViewInit {
         }, 8000);
       })
     ;
+
+    // pre-load an object of Audio objects
+    this.castillano.silables.forEach(silable => {
+      this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
+    })
   }
  
   ngAfterViewInit () {
@@ -141,7 +162,7 @@ export class Bloques implements AfterViewInit {
 
     // pick a random word
     this.wordHint = this.shuffle(this.castillano.words)[0];
-    console.log('pista: ' + this.wordHint.join('')); 
+    console.log('pista: ' + this.wordHint.join(''));
 
     // get list of remaining unused silables 
     let randomSilables:string[] = this.shuffle(this.castillano.silables)
@@ -151,16 +172,22 @@ export class Bloques implements AfterViewInit {
     ;
 
     this.silables = this.wordHint.concat( randomSilables.slice(0,3) );
-    console.log(this.silables); 
     
-    this.alreadyRefreshed = false;    
+    this.alreadyRefreshed = false;
+
   }
 
   newSilables() {
     this.reset();
     this.createSilables();
+    this.preloadWord(this.wordHint.join(''));
   }
   
+  preloadWord(word:string) {
+    this.wordAudio = new Audio('assets/palabras/' + word + '.MP3');
+    this.wordImage = "assets/imagenes/" + word + ".png";
+  }
+
   hint(){
     let blocks:QueryList<ElementRef> = this.updatedCurrentBlocks || this.blocksQueryList;
     blocks.forEach(block => {
@@ -200,6 +227,7 @@ export class Bloques implements AfterViewInit {
 
     interact.maxInteractions(Infinity);
     let blockZIndex = 1;
+    let silableAudios = this.silableAudios;
     
     interact('div', { // use selector context to bubble events and therefore enable re-use upon new blocks 
                       // http://interactjs.io/docs/#selector-contexts
@@ -221,7 +249,14 @@ export class Bloques implements AfterViewInit {
       .on('dragstart', function (event) {
           event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
           event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
+          
+          // make block visible above others
           event.target.style.zIndex = blockZIndex++;
+
+          console.info(this);
+          // Bloques.
+          let silable = event.target.innerText;
+          silableAudios[silable].play();
       })
       .on('dragmove', function (event) {
           event.interaction.x += event.dx;
