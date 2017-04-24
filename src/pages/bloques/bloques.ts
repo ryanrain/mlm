@@ -73,13 +73,6 @@ export class Bloques implements AfterViewInit {
         if (attempt.indexOf('') < 0) { // complete words only
           console.log( attempt );
 
-          // is the silable combo in the list of words?
-          // if ( castillano.silables.indexOf( wordArray ) >= 0 ){
-          //   return true;
-          // } else {
-          //   this.notAWord();
-          // }
-
           let inList:boolean = false;
           castillano.words.forEach( (wordInList:string[]) => {
             if ( attempt[0] === wordInList[0] && attempt[1] === wordInList[1] ){
@@ -177,8 +170,7 @@ export class Bloques implements AfterViewInit {
           block.nativeElement.classList.remove('hint');          
         },1500);
       }
-    })
-
+    });
   }
 
   scatterBlocks(blocks:QueryList<ElementRef>) {
@@ -209,7 +201,7 @@ export class Bloques implements AfterViewInit {
     interact.maxInteractions(Infinity);
     let blockZIndex = 1;
     
-    interact('div', { // use selector context to bubble and enable re-use upon new blocks 
+    interact('div', { // use selector context to bubble events and therefore enable re-use upon new blocks 
                       // http://interactjs.io/docs/#selector-contexts
         context: this.blockArea.nativeElement
       })
@@ -326,13 +318,19 @@ export class Bloques implements AfterViewInit {
   }
   
   ditchBlock(block){
-      block.classList.add('ditch');
+      block.classList.add('long-transition');
+      let height = 30 + Math.random() * 4;
+      block.style.marginTop = height + 'vh';
+      let width = (Math.random() - 1) * 4;
+      block.style.marginLeft = width + 'vh';
       setTimeout(() =>{
         block.style.top = block.offsetTop + 'px';
         block.style.left = block.offsetLeft + 'px';
         block.setAttribute('data-x', block.offsetLeft);
         block.setAttribute('data-y', block.offsetTop);
-        block.classList.remove('ditch');
+        block.style.marginTop = '';
+        block.style.marginLeft = '';        
+        block.classList.remove('long-transition');
         block.classList.remove('currently-placed-block');
       },800);
   }
