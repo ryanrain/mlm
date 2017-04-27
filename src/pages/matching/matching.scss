@@ -1,0 +1,48 @@
+matching-game {
+    text-align: center;
+    .refresh {
+      left:auto;
+      right:0;
+    }
+    .scroll-content {
+        background: url('/assets/fondos/FONDO6.png');
+        background-size: cover;
+        display: flex;
+        #libro-magico-container & {
+            padding-top:2.5em; // top nav buttons
+        }
+        > div {
+            flex:0 0 50%;
+            display: flex;
+            flex-direction: column;
+            > div {
+                flex: 0 0 20%;
+                max-height: 20%;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                align-items: flex-start;
+                color: white;
+                font-weight: bold;
+                font-size: 4vh;
+                text-shadow: 1px 1px black, -1px 1px black, 1px -1px black, -1px -1px black;
+                img {
+                    height: 16vh;
+                    width: 16vh;
+                    align-self: flex-end;
+                    border-radius: 20px;
+                    background: rgba(white, 0.5);
+                }
+            }
+        }
+    }
+    #words {
+        span {
+            display: inline-block;
+            border-radius: 20px;
+            background: rgba(white, 0.5);
+            padding: 0 .5em;
+            line-height: 16vh;
+        }
+    }
+}
