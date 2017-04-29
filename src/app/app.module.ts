@@ -6,7 +6,9 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ElegirImagen } from '../pages/elegirImagen/elegirImagen';
 import { Bloques } from '../pages/bloques/bloques';
+import { Matching } from '../pages/matching/matching';
 import { AlfabetoCastillano } from '../alfabetos/alfabeto.castillano';
+import { PalabrasCastillano } from '../alfabetos/palabras.castillano';
 import { SilabasCastillano } from '../silabas/silabas.castillano';
 
 @NgModule({
@@ -14,7 +16,8 @@ import { SilabasCastillano } from '../silabas/silabas.castillano';
     MyApp,
     HomePage,
     ElegirImagen,
-    Bloques
+    Bloques,
+    Matching
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -24,12 +27,14 @@ import { SilabasCastillano } from '../silabas/silabas.castillano';
     MyApp,
     HomePage,
     ElegirImagen,
-    Bloques
+    Bloques,
+    Matching
   ],
   providers: [
     {provide: ErrorHandler, useClass: IonicErrorHandler}, 
     AlfabetoCastillano, 
-    SilabasCastillano
+    SilabasCastillano,
+    PalabrasCastillano
   ]
 })
 export class AppModule {}
