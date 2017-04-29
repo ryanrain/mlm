@@ -17,13 +17,14 @@ import { PalabrasCastillano } from '../../alfabetos/palabras.castillano';
 
   <ion-content padding>
     <div id="words">
-      <div #words *ngFor="let word of wordsText"><span [attr.data-word]="word">{{word}}</span></div>
+      <div *ngFor="let word of wordsText"><span #words [attr.data-word]="word">{{word}}</span></div>
     </div>
     <div id="images">
-      <div #images *ngFor="let word of words">
-        <img src="assets/imagenes/{{word}}.png" [attr.data-word]="word">
+      <div *ngFor="let word of words">
+        <img #images src="assets/imagenes/{{word}}.png" [attr.data-word]="word">
       </div>      
     </div>
+    <canvas id="lines"></canvas>
   </ion-content>
   <div style="display:none;" class="preloader">
   </div>
@@ -33,7 +34,8 @@ export class Matching implements AfterViewInit {
 
   words:String[];
   wordsText:String[];
-  wordAttempted:String;
+  wordAttempted:String = '';
+  imgOrText:String = '';
 
   audioChing = new Audio('/assets/ching.mp3');
 
@@ -67,17 +69,78 @@ export class Matching implements AfterViewInit {
     this.attempts
       .throttleTime(300)    
       .subscribe(clickEvent => {
-        // console.log(clickEvent.target.attributes[0].nodeValue);
+        console.log(clickEvent);
+        
+        let currentAttempt = clickEvent.target.getAttribute("data-word"),
+            currentImgOrText = clickEvent.target.nodeName;
 
-        this.wordAttempted = clickEvent.target.getAttribute("data-word");
-        this.audioChing.play();
-        console.log(this.wordAttempted);
+        console.log(this.wordAttempted, currentAttempt, currentImgOrText);
 
-        if( this.wordAttempted === 'this.letraAhora' ) {
-
+        // if none are selected
+        if ( this.wordAttempted === '' ) {
+          this.wordAttempted = currentAttempt;
+          this.imgOrText = currentImgOrText;
+          clickEvent.target.classList.add('selected');
+          console.log('if none are selected');
+          return;
         }
-      })
-    ;
+
+        // if click the same thing a second time
+        if ( this.wordAttempted === currentAttempt && this.imgOrText === currentImgOrText ) {
+          this.deselectAll();
+          console.log('if click the same thing a second time');          
+        }
+
+        // if one has been selected already
+        if ( this.wordAttempted !== '' ) {
+          console.log('if one has been selected already');
+          clickEvent.target.classList.add('selected');
+          setTimeout(function() {    
+            if ( this.wordAttempted === currentAttempt ) {
+              console.log('if the next one is correct');
+              this.audioChing.play();
+              // draw a straight line 
+              
+              // make those no longer clickable
+              this.deselectAll();
+            } else {
+              console.log('incorrect');
+              this.deselectAll();
+            }
+          }.bind(this), 250);
+        }
+
+
+
+      }
+    );
+  }
+
+  deselectAll() {
+    this.wordAttempted = '';
+    this.imgOrText = '';
+    this.clickables.forEach(elementRef => {
+      elementRef.nativeElement.classList.remove('selected');
+    });
+  }
+
+  drawLine(){
+    /**
+     * first assemble a nodelist .filter with hasClass('selected')
+     * create a div
+     * set it's   
+     */
+      // var canvas = document.getElementById('myCanvas');
+      // var context = canvas.getContext('2d');
+
+      // context.beginPath();
+      // context.moveTo(100, 150);
+      // context.lineTo(450, 50);
+      // context.lineWidth = 10;
+
+      // // set line color
+      // context.strokeStyle = '#ff0000';
+      // context.stroke();
   }
 
   createWords(){

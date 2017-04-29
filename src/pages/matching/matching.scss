@@ -45,4 +45,11 @@ matching-game {
             line-height: 16vh;
         }
     }
+    #words, #images {
+        position: relative;
+        z-index: 10;
+        .selected {
+            background: yellow;
+        }
+    }
 }
