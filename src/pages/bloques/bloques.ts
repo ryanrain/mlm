@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef } from '@angular/core';
+import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener } from '@angular/core';
 import { NavController, AlertController } from 'ionic-angular';
 
 import {Subject} from 'rxjs/Subject';
@@ -54,6 +54,7 @@ export class Bloques implements AfterViewInit {
   silables = [];
 
   silableAudios = {};
+  bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
   wordAudio;
   wordImage:string;
@@ -61,6 +62,7 @@ export class Bloques implements AfterViewInit {
   blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
   activeDropZone:number;
   alreadyRefreshed: boolean = false;
+  notYetRun: boolean;
   
   @ViewChildren('blocks') blocksQueryList:QueryList<ElementRef>;
   @ViewChildren('droppable1, droppable2') zonasDroppables:QueryList<ElementRef>;
@@ -75,6 +77,7 @@ export class Bloques implements AfterViewInit {
   ) {
     this.createSilables();
     this.preloadWord(this.wordHint.join(''));
+    this.preloadBienAudios();
 
     this.wordStream
       .filter(attempt => { 
@@ -99,7 +102,10 @@ export class Bloques implements AfterViewInit {
         let successWord = wordArray.join('');
         this.wordImage = successWord;
         let successWordAudio = new Audio('assets/palabras/' + successWord + '.MP3')
-        this.audioChing.play();
+        
+        setTimeout(() => {
+          this.playRandomBienAudio();
+        },500);
 
         let alert = this.alertCtrl.create({
           title: successWord,
@@ -118,16 +124,16 @@ export class Bloques implements AfterViewInit {
         });
         setTimeout(() => {
           alert.present();
-        }, 500);
+        }, 2000);
         setTimeout(() => {
           successWordAudio.play();
-        }, 1000);
+        }, 3000);
         setTimeout(() => {
           if(!this.alreadyRefreshed) {
             alert.dismiss();
             this.newSilables();
           }
-        }, 8000);
+        }, 6000);
       })
     ;
 
@@ -141,7 +147,7 @@ export class Bloques implements AfterViewInit {
     this.blocksQueryList.changes.subscribe(blocks => {
       this.scatterBlocks(blocks);
       this.updatedCurrentBlocks = blocks;
-    })
+    });
     this.scatterBlocks(this.blocksQueryList); // no change event yet
     this.makeBlocksDraggable();
     this.createDropZones();
@@ -186,6 +192,18 @@ export class Bloques implements AfterViewInit {
   preloadWord(word:string) {
     this.wordAudio = new Audio('assets/palabras/' + word + '.MP3');
     this.wordImage = "assets/imagenes/" + word + ".png";
+  }
+
+  
+  preloadBienAudios(){
+    ['0','1','2','3','4','5','6'].forEach(number => {
+      this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
+    });
+  }
+
+  playRandomBienAudio(){
+    let random = Math.round(Math.random() * 6.2);
+    this.bienAudios[random.toString()].play();
   }
 
   hint(){
@@ -253,8 +271,6 @@ export class Bloques implements AfterViewInit {
           // make block visible above others
           event.target.style.zIndex = blockZIndex++;
 
-          console.info(this);
-          // Bloques.
           let silable = event.target.innerText;
           silableAudios[silable].play();
       })
@@ -448,6 +464,19 @@ export class Bloques implements AfterViewInit {
   
   volver() {
     this.navCtrl.pop();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(){
+    console.log(this.notYetRun);
+    // debounced resize
+    if ( this.notYetRun === true || typeof(this.notYetRun) === 'undefined') {
+      this.scatterBlocks(this.updatedCurrentBlocks || this.blocksQueryList);
+      this.notYetRun = false;
+      setTimeout(()=>{
+        this.notYetRun = true;
+      }, 1000); 
+    }
   }
 
 }
