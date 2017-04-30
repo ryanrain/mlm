@@ -44,6 +44,7 @@ export class Matching implements AfterViewInit {
   @ViewChildren('words, images') clickables:QueryList<ElementRef>;
   @ViewChild('lines') lines:ElementRef;
   attempts:Observable<any>;
+  attemptsSubscription;
   @ViewChild(Content) content: Content;
 
 
@@ -60,7 +61,7 @@ export class Matching implements AfterViewInit {
 
     this.clickables.changes.subscribe(buttons => {
       this.makeButtonsClickable(buttons);
-    })
+    });
 
     this.makeButtonsClickable(this.clickables); // first run
   }
@@ -81,11 +82,15 @@ export class Matching implements AfterViewInit {
       null
     );
 
+    // fix bug where words that re-appear in subsequent random selection have double action, immediately unselecting. also possible memory savings?
+    if ( typeof(this.attemptsSubscription) === 'object' ) {
+      this.attemptsSubscription.unsubscribe();
+    }
+
     // act on taps
-    this.attempts
+    this.attemptsSubscription = this.attempts
       .throttleTime(300)    
       .subscribe(clickEvent => {
-        console.log(clickEvent);
         
         let currentAttempt = clickEvent.target.getAttribute("data-word"),
             currentImgOrText = clickEvent.target.nodeName;
@@ -104,7 +109,8 @@ export class Matching implements AfterViewInit {
         // if click the same thing a second time
         if ( this.wordAttempted === currentAttempt && this.imgOrText === currentImgOrText ) {
           this.deselectAll();
-          console.log('if click the same thing a second time');          
+          console.log('if click the same thing a second time'); 
+          return;        
         }
 
         // if one has been selected already
