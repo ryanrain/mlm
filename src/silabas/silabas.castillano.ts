@@ -1,35 +1,35 @@
 export class SilabasCastillano {
 
     silables:string[] = [
-        'ca',
-        'sa',
         'bo',
-        'ta',
-        'ma',
-        'co',
+        'ca',
         'che',
+        'co',
         'cu',
-        'do',
-        'na',
-        'fo',
-        'go',
-        'va',
+        'da',     
         'de',
-        'o',
+        'do',
+        'go',
+        'fo',
+        'ga',
+        'la',
         'lla',
-        'pi',
-        'pa',
-        'to',
+        'llo',
+        'ma',
+        'na',
         'ña',
         'ni',
-        'u',
-        'llo',
+        'o',
+        'pa',
+        'pi',
         'po',
         'ro',
+        'sa',
         'so',
-        'la',
-        'ga',
-        'da'     
+        'ta',
+        'to',
+        'u',
+        'va'
     ];
 
     words = [
@@ -75,6 +75,7 @@ export class SilabasCastillano {
         ['ga','llo'],
         ['sa','po'],
         ['cu','na'],
-        ['da','do']
+        ['da','do'],
+        ['co','che']
     ];
 }
