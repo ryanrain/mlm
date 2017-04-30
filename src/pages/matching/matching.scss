@@ -52,4 +52,13 @@ matching-game {
             background: yellow;
         }
     }
+    #lines {
+        position: absolute;
+        top: 3em;
+        left: 16px;
+        path {
+            stroke-width: 8px;
+            stroke: rebeccapurple;
+        }
+    }
 }
