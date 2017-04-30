@@ -18,6 +18,10 @@ $duracionSubir: 3s;
 $tamanoGrande: 35vh;
 page-elegir-imagen {
     text-align: center;
+    .content {
+        background: url('/assets/fondos/FONDO4-sky.png');
+        background-size: cover;
+    }
     // @media (min-width:700px) {
     //     height: 700px;
     // }
@@ -34,18 +38,19 @@ page-elegir-imagen {
         }
         div {
             font-size: $tamanoGrande;
-            line-height: 70vh;
+            line-height: 50vh;
             position: absolute; 
             left:0;
             width:100%;
             overflow: visible;
             white-space: nowrap;
+            text-shadow: .02em .02em white, -.02em .02em white, .02em -.02em white, -.02em -.02em white;
         }
     }
     .arriba #letra-principal {
         div {
-            font-size: 5rem;
-            line-height: (50vh/2/2); // a little less than the space left 
+            font-size: 10vh;
+            line-height: 10vh;
             left: 30%;
             width: 0%;
             transition: $duracionSubir all;
@@ -60,33 +65,31 @@ page-elegir-imagen {
             transition: none;
             border-radius: 20px;
             position: absolute;
-            width: (100% / 3);
+            width: (86% / 3);
+            background: rgba(white, 0.5);
             // top:calc(100vh - 34vw);
             // @media (min-width:700px) {
             //     top: calc(100vh - (700px / 3));
             // }
-            bottom: 0;
+            bottom:22vh;            
             &:first-child {
-                left:0;
+                left: 7%;
             }
             &:nth-child(2) {
-                left:(100% / 3);
+                left:(7% + 86% / 3);
+                bottom: 7vw;
             }
             &:last-child {
-                left:(2 * 100% / 3);
+                left:(7% + 86% / 3 * 2);                
             }
         }
     }
     .arriba #imagenes-letra {
         .woohoo {
             position: absolute;
-            bottom: calc(34vw + (35vh/2) );
-            width: $tamanoGrande;
-            left:calc((100vw - #{$tamanoGrande}) / 2);
-            @media (min-width:700px) {
-                bottom: 40%;
-                left: calc((700px - #{$tamanoGrande}) / 2);
-            }
+            bottom: 50vh;
+            width: 50%;
+            left:25%;
             box-shadow: 0 0 50px yellow, 0 0 30px yellow inset;
             animation: tapped-animation $duracionSubir linear;
             -webkit-animation: tapped-animation $duracionSubir linear; 
