@@ -94,7 +94,7 @@ export class Matching implements AfterViewInit {
         
         let currentAttempt = clickEvent.target.getAttribute("data-word"),
             currentImgOrText = clickEvent.target.nodeName;
-
+        
         console.log(this.wordAttempted, currentAttempt, currentImgOrText);
 
         // if none are selected
@@ -124,10 +124,6 @@ export class Matching implements AfterViewInit {
               this.audioChing.play();
               this.drawLine(clickEvent.target);              
               this.deselectAll();
-
-
-              // make those no longer clickable
-
               if(this.numberCorrectSoFar === 5) {
                 setTimeout(()=>{
                   this.celebrate();
@@ -139,7 +135,6 @@ export class Matching implements AfterViewInit {
             }
           }.bind(this), 250);
         }
-
       }
     );
   }
@@ -180,6 +175,9 @@ export class Matching implements AfterViewInit {
 
     this.lines.nativeElement.appendChild(newpath);
 
+    // remove correctly linked items selectability
+    otherSelected.style.zIndex = '-1';
+    target.style.zIndex = '-1';
   }
 
   findOtherSelected(list:QueryList<ElementRef>, targetNodeName:string) {
