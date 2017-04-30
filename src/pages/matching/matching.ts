@@ -32,13 +32,15 @@ import { PalabrasCastillano } from '../../alfabetos/palabras.castillano';
 })
 export class Matching implements AfterViewInit {
 
-  words:String[];
-  wordsText:String[];
-  wordAttempted:String = '';
-  imgOrText:String = '';
-  numberCorrectSoFar:Number = 0;
+  words:string[];
+  wordsText:string[];
+  wordAttempted:string = '';
+  imgOrText:string = '';
+  numberCorrectSoFar:number = 0;
   notYetRun:boolean;
 
+  wordAudios = {};
+  bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
 
   @ViewChildren('words, images') clickables:QueryList<ElementRef>;
@@ -53,6 +55,8 @@ export class Matching implements AfterViewInit {
     public castillano: PalabrasCastillano,
       ) {
       this.createWords();
+      this.preloadWordAudios();
+      this.preloadBienAudios();
   }
 
   ngAfterViewInit() {
@@ -94,6 +98,8 @@ export class Matching implements AfterViewInit {
         
         let currentAttempt = clickEvent.target.getAttribute("data-word"),
             currentImgOrText = clickEvent.target.nodeName;
+
+        this.wordAudios[currentAttempt].play();
         
         console.log(this.wordAttempted, currentAttempt, currentImgOrText);
 
@@ -117,11 +123,13 @@ export class Matching implements AfterViewInit {
         if ( this.wordAttempted !== '' ) {
           console.log('if one has been selected already');
           clickEvent.target.classList.add('selected');
-          setTimeout(function() {    
+          setTimeout(() => {    
             if ( this.wordAttempted === currentAttempt ) {
               console.log('if the next one is correct');
               this.numberCorrectSoFar++;
-              this.audioChing.play();
+              setTimeout(()=>{
+                this.playRandomBienAudio();
+              },500);
               this.drawLine(clickEvent.target);              
               this.deselectAll();
               if(this.numberCorrectSoFar === 5) {
@@ -133,10 +141,29 @@ export class Matching implements AfterViewInit {
               console.log('incorrect');
               this.deselectAll();
             }
-          }.bind(this), 250);
+          }, 250);
         }
       }
     );
+  }
+
+  preloadWordAudios(){
+    // pre-load an object of Audio objects
+    this.words.forEach(word => {
+      this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');
+    });
+    // if they play it for a long time could this take too much memory?
+  }
+  
+  preloadBienAudios(){
+    ['0','1','2','3','4','5','6'].forEach(number => {
+      this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
+    });
+  }
+
+  playRandomBienAudio(){
+    let random = Math.round(Math.random() * 6.2);
+    this.bienAudios[random.toString()].play();
   }
 
   setSvgViewbox() {
@@ -202,7 +229,7 @@ export class Matching implements AfterViewInit {
   }
 
   celebrate() {
-    this.audioChing.play();
+    this.playRandomBienAudio();
     this.reset();
   }
 
@@ -212,6 +239,7 @@ export class Matching implements AfterViewInit {
         this.lines.nativeElement.removeChild(this.lines.nativeElement.firstChild);
     }
     this.createWords();
+    this.preloadWordAudios();
   }
 
   shuffle(array)
