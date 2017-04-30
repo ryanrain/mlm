@@ -14,7 +14,7 @@ import { LetraModel } from '../../models/letra.model';
   selector: 'page-elegir-imagen',
   // templateUrl: 'elegirImagen.html'
   template: `
-  <button class="volver" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
 
   <ion-content padding [class.arriba]="imagenArriba">
     <div #letraAhoraRef id="letra-principal">
@@ -29,6 +29,11 @@ import { LetraModel } from '../../models/letra.model';
       <img #opcion3 src="assets/imagenes/{{opciones[2].palabra}}.png" [id]="opciones[2].letra" [class]="opciones[2].palabra">
     </div>
   </ion-content>
+  <div style="display:none;" class="preloader">
+    <audio *ngFor="let letra of castillano.alfabeto" src="/assets/letra_sonidos/{{letra.letra}}.MP3" preload="auto"></audio>
+    <audio *ngFor="let letra of castillano.alfabeto" src="/assets/palabras/{{letra.palabra}}.MP3" preload="auto"></audio>
+    <img rel="preload" *ngFor="let letra of castillano.alfabeto" src="/assets/imagenes/{{letra.palabra}}.png">
+  </div>
   `
 })
 export class ElegirImagen implements AfterViewInit {
@@ -75,7 +80,6 @@ export class ElegirImagen implements AfterViewInit {
         this.intentos = acc.merge(current);
         return this.intentos;
       },
-      // new Observable<any>()
       null
     );
 
