@@ -2,10 +2,7 @@ import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRe
 import { NavController, AlertController } from 'ionic-angular';
 
 import {Subject} from 'rxjs/Subject';
-import 'rxjs/add/operator/concatMap';
-import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/filter';
-import 'rxjs/add/observable/zip';
 
 import {interact} from 'interactjs';
 
@@ -13,7 +10,6 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
 
 @Component({
   selector: 'bloques',
-  // templateUrl: 'bloques.html',
   template: `
   <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button bulb" (click)="hint()"><ion-icon name="bulb"></ion-icon></button>
@@ -247,7 +243,7 @@ export class Bloques implements AfterViewInit {
     let blockZIndex = 1;
     let silableAudios = this.silableAudios;
     
-    interact('div', { // use selector context to bubble events and therefore enable re-use upon new blocks 
+    interact('.cubo', { // use selector context to bubble events and therefore enable re-use upon new blocks 
                       // http://interactjs.io/docs/#selector-contexts
         context: this.blockArea.nativeElement
       })
