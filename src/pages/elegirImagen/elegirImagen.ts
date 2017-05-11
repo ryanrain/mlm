@@ -4,6 +4,7 @@ import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
+import 'rxjs/add/observable/zip';
 
 import { NavController } from 'ionic-angular';
 
@@ -17,6 +18,13 @@ import { LetraModel } from '../../models/letra.model';
   <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
 
   <ion-content padding [class.arriba]="imagenArriba">
+  
+    <img #bgImg id="bg-img" src="/assets/fondos/FONDO4-sky.png">
+    
+    <div id="loading" *ngIf="!allLoadedBool">
+      <img src="/assets/menu/maguito.png">
+    </div>
+
     <div #letraAhoraRef id="letra-principal">
       <div>
         <span *ngIf="palabraAhora == ''">{{letraAhora}}</span>
@@ -30,8 +38,6 @@ import { LetraModel } from '../../models/letra.model';
     </div>
   </ion-content>
   <div style="display:none;" class="preloader">
-    <audio *ngFor="let letra of castillano.alfabeto" src="/assets/letra_sonidos/{{letra.letra}}.MP3" preload="auto"></audio>
-    <audio *ngFor="let letra of castillano.alfabeto" src="/assets/palabras/{{letra.palabra}}.MP3" preload="auto"></audio>
     <img rel="preload" *ngFor="let letra of castillano.alfabeto" src="/assets/imagenes/{{letra.palabra}}.png">
   </div>
   `
@@ -49,15 +55,29 @@ export class ElegirImagen implements AfterViewInit {
   bienAudios = {};
   audioLetraAhora = new Audio;
   audioOpciones = {};
+  bgLoaded:Observable<any>;
+  firstAudiosLoaded:Observable<any>;
+  allLoaded:Observable<any>;
+  allLoadedBool:boolean = false;
 
   @ViewChildren('opcion1,opcion2,opcion3') opcionesBotones:QueryList<ElementRef>;
   @ViewChild('letraAhoraRef') letraAhoraRef:ElementRef;
+  @ViewChild('bgImg') bgImg:ElementRef;
 
   constructor(
     public navCtrl: NavController,
     public castillano: AlfabetoCastillano,
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
+
+    // Preload first set of Audio objects for all button words and letter
+    this.opciones.forEach(Letra  => {
+
+      // archivos palabra en puro menisculo
+      let palabraLower = Letra.palabra.toLowerCase();      
+      this.audioOpciones[Letra.palabra] = new Audio('/assets/palabras/' + palabraLower + '.MP3');
+    });
+
     this.preloadBienAudios();
   }
 
@@ -132,6 +152,19 @@ export class ElegirImagen implements AfterViewInit {
         }
       })
     ;
+
+    this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+    this.firstAudiosLoaded = Observable.fromEvent(this.audioOpciones[this.opciones[2].palabra], 'canplaythrough');
+    // create zipped and subscribe to it.
+    console.log(this.audioOpciones);
+
+    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded);
+
+    this.allLoaded.subscribe(array => {
+      console.log('allLoaded');
+      this.allLoadedBool = true;
+      this.preloadWordAndLetterAudios();
+    })
   }
   
   celebrar(boton){
@@ -140,9 +173,18 @@ export class ElegirImagen implements AfterViewInit {
     setTimeout(() => {
       this.playRandomBienAudio();
     }, 500);
-
   }
   
+  preloadWordAndLetterAudios() {
+    // filter out the first set?
+    this.castillano.alfabeto.forEach(Letra  => {
+      this.audioOpciones[Letra.letra] = new Audio('/assets/letra_sonidos/' + Letra.letra + '.MP3');
+      // archivos palabra en puro menisculo
+      let palabraLower = Letra.palabra.toLowerCase();      
+      this.audioOpciones[Letra.palabra] = new Audio('/assets/palabras/' + palabraLower + '.MP3');
+    });
+  }
+
   preloadBienAudios(){
     ['0','1','2','3','4','5','6'].forEach(number => {
       this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
@@ -189,14 +231,6 @@ export class ElegirImagen implements AfterViewInit {
       this.alfabetoAlAzar[1], 
       this.alfabetoAlAzar[2]
     ]);
-
-    // objeto de sonidos para todos las opciones
-    this.opciones.forEach(Letra  => {
-      this.audioOpciones[Letra.letra] = new Audio('/assets/letra_sonidos/' + Letra.letra + '.MP3');
-      // archivos palabra en puro menisculo
-      var palabraLower = Letra.palabra.toLowerCase();      
-      this.audioOpciones[Letra.palabra] = new Audio('/assets/palabras/' + palabraLower + '.MP3');
-    });
 
   }
 

@@ -18,19 +18,14 @@ $duracionSubir: 3s;
 $tamanoGrande: 35vh;
 page-elegir-imagen {
     text-align: center;
-    .content {
-        background: url('/assets/fondos/FONDO4-sky.png');
-        background-size: cover;
+    #bg-img {
+        position: absolute;
+        top:0;
+        left:0;
+        height: calc(100% + 64px);
+        width: auto;
+        min-width: calc(100% + 64px);
     }
-    // @media (min-width:700px) {
-    //     height: 700px;
-    // }
-    // #vertical-container {
-    //     display: flex;
-    //     flex-direction: column;
-    //     height: 100vh;
-    //     max-height: 175vw;
-    // }
     #letra-principal {
         height: calc(100vh - 34vw);
         @media (min-width:700px) {
