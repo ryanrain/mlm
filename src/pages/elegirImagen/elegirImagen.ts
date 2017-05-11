@@ -45,7 +45,8 @@ export class ElegirImagen implements AfterViewInit {
   imagenArriba:boolean = false;
   intentos:Observable<any>;
   letraClicks:Observable<any>;
-  audioChing = new Audio('/assets/ching.mp3');
+  // audioChing = new Audio('/assets/ching.mp3');
+  bienAudios = {};
   audioLetraAhora = new Audio;
   audioOpciones = {};
 
@@ -57,6 +58,7 @@ export class ElegirImagen implements AfterViewInit {
     public castillano: AlfabetoCastillano,
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
+    this.preloadBienAudios();
   }
 
   ngAfterViewInit() {
@@ -96,35 +98,35 @@ export class ElegirImagen implements AfterViewInit {
         if( letra === this.letraAhora ) {
           // note these setTimeout execute 
           let delay1 = 500,
-              delay2 = delay1 + 1500,
+              delay2 = delay1 + 2000,
               delay3 = delay2 + 1500,
               delay4 = delay3 + 1500;
 
           setTimeout(
-            function(){
+            ()=>{
               this.celebrar(clickEvent.target);
               this.subirImagen();
-            }.bind(this),
+            },
             delay1
           );
           setTimeout(
-            function(){
+            () => {
               this.escuchar(letra);
-            }.bind(this),
+            },
             delay2
           );
           setTimeout(
-            function(){
+            () => {
               this.mostrarPalabra(palabra);
               this.escuchar(palabra);
-            }.bind(this),
+            },
             delay3
           );
           setTimeout(
-            function(){
+            () => {
               this.reset();
               this.nuevaLetra(this.castillano.alfabeto);
-            }.bind(this),
+            },
             delay4
           );
         }
@@ -134,7 +136,22 @@ export class ElegirImagen implements AfterViewInit {
   
   celebrar(boton){
     boton.classList.add('woohoo');
-    this.audioChing.play();    
+    // this.audioChing.play();
+    setTimeout(() => {
+      this.playRandomBienAudio();
+    }, 500);
+
+  }
+  
+  preloadBienAudios(){
+    ['0','1','2','3','4','5','6'].forEach(number => {
+      this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
+    });
+  }
+
+  playRandomBienAudio(){
+    let random = Math.round(Math.random() * 6.2);
+    this.bienAudios[random.toString()].play();
   }
 
   subirImagen(){
