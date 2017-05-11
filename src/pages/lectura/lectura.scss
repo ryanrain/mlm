@@ -1,0 +1,32 @@
+lecturas {
+    .content {
+        background: url(/assets/fondos/FONDO-LECTURAS.png) center top;
+        background-size: cover; 
+    }   
+    ion-header {
+        display: flex;
+        .button {
+            background: transparent;
+            box-shadow: none;
+            text-shadow: 1px 1px darkgreen, -1px 1px darkgreen, 1px -1px darkgreen, -1px -1px darkgreen;
+        }
+    }
+
+    #lecturas-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        > div {
+            flex: 0 0 30%;
+            text-align: center;
+            margin: 0 0 2em;
+            background: rgba(white,.8);
+            border-radius: 20px;
+        }
+    }
+    @media (min-width:500px) and (min-height:500px) {
+        h5 {
+            font-size: 2.5rem;
+        }
+    }
+}

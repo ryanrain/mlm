@@ -1,0 +1,29 @@
+page-item-detail {
+  font-size: 1.8rem;
+  font-family: "Roboto", "Helvetica Neue", sans-serif;
+  h1 {
+    font-size: 3rem;
+    font-family: 'linotte', "Roboto", "Helvetica Neue", sans-serif;    
+  }
+  // .story-text, .list {
+  // }
+  .item-profile {
+    width: 100%;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 250px;
+  }
+  .correct {
+    background: rgba(green,.2);
+  }  
+  .incorrect {
+    background: rgba(red,.2);
+  }
+  .muybien {
+    padding:.5em 1em;
+    position: absolute;
+    right:1em;
+    font-size: 1.5rem;
+  }
+}
