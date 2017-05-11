@@ -76,6 +76,18 @@ export class SilabasCastillano {
         ['sa','po'],
         ['cu','na'],
         ['da','do'],
-        ['co','che']
+        ['co','che'],
+        ['co','do'],
+        ['lo','ro'],
+        ['ma','pa'],
+        ['me','sa'],
+        ['ni','do'],
+        ['o','ro'],
+        ['pa','la'],
+        ['pa','sa'],
+        ['pa','ta'],
+        ['pi','so'],
+        ['ro','to'],
+        ['ta','co']
     ];
 }
