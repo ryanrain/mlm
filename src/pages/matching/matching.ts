@@ -6,7 +6,7 @@ import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
 import 'rxjs/add/observable/zip';
 
-import { NavController, Content } from 'ionic-angular';
+import { NavController, Content, Platform } from 'ionic-angular';
 
 import { PalabrasCastillano } from '../../alfabetos/palabras.castillano';
 
@@ -26,14 +26,17 @@ import { PalabrasCastillano } from '../../alfabetos/palabras.castillano';
     </div>
 
     <svg  xmlns="http://www.w3.org/2000/svg" #lines id="lines" viewBox="0 0 320 600"></svg>
+    
     <div id="words">
       <div *ngFor="let word of wordsText"><span #words [attr.data-word]="word" [class]="word">{{word}}</span></div>
     </div>
+    
     <div id="images">
       <div *ngFor="let word of words">
         <img #images [class]="word" src="assets/imagenes/{{word}}.png" [attr.data-word]="word">
       </div>      
     </div>
+
   </ion-content>
   <div style="display:none;" class="preloader">
   </div>
@@ -69,6 +72,7 @@ export class Matching implements AfterViewInit {
   constructor(
     public navCtrl: NavController,
     public castillano: PalabrasCastillano,
+    public platform: Platform
       ) {
       this.createWords();
       this.preloadWordAudios();
@@ -87,23 +91,36 @@ export class Matching implements AfterViewInit {
     this.makeButtonsClickable(this.clickables); // first run
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-    // console.log(this.wordAudios[this.words[this.words.length - 1]]);
-    this.firstAudiosLoaded = Observable.fromEvent(this.wordAudios[this.words[this.words.length - 1]], 'canplaythrough');
-    this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
+    if (this.platform.is('ios')) {
 
-    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
+      this.bgLoaded.subscribe(status => {
+        this.allLoadedBool = true;
+        this.audioInstruccion.play();
+        
+        // now preload all of them
+        this.castillano.words.forEach(word => {
+          this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');      
+        });
+      });
 
-    this.allLoaded.subscribe(array => {
-      this.allLoadedBool = true;
-      this.audioInstruccion.play();
-      
-      // now preload all of them
-      this.castillano.words.forEach(word => {
-        this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');      
-      })
+    } else {
 
-    });
+      this.firstAudiosLoaded = Observable.fromEvent(this.wordAudios[this.words[this.words.length - 1]], 'canplaythrough');
+      this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
 
+      this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
+
+      this.allLoaded.subscribe(array => {
+        this.allLoadedBool = true;
+        this.audioInstruccion.play();
+        
+        // now preload all of them
+        this.castillano.words.forEach(word => {
+          this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');      
+        });
+      });
+
+    }
   }
 
   makeButtonsClickable(buttons:QueryList<ElementRef>) {

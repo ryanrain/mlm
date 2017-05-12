@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/zip';
 
@@ -58,11 +58,13 @@ export class HomePage implements AfterViewInit {
   allLoadedBool:boolean = false;
   @ViewChild('bgImg') bgImg:ElementRef;
 
-  constructor(public navCtrl: NavController) {
+  constructor(public navCtrl: NavController, public platform: Platform) {
+
     // pre-load an object of Audio objects
     this.buttonAudioNames.forEach(title => {
       this.buttonAudios[title] = new Audio("assets/titulos/" + title + '.MP3');
     });
+
   }
 
   ngAfterViewInit() {
@@ -72,13 +74,18 @@ export class HomePage implements AfterViewInit {
     });
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-    this.buttonAudiosLoaded = Observable.fromEvent(this.buttonAudios[this.buttonAudioNames[this.buttonAudioNames.length - 1]], 'canplaythrough');
-
-    this.allLoaded = Observable.zip(this.bgLoaded, this.buttonAudiosLoaded);
-
-    this.allLoaded.subscribe(array => {
-      this.allLoadedBool = true;
-    });
+    
+    if (this.platform.is('ios')) {
+      this.bgLoaded.subscribe(status => {
+        this.allLoadedBool = true;
+      });
+    } else {
+      this.buttonAudiosLoaded = Observable.fromEvent(this.buttonAudios[this.buttonAudioNames[this.buttonAudioNames.length - 1]], 'canplaythrough');
+      this.allLoaded = Observable.zip(this.bgLoaded, this.buttonAudiosLoaded);
+      this.allLoaded.subscribe(array => {
+        this.allLoadedBool = true;        
+      });
+    }
   }
 
   openPage(page) {

@@ -6,7 +6,7 @@ import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
 import 'rxjs/add/observable/zip';
 
-import { NavController } from 'ionic-angular';
+import { NavController, Platform } from 'ionic-angular';
 
 import { AlfabetoCastillano } from '../../alfabetos/alfabeto.castillano';
 import { LetraModel } from '../../models/letra.model';
@@ -74,6 +74,7 @@ export class ElegirImagen implements AfterViewInit {
   constructor(
     public navCtrl: NavController,
     public castillano: AlfabetoCastillano,
+    public platform: Platform
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
     this.audioInstruccion = new Audio('/assets/instrucciones/letras.MP3');
@@ -161,23 +162,37 @@ export class ElegirImagen implements AfterViewInit {
     ;
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-    this.firstAudiosLoaded = Observable.fromEvent(this.audioOpciones[this.opciones[2].palabra], 'canplaythrough');
-    this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
 
-    console.log(this.audioOpciones);
+    if (this.platform.is('ios')) {
 
-    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
+      this.bgLoaded.subscribe(status => {
+        this.allLoadedBool = true;
+        this.audioInstruccion.play();
+        setTimeout(() => {
+          this.audioLetraAhora.play();
+        },2800);
 
-    this.allLoaded.subscribe(array => {
-      this.allLoadedBool = true; // hide loading overlay
+        this.preloadWordAndLetterAudios();
+      });
 
-      this.audioInstruccion.play();
-      setTimeout(() => {
-        this.audioLetraAhora.play();
-      },2800);
+    } else {
+      this.firstAudiosLoaded = Observable.fromEvent(this.audioOpciones[this.opciones[2].palabra], 'canplaythrough');
+      this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
 
-      this.preloadWordAndLetterAudios();
-    });
+      this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
+
+      this.allLoaded.subscribe(array => {
+        this.allLoadedBool = true; // hide loading overlay
+
+        this.audioInstruccion.play();
+        setTimeout(() => {
+          this.audioLetraAhora.play();
+        },2800);
+
+        this.preloadWordAndLetterAudios();
+      });
+
+    }
 
     this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
     this.maguitoClicks.subscribe(event => {

@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
@@ -89,7 +89,8 @@ export class Bloques implements AfterViewInit {
   constructor(
     public navCtrl: NavController,
     private alertCtrl: AlertController,
-    public castillano: SilabasCastillano
+    public castillano: SilabasCastillano, 
+    public platform: Platform
   ) {
     this.createSilables();
     this.preloadWord(this.wordHint.join(''));
@@ -170,20 +171,36 @@ export class Bloques implements AfterViewInit {
     this.createDropZones();
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-    this.firstAudiosLoaded = Observable.fromEvent(this.silableAudios[this.silables[this.silables.length - 1]], 'canplaythrough');
-    this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
-    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
 
-    this.allLoaded.subscribe(array => {
-      console.log('allLoaded');
-      this.allLoadedBool = true;
-      this.audioInstruccion.play();
-      
-      // now pre-load all silables
-      this.castillano.silables.forEach(silable => {
-        this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
-      })
-    })
+    if (this.platform.is('ios')) {
+
+      this.bgLoaded.subscribe(status => {
+        this.allLoadedBool = true;
+        this.audioInstruccion.play();
+        
+        // now pre-load all silables
+        this.castillano.silables.forEach(silable => {
+          this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
+        });
+      });
+
+    } else {
+
+      this.firstAudiosLoaded = Observable.fromEvent(this.silableAudios[this.silables[this.silables.length - 1]], 'canplaythrough');
+      this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
+      this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
+
+      this.allLoaded.subscribe(array => {
+        this.allLoadedBool = true;
+        this.audioInstruccion.play();
+        
+        // now pre-load all silables
+        this.castillano.silables.forEach(silable => {
+          this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
+        });
+      });
+
+    }
 
     this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
     this.maguitoClicks.subscribe(event => {
