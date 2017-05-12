@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
 
@@ -26,16 +26,22 @@ import { ItemDetailPage } from '../item-detail/item-detail';
     </ion-content>
   `
 })
-export class Lectura {
+export class Lectura implements AfterViewInit {
 
   bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
+  audioInstruccion:HTMLAudioElement;
 
-  constructor(
+  constructor (
     public navCtrl: NavController,
     public lecturas: LecturasContent
       ) {
       this.preloadBienAudios();
+      this.audioInstruccion = new Audio('/assets/instrucciones/lecturas.MP3');
+  }
+
+  ngAfterViewInit() {
+    this.audioInstruccion.play();
   }
 
   preloadBienAudios(){
