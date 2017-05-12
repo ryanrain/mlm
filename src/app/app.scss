@@ -91,3 +91,11 @@ $navButtonSize: 35px;
     transform: rotate(-20deg);
   }
 }
+.bg-img {
+    position: absolute;
+    top:0;
+    left:0;
+    height: 100vh;
+    width: auto;
+    min-width: calc(100% + 64px);
+}

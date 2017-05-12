@@ -1,10 +1,6 @@
 $blockSize: 28vmin;
 $blockSizeLgScreen: 22vmin;
 bloques {
-    .content {
-        background: url('/assets/fondos/FONDO1.png');
-        background-size: cover;
-    }
     .scroll-content {
       display: flex;
       flex-direction: column;

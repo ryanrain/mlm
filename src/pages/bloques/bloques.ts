@@ -1,8 +1,9 @@
 import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener } from '@angular/core';
 import { NavController, AlertController } from 'ionic-angular';
-
+import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/observable/zip';
 
 import {interact} from 'interactjs';
 
@@ -15,7 +16,14 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
   <button class="nav-button bulb" (click)="hint()"><ion-icon name="bulb"></ion-icon></button>
   <button class="nav-button refresh" (click)="newSilables()"><ion-icon name="refresh"></ion-icon></button>
 
-  <ion-content [ngClass]="{woohoo:(woohoo) }" #ionContentRef>
+  <ion-content [ngClass]="{woohoo:(woohoo) }">
+
+    <img #bgImg class="bg-img" src="/assets/fondos/FONDO1.png">
+        
+    <div id="loading" *ngIf="!allLoadedBool">
+      <img src="/assets/menu/maguito.png">
+    </div>
+    
     <ion-row class="row lugares">
       <ion-col class="lugar">
         <div #droppable1 class="droppable" id="0"></div>
@@ -32,7 +40,7 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
         <span>{{silaba}}</span>
       </div>
     </div>
-
+    
   </ion-content>
   <div style="display:none;" class="preloader">
     <img *ngFor="let color of blockColors" src="/assets/cubos/cubo{{color}}.png">
@@ -59,10 +67,16 @@ export class Bloques implements AfterViewInit {
   activeDropZone:number;
   alreadyRefreshed: boolean = false;
   notYetRun: boolean;
+
+  bgLoaded:Observable<any>;
+  firstAudiosLoaded:Observable<any>;
+  allLoaded:Observable<any>;
+  allLoadedBool:boolean = false;
   
   @ViewChildren('blocks') blocksQueryList:QueryList<ElementRef>;
   @ViewChildren('droppable1, droppable2') zonasDroppables:QueryList<ElementRef>;
   @ViewChild('blockArea') blockArea:ElementRef;
+  @ViewChild('bgImg') bgImg:ElementRef;
 
   wordStream:Subject<Array<string>> = new Subject();
 
@@ -133,8 +147,8 @@ export class Bloques implements AfterViewInit {
       })
     ;
 
-    // pre-load an object of Audio objects
-    this.castillano.silables.forEach(silable => {
+    // pre-load current silables
+    this.silables.forEach(silable => {
       this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
     })
   }
@@ -147,6 +161,20 @@ export class Bloques implements AfterViewInit {
     this.scatterBlocks(this.blocksQueryList); // no change event yet
     this.makeBlocksDraggable();
     this.createDropZones();
+
+    this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+    this.firstAudiosLoaded = Observable.fromEvent(this.silableAudios[this.silables[this.silables.length - 1]], 'canplaythrough');
+    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded);
+
+    this.allLoaded.subscribe(array => {
+      console.log('allLoaded');
+      this.allLoadedBool = true;
+      // now pre-load all silables
+      this.castillano.silables.forEach(silable => {
+        this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
+      })
+    })
+
   }
 
   reset() {
