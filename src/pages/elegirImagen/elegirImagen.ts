@@ -22,7 +22,8 @@ import { LetraModel } from '../../models/letra.model';
     <img #bgImg class="bg-img" src="/assets/fondos/FONDO4-sky.png">
     
     <div id="loading" *ngIf="!allLoadedBool">
-      <img src="/assets/menu/maguito.png">
+      <img id="loader-circle" src="/assets/menu/loader.gif">
+      <img #maguito id="maguito" src="/assets/menu/maguito.png">
     </div>
 
     <div #letraAhoraRef id="letra-principal">
@@ -51,7 +52,7 @@ export class ElegirImagen implements AfterViewInit {
   imagenArriba:boolean = false;
   intentos:Observable<any>;
   letraClicks:Observable<any>;
-  // audioChing = new Audio('/assets/ching.mp3');
+  audioChing = new Audio('/assets/ching.mp3');
   bienAudios = {};
   audioLetraAhora = new Audio;
   audioOpciones = {};
@@ -59,6 +60,8 @@ export class ElegirImagen implements AfterViewInit {
   firstAudiosLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
+  maguitoClicks:Observable<any>;
+  @ViewChild('maguito') maguito:ElementRef;
 
   @ViewChildren('opcion1,opcion2,opcion3') opcionesBotones:QueryList<ElementRef>;
   @ViewChild('letraAhoraRef') letraAhoraRef:ElementRef;
@@ -164,7 +167,13 @@ export class ElegirImagen implements AfterViewInit {
       console.log('allLoaded');
       this.allLoadedBool = true;
       this.preloadWordAndLetterAudios();
-    })
+    });
+
+    this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
+    this.maguitoClicks.subscribe(event => {
+      this.audioChing.play();
+    });
+
   }
   
   celebrar(boton){

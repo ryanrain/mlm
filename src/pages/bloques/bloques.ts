@@ -21,7 +21,8 @@ import { SilabasCastillano } from '../../silabas/silabas.castillano';
     <img #bgImg class="bg-img" src="/assets/fondos/FONDO1.png">
         
     <div id="loading" *ngIf="!allLoadedBool">
-      <img src="/assets/menu/maguito.png">
+      <img id="loader-circle" src="/assets/menu/loader.gif">
+      <img #maguito id="maguito" src="/assets/menu/maguito.png">
     </div>
     
     <ion-row class="row lugares">
@@ -73,10 +74,13 @@ export class Bloques implements AfterViewInit {
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
   
+  maguitoClicks:Observable<any>;
+
   @ViewChildren('blocks') blocksQueryList:QueryList<ElementRef>;
   @ViewChildren('droppable1, droppable2') zonasDroppables:QueryList<ElementRef>;
   @ViewChild('blockArea') blockArea:ElementRef;
   @ViewChild('bgImg') bgImg:ElementRef;
+  @ViewChild('maguito') maguito:ElementRef;
 
   wordStream:Subject<Array<string>> = new Subject();
 
@@ -173,6 +177,11 @@ export class Bloques implements AfterViewInit {
       this.castillano.silables.forEach(silable => {
         this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
       })
+    })
+
+    this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
+    this.maguitoClicks.subscribe(event => {
+      this.audioChing.play();
     })
 
   }
