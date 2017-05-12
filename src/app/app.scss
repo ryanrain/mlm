@@ -103,4 +103,5 @@ $navButtonSize: 35px;
     height: 100vh;
     width: auto;
     min-width: calc(100% + 64px);
+    z-index: -1;
 }
