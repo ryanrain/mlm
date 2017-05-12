@@ -51,9 +51,11 @@ export class Matching implements AfterViewInit {
   wordAudios = {};
   bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
+  audioInstruccion:HTMLAudioElement; 
 
   bgLoaded:Observable<any>;
   firstAudiosLoaded:Observable<any>;
+  instruccionLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
 
@@ -71,6 +73,7 @@ export class Matching implements AfterViewInit {
       this.createWords();
       this.preloadWordAudios();
       this.preloadBienAudios();
+      this.audioInstruccion = new Audio('/assets/instrucciones/pares.MP3');
   }
 
   ngAfterViewInit() {
@@ -86,11 +89,13 @@ export class Matching implements AfterViewInit {
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
     // console.log(this.wordAudios[this.words[this.words.length - 1]]);
     this.firstAudiosLoaded = Observable.fromEvent(this.wordAudios[this.words[this.words.length - 1]], 'canplaythrough');
+    this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
 
-    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded);
+    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
 
     this.allLoaded.subscribe(array => {
       this.allLoadedBool = true;
+      this.audioInstruccion.play();
       
       // now preload all of them
       this.castillano.words.forEach(word => {
