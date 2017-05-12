@@ -49,7 +49,8 @@ export class HomePage implements AfterViewInit {
   maguitoClicks:Observable<any>;
   audioChing = new Audio('/assets/ching.mp3');
   buttonAudioNames = ['pares','lecturas','bloques'];
-  buttonAudios = {}
+  buttonAudios = {};
+  openPageRunning:boolean = false;
 
   bgLoaded:Observable<any>;
   buttonAudiosLoaded:Observable<any>;
@@ -81,11 +82,15 @@ export class HomePage implements AfterViewInit {
   }
 
   openPage(page) {
+    this.openPageRunning = true;
     if(typeof(this.buttonAudios[page.buttonAudioName]) !== 'undefined'){
       this.buttonAudios[page.buttonAudioName].play()
     }
     setTimeout(() => {
-      this.navCtrl.push(page.component);
+      if (this.openPageRunning) {
+        this.navCtrl.push(page.component);
+      }
+      this.openPageRunning = false;
     },1000);
   }
 
