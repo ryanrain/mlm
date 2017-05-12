@@ -39,7 +39,7 @@ export class PalabrasCastillano {
         'perro',
         'piña',
         'piñata',
-        'Pipa',
+        'pipa',
         'pollo',
         'queso',
         'ropa',
