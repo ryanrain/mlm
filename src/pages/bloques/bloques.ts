@@ -61,6 +61,7 @@ export class Bloques implements AfterViewInit {
   silableAudios = {};
   bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
+  audioInstruccion:HTMLAudioElement; 
   wordAudio;
   wordImage:string;
   
@@ -71,6 +72,7 @@ export class Bloques implements AfterViewInit {
 
   bgLoaded:Observable<any>;
   firstAudiosLoaded:Observable<any>;
+  instruccionLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
   
@@ -92,6 +94,7 @@ export class Bloques implements AfterViewInit {
     this.createSilables();
     this.preloadWord(this.wordHint.join(''));
     this.preloadBienAudios();
+    this.audioInstruccion = new Audio('/assets/instrucciones/bloques.MP3');
 
     this.wordStream
       .filter(attempt => { 
@@ -168,11 +171,14 @@ export class Bloques implements AfterViewInit {
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
     this.firstAudiosLoaded = Observable.fromEvent(this.silableAudios[this.silables[this.silables.length - 1]], 'canplaythrough');
-    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded);
+    this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
+    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
 
     this.allLoaded.subscribe(array => {
       console.log('allLoaded');
       this.allLoadedBool = true;
+      this.audioInstruccion.play();
+      
       // now pre-load all silables
       this.castillano.silables.forEach(silable => {
         this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
