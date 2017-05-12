@@ -19,7 +19,7 @@ import { LetraModel } from '../../models/letra.model';
 
   <ion-content padding [class.arriba]="imagenArriba">
   
-    <img #bgImg id="bg-img" src="/assets/fondos/FONDO4-sky.png">
+    <img #bgImg class="bg-img" src="/assets/fondos/FONDO4-sky.png">
     
     <div id="loading" *ngIf="!allLoadedBool">
       <img src="/assets/menu/maguito.png">

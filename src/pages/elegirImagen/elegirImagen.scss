@@ -18,14 +18,6 @@ $duracionSubir: 3s;
 $tamanoGrande: 35vh;
 page-elegir-imagen {
     text-align: center;
-    #bg-img {
-        position: absolute;
-        top:0;
-        left:0;
-        height: calc(100% + 64px);
-        width: auto;
-        min-width: calc(100% + 64px);
-    }
     #letra-principal {
         height: calc(100vh - 34vw);
         @media (min-width:700px) {
