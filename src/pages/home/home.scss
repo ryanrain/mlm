@@ -1,7 +1,5 @@
 page-home {
     .scroll-content {
-        background: url(/assets/fondos/FONDO4.png) center center;
-        background-size: cover;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
@@ -34,7 +32,7 @@ page-home {
             text-align: center;
         }
     }
-    #maguito {
+    .scroll-content > #maguito {
         background: url(/assets/menu/maguito.png) right center;
         background-size: contain;
         background-repeat: no-repeat;
