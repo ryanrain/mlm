@@ -70,9 +70,10 @@ $navButtonSize: 35px;
     background: rgba($yellow, .9);
     z-index: 100;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    img {
+    flex-direction: column;
+    #maguito {
         animation-name: dance;
         animation-duration: 1.5s; 
         animation-timing-function: ease-in-out; 
@@ -81,14 +82,18 @@ $navButtonSize: 35px;
         animation-iteration-count: infinite;
         animation-fill-mode: none;
         animation-play-state: running; 
+        padding-bottom:10vh;        
+    }
+    #loader-circle {
+        padding-top:10vh;
     }
 }
 @keyframes dance {
   0%, 100% {
-    transform: rotate(20deg);
+    transform: rotate(10deg);
   }
   50% {
-    transform: rotate(-20deg);
+    transform: rotate(-10deg);
   }
 }
 .bg-img {
