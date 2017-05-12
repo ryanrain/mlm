@@ -4,6 +4,7 @@ import 'rxjs/add/observable/fromEvent';
 // import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
+import 'rxjs/add/observable/zip';
 
 import { NavController, Content } from 'ionic-angular';
 
@@ -16,6 +17,14 @@ import { PalabrasCastillano } from '../../alfabetos/palabras.castillano';
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
 
   <ion-content padding>
+    
+    <img #bgImg class="bg-img" src="/assets/fondos/FONDO6.png">
+    
+    <div id="loading" *ngIf="!allLoadedBool">
+      <img id="loader-circle" src="/assets/menu/loader.gif">
+      <img #maguito id="maguito" src="/assets/menu/maguito.png">
+    </div>
+
     <svg  xmlns="http://www.w3.org/2000/svg" #lines id="lines" viewBox="0 0 320 600"></svg>
     <div id="words">
       <div *ngFor="let word of wordsText"><span #words [attr.data-word]="word" [class]="word">{{word}}</span></div>
@@ -43,12 +52,17 @@ export class Matching implements AfterViewInit {
   bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
 
+  bgLoaded:Observable<any>;
+  firstAudiosLoaded:Observable<any>;
+  allLoaded:Observable<any>;
+  allLoadedBool:boolean = false;
+
   @ViewChildren('words, images') clickables:QueryList<ElementRef>;
   @ViewChild('lines') lines:ElementRef;
   attempts:Observable<any>;
   attemptsSubscription;
   @ViewChild(Content) content: Content;
-
+  @ViewChild('bgImg') bgImg:ElementRef;
 
   constructor(
     public navCtrl: NavController,
@@ -68,6 +82,23 @@ export class Matching implements AfterViewInit {
     });
 
     this.makeButtonsClickable(this.clickables); // first run
+
+    this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+    // console.log(this.wordAudios[this.words[this.words.length - 1]]);
+    this.firstAudiosLoaded = Observable.fromEvent(this.wordAudios[this.words[this.words.length - 1]], 'canplaythrough');
+
+    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded);
+
+    this.allLoaded.subscribe(array => {
+      this.allLoadedBool = true;
+      
+      // now preload all of them
+      this.castillano.words.forEach(word => {
+        this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');      
+      })
+
+    });
+
   }
 
   makeButtonsClickable(buttons:QueryList<ElementRef>) {
@@ -148,7 +179,6 @@ export class Matching implements AfterViewInit {
     this.words.forEach(word => {
       this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');
     });
-    // if they play it for a long time could this take too much memory?
   }
   
   preloadBienAudios(){
@@ -234,7 +264,6 @@ export class Matching implements AfterViewInit {
         this.lines.nativeElement.removeChild(this.lines.nativeElement.firstChild);
     }
     this.createWords();
-    this.preloadWordAudios();
   }
 
   shuffle(array)
