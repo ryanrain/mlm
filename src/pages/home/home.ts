@@ -86,7 +86,7 @@ export class HomePage implements AfterViewInit {
     }
     setTimeout(() => {
       this.navCtrl.push(page.component);
-    },800);
+    },1000);
   }
 
 }
