@@ -57,8 +57,9 @@ matching-game {
         top: 3em;
         left: 16px;
         path {
-            stroke-width: 8px;
+            stroke-width: 1.6vh;
             stroke: rebeccapurple;
+            stroke-linecap: round;
         }
     }
 }

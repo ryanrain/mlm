@@ -16,7 +16,7 @@ import { PalabrasCastillano } from '../../alfabetos/palabras.castillano';
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
 
   <ion-content padding>
-    <svg #lines id="lines" viewBox="0 0 320 600"></svg>
+    <svg  xmlns="http://www.w3.org/2000/svg" #lines id="lines" viewBox="0 0 320 600"></svg>
     <div id="words">
       <div *ngFor="let word of wordsText"><span #words [attr.data-word]="word" [class]="word">{{word}}</span></div>
     </div>
@@ -127,15 +127,11 @@ export class Matching implements AfterViewInit {
             if ( this.wordAttempted === currentAttempt ) {
               console.log('if the next one is correct');
               this.numberCorrectSoFar++;
-              setTimeout(()=>{
-                this.playRandomBienAudio();
-              },500);
+              this.audioChing.play();
               this.drawLine(clickEvent.target);              
               this.deselectAll();
               if(this.numberCorrectSoFar === 5) {
-                setTimeout(()=>{
                   this.celebrate();
-                },2000);
               }
             } else {
               console.log('incorrect');
@@ -194,11 +190,8 @@ export class Matching implements AfterViewInit {
     topOffsetOfOtherSelected = otherSelected.offsetTop + (otherSelected.offsetHeight / 2)
     
 
-    console.log(otherSelected);
-    otherSelected.nativeElement
-
     let newpath = document.createElementNS('http://www.w3.org/2000/svg',"path"); 
-    newpath.setAttribute('d', 'M ' + leftOffsetOfMostRecent + ',' + topOffsetOfMostRecent + ',L' + leftOffsetOfOtherSelected + ',' + topOffsetOfOtherSelected);
+    newpath.setAttribute('d', 'M ' + leftOffsetOfMostRecent + ' ' + topOffsetOfMostRecent + ' L' + leftOffsetOfOtherSelected + ' ' + topOffsetOfOtherSelected);
 
     this.lines.nativeElement.appendChild(newpath);
 
@@ -230,7 +223,9 @@ export class Matching implements AfterViewInit {
 
   celebrate() {
     this.playRandomBienAudio();
-    this.reset();
+    setTimeout(()=> {
+      this.reset();
+    },3000);
   }
 
   reset() {
