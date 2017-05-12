@@ -4,9 +4,12 @@ import { StatusBar, Splashscreen } from 'ionic-native';
 
 import { HomePage } from '../pages/home/home';
 
+// import * as screenfull from 'screenfull';
 
 @Component({
-  templateUrl: 'app.html'
+  template: `
+    <ion-nav [root]="rootPage"></ion-nav>
+  `
 })
 export class MyApp {
   rootPage = HomePage;
@@ -19,4 +22,11 @@ export class MyApp {
       Splashscreen.hide();
     });
   }
+
+  // ngAfterViewInit() {
+  //   if (screenfull.enabled) {
+	// 		screenfull.toggle();
+  //     console.log('screenfulled');
+	// 	}
+  // }
 }
