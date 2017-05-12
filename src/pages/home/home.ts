@@ -20,7 +20,7 @@ import { Lectura } from '../lectura/lectura';
         <img id="maguito" src="/assets/menu/maguito.png">
       </div>
       <div id="mlm"></div>
-      <div id="menu-buttons"><div *ngFor="let p of pages" (click)="openPage(p)">{{p.title}}</div></div>
+      <div id="menu-buttons"><div *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.buttonAudioName">{{p.title}}</div></div>
       <div #maguito id="maguito"></div>
     </ion-content>
   `
@@ -28,11 +28,23 @@ import { Lectura } from '../lectura/lectura';
 export class HomePage implements AfterViewInit {
   
   pages: any[] = [
-    { title: 'Letras', component: ElegirImagen },
-    { title: 'Bloques', component: Bloques },
-    { title: 'Pares', component: Matching },
-    { title: 'Lecturas de Comprensión', component: Lectura }
-  ]
+    { title: 'Letras', 
+      buttonAudioName: 'letras',
+      component: ElegirImagen 
+    },
+    { title: 'Bloques', 
+      buttonAudioName: 'bloques',
+      component: Bloques 
+    },
+    { title: 'Pares', 
+      buttonAudioName: 'pares',
+      component: Matching 
+    },
+    { title: 'Lecturas de Comprensión', 
+      buttonAudioName: 'lecturas',
+      component: Lectura 
+    }
+  ];
   @ViewChild('maguito') maguito:ElementRef;
   maguitoClicks:Observable<any>;
   audioChing = new Audio('/assets/ching.mp3');
@@ -66,11 +78,15 @@ export class HomePage implements AfterViewInit {
     this.allLoaded.subscribe(array => {
       this.allLoadedBool = true;
     });
-
   }
 
   openPage(page) {
-    this.navCtrl.push(page.component);
+    if(typeof(this.buttonAudios[page.buttonAudioName]) !== 'undefined'){
+      this.buttonAudios[page.buttonAudioName].play()
+    }
+    setTimeout(() => {
+      this.navCtrl.push(page.component);
+    },800);
   }
 
 }
