@@ -56,10 +56,14 @@ export class ElegirImagen implements AfterViewInit {
   bienAudios = {};
   audioLetraAhora = new Audio;
   audioOpciones = {};
+  audioInstruccion:HTMLAudioElement; 
+  
   bgLoaded:Observable<any>;
   firstAudiosLoaded:Observable<any>;
+  instruccionLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
+
   maguitoClicks:Observable<any>;
   @ViewChild('maguito') maguito:ElementRef;
 
@@ -72,10 +76,10 @@ export class ElegirImagen implements AfterViewInit {
     public castillano: AlfabetoCastillano,
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
+    this.audioInstruccion = new Audio('/assets/instrucciones/letras.MP3');
 
     // Preload first set of Audio objects for all button words and letter
     this.opciones.forEach(Letra  => {
-
       // archivos palabra en puro menisculo
       let palabraLower = Letra.palabra.toLowerCase();      
       this.audioOpciones[Letra.palabra] = new Audio('/assets/palabras/' + palabraLower + '.MP3');
@@ -158,14 +162,20 @@ export class ElegirImagen implements AfterViewInit {
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
     this.firstAudiosLoaded = Observable.fromEvent(this.audioOpciones[this.opciones[2].palabra], 'canplaythrough');
-    // create zipped and subscribe to it.
+    this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
+
     console.log(this.audioOpciones);
 
-    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded);
+    this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
 
     this.allLoaded.subscribe(array => {
-      console.log('allLoaded');
-      this.allLoadedBool = true;
+      this.allLoadedBool = true; // hide loading overlay
+
+      this.audioInstruccion.play();
+      setTimeout(() => {
+        this.audioLetraAhora.play();
+      },2800);
+
       this.preloadWordAndLetterAudios();
     });
 
