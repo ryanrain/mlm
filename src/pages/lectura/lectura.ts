@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
 
@@ -26,43 +26,17 @@ import { ItemDetailPage } from '../item-detail/item-detail';
     </ion-content>
   `
 })
-export class Lectura implements AfterViewInit {
-
-  bienAudios = {};
-  audioChing = new Audio('/assets/ching.mp3');
-  audioInstruccion:HTMLAudioElement;
+export class Lectura {
 
   constructor (
     public navCtrl: NavController,
     public lecturas: LecturasContent
       ) {
-      this.preloadBienAudios();
-      this.audioInstruccion = new Audio('/assets/instrucciones/lecturas.MP3');
-  }
-
-  ngAfterViewInit() {
-    this.audioInstruccion.play();
-  }
-
-  preloadBienAudios(){
-    ['0','1','2','3','4','5','6'].forEach(number => {
-      this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
-    });
-  }
-
-  playRandomBienAudio(){
-    let random = Math.round(Math.random() * 6.2);
-    this.bienAudios[random.toString()].play();
-  }
-
-  celebrate() {
-    this.playRandomBienAudio();
   }
 
   openItem(lectura: LecturaModel) {
     this.navCtrl.push(ItemDetailPage, {
-      lectura: lectura,
-      lecturas: this.lecturas
+      lectura: lectura
     });
   }
 

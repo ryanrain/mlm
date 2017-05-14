@@ -54,17 +54,13 @@ import { LecturasContent } from '../lectura/lecturas.content';
 })
 export class ItemDetailPage {
   lectura: LecturaModel;
-  lecturas: LecturasContent;
   answersGiven = [];
   buttonText = 'LISTO';
   hitFinished = false;
 
   constructor(public navCtrl: NavController, navParams: NavParams) {
     this.lectura = navParams.get('lectura');
-    this.lecturas = navParams.get('lecturas');
     
-    console.log(this.lecturas);
-
     this.lectura.preguntas.forEach((pregunta) => {
       this.answersGiven.push(null);
     });
@@ -73,9 +69,6 @@ export class ItemDetailPage {
 
   checkAnswers() {
     if ( this.hitFinished ) {
-      // let currentLectura = this.lecturas.
-      console.log(this.lecturas.lecturas);
-      
       this.navCtrl.pop();
     }
 
