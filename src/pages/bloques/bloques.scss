@@ -4,6 +4,7 @@ bloques {
     .scroll-content {
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
     .refresh {
       left:auto;
@@ -25,6 +26,9 @@ bloques {
     }
     .block-area { 
       flex: 0 0 70%;
+      .ios & {
+        flex: 0 0 63%;
+      }
     }
     .bloque {
         display: inline-block;
@@ -42,7 +46,7 @@ bloques {
       }
     }
     .droppable {
-      border: 0.6vh dashed darkgreen; // 1vh dashed yellow;
+      border: 4px dashed darkgreen; // 1vh dashed yellow;
       display: inline-block;
       box-sizing: content-box;
       width:$blockSize;
@@ -88,6 +92,9 @@ bloques {
       transform: translate3d(0, 0, 0);
       backface-visibility: hidden;
       perspective: 1000px;
+    }
+    .bg-img.play-pause {
+      z-index: 100;
     }
 }
 .success-word {

@@ -2,7 +2,7 @@ page-home {
     .scroll-content {
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: center;
         align-items: center;
     }
     #mlm {
@@ -15,6 +15,7 @@ page-home {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-around;
+        margin: 3vh 0;
         > div {
             flex: 0 0 40%;
             background: rgba($yellow, .85);

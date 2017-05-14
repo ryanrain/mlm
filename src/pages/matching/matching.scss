@@ -6,31 +6,35 @@ matching-game {
     }
     .scroll-content {
         display: flex;
+        height: 100%;
+        width: 100%;
         #libro-magico-container & {
             padding-top:2.5em; // top nav buttons
         }
+    }
+    #words, #images {
+        flex:0 0 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        height: calc(100vh - 100px);
         > div {
-            flex:0 0 50%;
+            flex: 0 0 20%;
+            max-height: 20%;
             display: flex;
+            justify-content: center;
             flex-direction: column;
-            > div {
-                flex: 0 0 20%;
-                max-height: 20%;
-                display: flex;
-                justify-content: center;
-                flex-direction: column;
-                align-items: flex-start;
-                color: white;
-                font-weight: bold;
-                font-size: 4vh;
-                text-shadow: 1px 1px black, -1px 1px black, 1px -1px black, -1px -1px black;
-                img {
-                    height: 16vh;
-                    width: 16vh;
-                    align-self: flex-end;
-                    border-radius: 20px;
-                    background: rgba(white, 0.5);
-                }
+            align-items: flex-start;
+            color: white;
+            font-weight: bold;
+            font-size: 4vh;
+            text-shadow: 1px 1px black, -1px 1px black, 1px -1px black, -1px -1px black;
+            img {
+                height: 16vh;
+                width: 16vh;
+                align-self: flex-end;
+                border-radius: 20px;
+                background: rgba(white, 0.5);
             }
         }
     }
@@ -55,7 +59,7 @@ matching-game {
         top: 3em;
         left: 16px;
         path {
-            stroke-width: 1.6vh;
+            stroke-width: 12px;
             stroke: rebeccapurple;
             stroke-linecap: round;
         }

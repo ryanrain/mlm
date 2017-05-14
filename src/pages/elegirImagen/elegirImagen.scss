@@ -18,8 +18,16 @@ $duracionSubir: 3s;
 $tamanoGrande: 35vh;
 page-elegir-imagen {
     text-align: center;
+    .scroll-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        > div {
+            flex: 0 0 50%;
+        }
+    }
     #letra-principal {
-        height: calc(100vh - 34vw);
+        // height: calc(100vh - 34vw);
         @media (min-width:700px) {
             height: calc(100vh - (700px / 3));
         }
@@ -48,7 +56,7 @@ page-elegir-imagen {
         position: static;
     }
     #imagenes-letra {
-        flex: 0 1 34vw;
+        // flex: 0 1 34vw;
         img {
             transition: none;
             border-radius: 20px;
@@ -59,13 +67,13 @@ page-elegir-imagen {
             // @media (min-width:700px) {
             //     top: calc(100vh - (700px / 3));
             // }
-            bottom:22vh;            
+            bottom:25%;            
             &:first-child {
                 left: 7%;
             }
             &:nth-child(2) {
                 left:(7% + 86% / 3);
-                bottom: 7vw;
+                bottom: 10%;
             }
             &:last-child {
                 left:(7% + 86% / 3 * 2);                
