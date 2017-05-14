@@ -8,7 +8,7 @@ import 'rxjs/add/observable/zip';
 
 import { NavController, Platform } from 'ionic-angular';
 
-import { AlfabetoCastillano } from '../../alfabetos/alfabeto.castillano';
+import { AlfabetoCastillano } from '../../castillano/alfabeto.castillano';
 import { LetraModel } from '../../models/letra.model';
 
 @Component({

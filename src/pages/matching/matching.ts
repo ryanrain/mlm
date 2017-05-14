@@ -8,7 +8,7 @@ import 'rxjs/add/observable/zip';
 
 import { NavController, Content, Platform } from 'ionic-angular';
 
-import { PalabrasCastillano } from '../../alfabetos/palabras.castillano';
+import { PalabrasCastillano } from '../../castillano/palabras.castillano';
 
 @Component({
   selector: 'matching-game',
