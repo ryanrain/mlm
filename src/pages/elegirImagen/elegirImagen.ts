@@ -4,12 +4,12 @@ import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
-import 'rxjs/add/observable/zip';
 
 import { NavController, Platform } from 'ionic-angular';
 
 import { AlfabetoCastillano } from '../../castillano/alfabeto.castillano';
 import { LetraModel } from '../../models/letra.model';
+import { AudioFileService } from '../../services/audio.file.service';
 
 @Component({
   selector: 'page-elegir-imagen',
@@ -52,16 +52,8 @@ export class ElegirImagen implements AfterViewInit {
   imagenArriba:boolean = false;
   intentos:Observable<any>;
   letraClicks:Observable<any>;
-  audioChing = new Audio('/assets/ching.mp3');
-  bienAudios = {};
-  audioLetraAhora = new Audio;
-  audioOpciones = {};
-  audioInstruccion:HTMLAudioElement; 
   
   bgLoaded:Observable<any>;
-  firstAudiosLoaded:Observable<any>;
-  instruccionLoaded:Observable<any>;
-  allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
 
   maguitoClicks:Observable<any>;
@@ -74,29 +66,19 @@ export class ElegirImagen implements AfterViewInit {
   constructor(
     public navCtrl: NavController,
     public castillano: AlfabetoCastillano,
-    public platform: Platform
+    public platform: Platform, 
+    public afs: AudioFileService
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
-    this.audioInstruccion = new Audio('/assets/instrucciones/letras.MP3');
-
-    // Preload first set of Audio objects for all button words and letter
-    this.opciones.forEach(Letra  => {
-      // archivos palabra en puro menisculo
-      let palabraLower = Letra.palabra.toLowerCase();      
-      this.audioOpciones[Letra.palabra] = new Audio('/assets/palabras/' + palabraLower + '.MP3');
-    });
-
-    this.preloadBienAudios();
   }
 
   ngAfterViewInit() {
     // que un 'click' en la letra haga sonar el audio de la letra
-    this.audioLetraAhora.src = 'assets/letra_sonidos/' + this.letraAhora + '.MP3';
     this.letraClicks = Observable.fromEvent(this.letraAhoraRef.nativeElement, 'click');
     this.letraClicks
       .throttleTime(1000)
       .subscribe(clickEvent => {
-        this.audioLetraAhora.play();
+        this.afs.playWhenReady(this.afs.letters[this.letraAhora]);        
       });
 
     // loop through QueryList and return a single Observable of events
@@ -121,7 +103,7 @@ export class ElegirImagen implements AfterViewInit {
 
         let letra = clickEvent.target.id;
         let palabra = clickEvent.target.classList[0];
-        this.escuchar(palabra);
+        this.afs.playWhenReady(this.afs.words[palabra]);
 
         if( letra === this.letraAhora ) {
           // note these setTimeout execute 
@@ -139,14 +121,14 @@ export class ElegirImagen implements AfterViewInit {
           );
           setTimeout(
             () => {
-              this.escuchar(letra);
+              this.afs.playWhenReady(this.afs.letters[letra]);              
             },
             delay2
           );
           setTimeout(
             () => {
               this.mostrarPalabra(palabra);
-              this.escuchar(palabra);
+              this.afs.playWhenReady(this.afs.words[palabra]);              
             },
             delay3
           );
@@ -163,80 +145,34 @@ export class ElegirImagen implements AfterViewInit {
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-    if (this.platform.is('ios')) {
+    this.bgLoaded.subscribe(status => {
+      this.allLoadedBool = true;
+      this.afs.playWhenReady(this.afs.instructions['letras']);
 
-      this.bgLoaded.subscribe(status => {
-        this.allLoadedBool = true;
-        this.audioInstruccion.play();
-        setTimeout(() => {
-          this.audioLetraAhora.play();
-        },2800);
-
-        this.preloadWordAndLetterAudios();
+      this.afs.instructions['letras'].addEventListener('ended', () => {
+        this.afs.playWhenReady(this.afs.letters[this.letraAhora]); 
+        this.afs.instructions['letras'].removeEventListener('ended');
       });
 
-    } else {
-      this.firstAudiosLoaded = Observable.fromEvent(this.audioOpciones[this.opciones[2].palabra], 'canplaythrough');
-      this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
-
-      this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
-
-      this.allLoaded.subscribe(array => {
-        this.allLoadedBool = true; // hide loading overlay
-
-        this.audioInstruccion.play();
-        setTimeout(() => {
-          this.audioLetraAhora.play();
-        },2800);
-
-        this.preloadWordAndLetterAudios();
-      });
-
-    }
+    });
 
     this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
     this.maguitoClicks.subscribe(event => {
-      this.audioChing.play();
+      //make him spin
     });
 
   }
   
   celebrar(boton){
     boton.classList.add('woohoo');
-    // this.audioChing.play();
     setTimeout(() => {
-      this.playRandomBienAudio();
+      this.afs.playRandomBienAudio();
     }, 500);
-  }
-  
-  preloadWordAndLetterAudios() {
-    // filter out the first set?
-    this.castillano.alfabeto.forEach(Letra  => {
-      this.audioOpciones[Letra.letra] = new Audio('/assets/letra_sonidos/' + Letra.letra + '.MP3');
-      // archivos palabra en puro menisculo
-      let palabraLower = Letra.palabra.toLowerCase();      
-      this.audioOpciones[Letra.palabra] = new Audio('/assets/palabras/' + palabraLower + '.MP3');
-    });
-  }
-
-  preloadBienAudios(){
-    ['0','1','2','3','4','5','6'].forEach(number => {
-      this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
-    });
-  }
-
-  playRandomBienAudio(){
-    let random = Math.round(Math.random() * 6.2);
-    this.bienAudios[random.toString()].play();
   }
 
   subirImagen(){
     this.imagenArriba = true;
     // animacion sube el imagen, achica la letra
-  }
-
-  escuchar(letraOPalabra:string) {
-    this.audioOpciones[letraOPalabra].play();    
   }
 
   mostrarPalabra (palabra:string) {
@@ -257,7 +193,6 @@ export class ElegirImagen implements AfterViewInit {
 
     // letra principal
     this.letraAhora = this.alfabetoAlAzar[0].letra;
-    this.audioLetraAhora.src = 'assets/letra_sonidos/' + this.letraAhora + '.MP3';    
 
     // tres opciones
     this.opciones = this.shuffle([
