@@ -66,8 +66,12 @@ export class HomePage implements AfterViewInit {
   constructor(public navCtrl: NavController, public platform: Platform, public afs: AudioFileService) {
     this.pages.forEach(page => {
       // no need to go through service because directly in the "gesture"
-      this.buttonAudios[page.audioFileName] = new Audio("assets/titulos/" + page.audioFileName + '.MP3');
-    })
+      page['audio'] = new Audio("assets/titulos/" + page.audioFileName + '.MP3');
+      page['audio'].addEventListener('ended', () => {
+        this.openPageRunning = false;
+        this.navCtrl.push(page.component);
+      });
+    });
 
   }
 
@@ -100,7 +104,7 @@ export class HomePage implements AfterViewInit {
     if (!this.openPageRunning) {
       this.openPageRunning = true;
 
-      this.buttonAudios[page.audioFileName].play();
+      page.audio.play();
 
       if (page.hasOwnProperty('requiredAudios') && typeof(page.requiredAudios === "array")) {
         page.requiredAudios.forEach(requiredAudio => {
@@ -111,10 +115,7 @@ export class HomePage implements AfterViewInit {
 
       this.afs.populateInstructions(page.audioFileName);
 
-      this.navCtrl.push(page.component);
-
     }
-    this.openPageRunning = false;
   }
 
 }
