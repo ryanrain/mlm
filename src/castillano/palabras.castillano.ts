@@ -60,6 +60,18 @@ export class PalabrasCastillano {
         'xochitl',
         'yoyo',
         'zapata',
-        'zapato'
+        'zapato',
+        'codo',
+        'loro',
+        'mapa',
+        'mesa',
+        'nido',
+        'oro',
+        'pala',
+        'pasa',
+        'pata',
+        'piso',
+        'roto',
+        'taco'
     ];
 }
