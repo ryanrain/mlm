@@ -134,11 +134,9 @@ export class AudioFileService {
         if (audio.readyState > 3) {
           audio.play();
         } else {
-            // if ( audio.readyState === 0 ) {
-
-            // }
           audio.addEventListener('canplaythrough', () => {
             audio.play();
+            // removeEventListener? or not since readyState will be at 4 from now on?
           })
         }
     }
