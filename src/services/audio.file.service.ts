@@ -96,22 +96,26 @@ export class AudioFileService {
     }
 
     populateInstructions(audioFileName:string) {
+        if (typeof(this.instructions[audioFileName]) === 'undefined') {
+            this.instructions[audioFileName] = new Audio("assets/instrucciones/" + audioFileName + '.MP3');
 
-        this.instructions[audioFileName] = new Audio("assets/instrucciones/" + audioFileName + '.MP3');
-
-        if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
-            this.playPause(this.instructions);
+            if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
+                this.playPauseSingle(this.instructions[audioFileName]);
+            }
         }
     }
 
     playPause ( audioObject:{} ) {
-        console.log('playpause called. ',audioObject);
-        for (var key in audioObject) {
-            if (audioObject.hasOwnProperty(key)) {
-                // console.log(audioObject[key]);
-                this.playPauseSingle(audioObject[key]);
+        console.log('playpause called.');
+        if (typeof(audioObject['playpaused']) === 'undefined') {
+            console.log('playPause run: ', audioObject);
+            for (var key in audioObject) {
+                if (audioObject.hasOwnProperty(key)) {
+                    this.playPauseSingle(audioObject[key]);
+                }
             }
         }
+        audioObject['playpaused'] = true;
     }
 
     playPauseSingle(audio:HTMLAudioElement) {
@@ -137,6 +141,11 @@ export class AudioFileService {
             audio.play();
           })
         }
+    }
+
+    playRandomBienAudio(){
+        let random = Math.round(Math.random() * 6.2);
+        this.muybien[random.toString()].play();
     }
 
 }
