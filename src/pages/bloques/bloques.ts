@@ -3,7 +3,6 @@ import { NavController, AlertController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
-import 'rxjs/add/observable/zip';
 
 import {interact} from 'interactjs';
 
@@ -117,7 +116,7 @@ export class Bloques implements AfterViewInit {
         this.wordImage = successWord;
         
         setTimeout(() => {
-          this.playRandomBienAudio();
+          this.afs.playRandomBienAudio();
         },500);
 
         let alert = this.alertCtrl.create({
@@ -163,24 +162,10 @@ export class Bloques implements AfterViewInit {
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-    if (this.platform.is('ios')) {
-
-      this.bgLoaded.subscribe(status => {
-        this.allLoadedBool = true;
-        this.afs.playWhenReady(this.afs.instructions['bloques']);
-      });
-
-    } else {
-
-      this.instructionLoaded = Observable.fromEvent(this.afs.instructions['bloques'], 'canplaythrough');
-      this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
-
-      this.allLoaded.subscribe(array => {
-        this.allLoadedBool = true;
-        this.afs.playWhenReady(this.afs.instructions['bloques']);
-      });
-
-    }
+    this.bgLoaded.subscribe(status => {
+      this.allLoadedBool = true;
+      this.afs.playWhenReady(this.afs.instructions['bloques']);
+    });
 
     this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
     this.maguitoClicks.subscribe(event => {
@@ -227,12 +212,6 @@ export class Bloques implements AfterViewInit {
   
   preloadWordImage(word:string) {
     this.wordImage = "assets/imagenes/" + word + ".png";
-  }
-
-  playRandomBienAudio(){
-    let random = Math.round(Math.random() * 6.2);
-    console.log(this.afs.muybien);
-    this.afs.muybien[random.toString()].play();
   }
 
   hint(){
