@@ -4,11 +4,12 @@ import 'rxjs/add/observable/fromEvent';
 // import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
-import 'rxjs/add/observable/zip';
 
 import { NavController, Content, Platform } from 'ionic-angular';
 
 import { PalabrasCastillano } from '../../castillano/palabras.castillano';
+import { AudioFileService } from '../../services/audio.file.service';
+
 
 @Component({
   selector: 'matching-game',
@@ -51,14 +52,10 @@ export class Matching implements AfterViewInit {
   numberCorrectSoFar:number = 0;
   notYetRun:boolean;
 
-  wordAudios = {};
-  bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
-  audioInstruccion:HTMLAudioElement; 
 
   bgLoaded:Observable<any>;
   firstAudiosLoaded:Observable<any>;
-  instruccionLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
 
@@ -70,14 +67,12 @@ export class Matching implements AfterViewInit {
   @ViewChild('bgImg') bgImg:ElementRef;
 
   constructor(
-    public navCtrl: NavController,
-    public castillano: PalabrasCastillano,
-    public platform: Platform
+      public navCtrl: NavController,
+      public castillano: PalabrasCastillano,
+      public platform: Platform, 
+      public afs: AudioFileService
       ) {
       this.createWords();
-      this.preloadWordAudios();
-      this.preloadBienAudios();
-      this.audioInstruccion = new Audio('/assets/instrucciones/pares.MP3');
   }
 
   ngAfterViewInit() {
@@ -91,36 +86,12 @@ export class Matching implements AfterViewInit {
     this.makeButtonsClickable(this.clickables); // first run
 
     this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-    if (this.platform.is('ios')) {
 
-      this.bgLoaded.subscribe(status => {
-        this.allLoadedBool = true;
-        this.audioInstruccion.play();
-        
-        // now preload all of them
-        this.castillano.words.forEach(word => {
-          this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');      
-        });
-      });
+    this.bgLoaded.subscribe(status => {
+      this.allLoadedBool = true;
+      this.afs.playWhenReady(this.afs.instructions['pares']);
+    });
 
-    } else {
-
-      this.firstAudiosLoaded = Observable.fromEvent(this.wordAudios[this.words[this.words.length - 1]], 'canplaythrough');
-      this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
-
-      this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
-
-      this.allLoaded.subscribe(array => {
-        this.allLoadedBool = true;
-        this.audioInstruccion.play();
-        
-        // now preload all of them
-        this.castillano.words.forEach(word => {
-          this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');      
-        });
-      });
-
-    }
   }
 
   makeButtonsClickable(buttons:QueryList<ElementRef>) {
@@ -152,7 +123,7 @@ export class Matching implements AfterViewInit {
         let currentAttempt = clickEvent.target.getAttribute("data-word"),
             currentImgOrText = clickEvent.target.nodeName;
 
-        this.wordAudios[currentAttempt].play();
+        this.afs.playWhenReady(this.afs.words[currentAttempt]);
         
         console.log(this.wordAttempted, currentAttempt, currentImgOrText);
 
@@ -194,24 +165,6 @@ export class Matching implements AfterViewInit {
         }
       }
     );
-  }
-
-  preloadWordAudios(){
-    // pre-load an object of Audio objects
-    this.words.forEach(word => {
-      this.wordAudios[word] = new Audio("assets/palabras/" + word + '.MP3');
-    });
-  }
-  
-  preloadBienAudios(){
-    ['0','1','2','3','4','5','6'].forEach(number => {
-      this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
-    });
-  }
-
-  playRandomBienAudio(){
-    let random = Math.round(Math.random() * 6.2);
-    this.bienAudios[random.toString()].play();
   }
 
   setSvgViewbox() {
@@ -274,7 +227,7 @@ export class Matching implements AfterViewInit {
   }
 
   celebrate() {
-    this.playRandomBienAudio();
+    this.afs.playRandomBienAudio();
     setTimeout(()=> {
       this.reset();
     },3000);
