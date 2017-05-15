@@ -10,10 +10,12 @@ import { Matching } from '../pages/matching/matching';
 import { Lectura } from '../pages/lectura/lectura';
 import { ItemDetailPage } from '../pages/item-detail/item-detail';
 
-import { AlfabetoCastillano } from '../alfabetos/alfabeto.castillano';
-import { PalabrasCastillano } from '../alfabetos/palabras.castillano';
-import { SilabasCastillano } from '../silabas/silabas.castillano';
+import { AlfabetoCastillano } from '../castillano/alfabeto.castillano';
+import { PalabrasCastillano } from '../castillano/palabras.castillano';
+import { SilabasCastillano } from '../castillano/silabas.castillano';
 import { LecturasContent } from '../pages/lectura/lecturas.content';
+
+import { AudioFileService } from '../services/audio.file.service';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,8 @@ import { LecturasContent } from '../pages/lectura/lecturas.content';
     AlfabetoCastillano, 
     SilabasCastillano,
     PalabrasCastillano,
-    LecturasContent
+    LecturasContent,
+    AudioFileService
   ]
 })
 export class AppModule {}

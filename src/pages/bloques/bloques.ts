@@ -7,7 +7,8 @@ import 'rxjs/add/observable/zip';
 
 import {interact} from 'interactjs';
 
-import { SilabasCastillano } from '../../silabas/silabas.castillano';
+import { SilabasCastillano } from '../../castillano/silabas.castillano';
+import { AudioFileService } from '../../services/audio.file.service';
 
 @Component({
   selector: 'bloques',
@@ -58,11 +59,7 @@ export class Bloques implements AfterViewInit {
   updatedCurrentBlocks;
   silables = [];
 
-  silableAudios = {};
-  bienAudios = {};
   audioChing = new Audio('/assets/ching.mp3');
-  audioInstruccion:HTMLAudioElement; 
-  wordAudio;
   wordImage:string;
   
   blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
@@ -72,7 +69,7 @@ export class Bloques implements AfterViewInit {
 
   bgLoaded:Observable<any>;
   firstAudiosLoaded:Observable<any>;
-  instruccionLoaded:Observable<any>;
+  instructionLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
   
@@ -90,12 +87,11 @@ export class Bloques implements AfterViewInit {
     public navCtrl: NavController,
     private alertCtrl: AlertController,
     public castillano: SilabasCastillano, 
-    public platform: Platform
+    public platform: Platform, 
+    public afs: AudioFileService
   ) {
     this.createSilables();
-    this.preloadWord(this.wordHint.join(''));
-    this.preloadBienAudios();
-    this.audioInstruccion = new Audio('/assets/instrucciones/bloques.MP3');
+    this.preloadWordImage(this.wordHint.join(''));
 
     this.wordStream
       .filter(attempt => { 
@@ -119,7 +115,6 @@ export class Bloques implements AfterViewInit {
       .subscribe(wordArray => {
         let successWord = wordArray.join('');
         this.wordImage = successWord;
-        let successWordAudio = new Audio('assets/palabras/' + successWord + '.MP3')
         
         setTimeout(() => {
           this.playRandomBienAudio();
@@ -144,7 +139,8 @@ export class Bloques implements AfterViewInit {
           alert.present();
         }, 2000);
         setTimeout(() => {
-          successWordAudio.play();
+          // console.log(this.afs.silableWords[successWord], successWord)
+          this.afs.playWhenReady( this.afs.silableWords[successWord] );
         }, 3000);
         setTimeout(() => {
           if(!this.alreadyRefreshed) {
@@ -154,11 +150,6 @@ export class Bloques implements AfterViewInit {
         }, 6000);
       })
     ;
-
-    // pre-load current silables
-    this.silables.forEach(silable => {
-      this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
-    })
   }
  
   ngAfterViewInit () {
@@ -176,35 +167,24 @@ export class Bloques implements AfterViewInit {
 
       this.bgLoaded.subscribe(status => {
         this.allLoadedBool = true;
-        this.audioInstruccion.play();
-        
-        // now pre-load all silables
-        this.castillano.silables.forEach(silable => {
-          this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
-        });
+        this.afs.playWhenReady(this.afs.instructions['bloques']);
       });
 
     } else {
 
-      this.firstAudiosLoaded = Observable.fromEvent(this.silableAudios[this.silables[this.silables.length - 1]], 'canplaythrough');
-      this.instruccionLoaded = Observable.fromEvent(this.audioInstruccion, 'canplaythrough');
-      this.allLoaded = Observable.zip(this.bgLoaded, this.firstAudiosLoaded, this.instruccionLoaded);
+      this.instructionLoaded = Observable.fromEvent(this.afs.instructions['bloques'], 'canplaythrough');
+      this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
 
       this.allLoaded.subscribe(array => {
         this.allLoadedBool = true;
-        this.audioInstruccion.play();
-        
-        // now pre-load all silables
-        this.castillano.silables.forEach(silable => {
-          this.silableAudios[silable] = new Audio("assets/silabas/" + silable + '.MP3');
-        });
+        this.afs.playWhenReady(this.afs.instructions['bloques']);
       });
 
     }
 
     this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
     this.maguitoClicks.subscribe(event => {
-      this.audioChing.play();
+      // make him spin
     })
 
   }
@@ -242,24 +222,17 @@ export class Bloques implements AfterViewInit {
   newSilables() {
     this.reset();
     this.createSilables();
-    this.preloadWord(this.wordHint.join(''));
+    this.preloadWordImage(this.wordHint.join(''));
   }
   
-  preloadWord(word:string) {
-    this.wordAudio = new Audio('assets/palabras/' + word + '.MP3');
+  preloadWordImage(word:string) {
     this.wordImage = "assets/imagenes/" + word + ".png";
-  }
-
-  
-  preloadBienAudios(){
-    ['0','1','2','3','4','5','6'].forEach(number => {
-      this.bienAudios[number] = new Audio("assets/muybien/" + number + '.MP3');
-    });
   }
 
   playRandomBienAudio(){
     let random = Math.round(Math.random() * 6.2);
-    this.bienAudios[random.toString()].play();
+    console.log(this.afs.muybien);
+    this.afs.muybien[random.toString()].play();
   }
 
   hint(){
@@ -301,7 +274,7 @@ export class Bloques implements AfterViewInit {
 
     interact.maxInteractions(Infinity);
     let blockZIndex = 1;
-    let silableAudios = this.silableAudios;
+    let silableAudios = this.afs.silables;
     
     interact('.cubo', { // use selector context to bubble events and therefore enable re-use upon new blocks 
                       // http://interactjs.io/docs/#selector-contexts
