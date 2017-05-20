@@ -35,7 +35,7 @@ export class SilabasCastillano {
     words = [
         ['o','so'],
         ['u','va'],
-        // ['si','lla'],
+        // ['si','lla'], // no 'si'
         ['lu','na'],
         ['de','do'],
         ['ni','ña'],
@@ -56,7 +56,7 @@ export class SilabasCastillano {
         ['ma','no'],
         ['ma','go'],
         ['li','ma'],
-        // ['ne','na'],
+        // ['ne','na'], // no 'ne'
         ['o','lla'],
         ['lla','ma'],
         ['pi','pa'],
@@ -79,7 +79,7 @@ export class SilabasCastillano {
         ['co','do'],
         ['lo','ro'],
         ['ma','pa'],
-        // ['me','sa'],
+        // ['me','sa'], // no 'me'
         ['ni','do'],
         ['o','ro'],
         ['pa','la'],
@@ -87,6 +87,25 @@ export class SilabasCastillano {
         ['pa','ta'],
         ['pi','so'],
         ['ro','to'],
-        ['ta','co']
+        ['ta','co'],
+        ['co','pa'],
+        ['co','co'],
+        ['co','la'],
+        ['co','ro'],
+        ['co','sa'],
+        ['da','ma'],
+        ['do','ña'],
+        ['fo','to'],
+        ['go','ta'],
+        ['la','va'],
+        ['ma','lla'],
+        ['ma','ma'],
+        ['no','che'],
+        ['pe','ra'],
+        ['pe','sa'],
+        ['pi','la'],
+        ['ra','yo'],
+        ['sa','co'],
+        ['yo','ga']
     ];
 }

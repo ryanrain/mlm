@@ -72,6 +72,27 @@ export class PalabrasCastillano {
         'pata',
         'piso',
         'roto',
-        'taco'
+        'taco',
+        'coco',
+        'cola',
+        'copa',
+        'coro',
+        'cosa',
+        'dama',
+        'doña',
+        'foto',
+        'gota',
+        'helado',
+        'lava',
+        'malla',
+        'mama',
+        'noche',
+        'pera',
+        'pesa',
+        'pila',
+        'pipa',
+        'rayo',
+        'saco',
+        'yoga'
     ];
 }
