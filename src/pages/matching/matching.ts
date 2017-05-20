@@ -19,11 +19,11 @@ import { AudioFileService } from '../../services/audio.file.service';
 
   <ion-content padding>
     
-    <img #bgImg class="bg-img" src="/assets/fondos/FONDO6.png">
+    <img #bgImg class="bg-img" src="assets/fondos/FONDO6.png">
     
-    <div id="loading" *ngIf="!allLoadedBool">
-      <img id="loader-circle" src="/assets/menu/loader.gif">
-      <img #maguito id="maguito" src="/assets/menu/maguito.png">
+    <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+      <img id="loader-circle" src="assets/menu/loader.gif">
+      <img #maguito id="maguito" src="assets/menu/maguito.png">
     </div>
 
     <svg  xmlns="http://www.w3.org/2000/svg" #lines id="lines" viewBox="0 0 320 600"></svg>
@@ -52,7 +52,7 @@ export class Matching implements AfterViewInit {
   numberCorrectSoFar:number = 0;
   notYetRun:boolean;
 
-  audioChing = new Audio('/assets/ching.mp3');
+  audioBell = new Audio('assets/bell.mp3');
 
   bgLoaded:Observable<any>;
   firstAudiosLoaded:Observable<any>;
@@ -151,7 +151,7 @@ export class Matching implements AfterViewInit {
             if ( this.wordAttempted === currentAttempt ) {
               console.log('if the next one is correct');
               this.numberCorrectSoFar++;
-              this.audioChing.play();
+              this.audioBell.play();
               this.drawLine(clickEvent.target);              
               this.deselectAll();
               if(this.numberCorrectSoFar === 5) {
