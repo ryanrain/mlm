@@ -14,6 +14,8 @@ export class AudioFileService {
     silableWords = {};
     muybien = {};
     instructions = {};
+
+    isWeb:boolean;
     
     constructor(public platform: Platform,
                 public lettersCastillano: AlfabetoCastillano,
@@ -21,6 +23,13 @@ export class AudioFileService {
                 public wordsCastillano: PalabrasCastillano
                 ) {
         console.log('ionic platforms: ', this.platform.platforms());
+
+        if (platform.is('mobileweb') || platform.is('core')) {
+            this.isWeb = true;
+        } else {
+            this.isWeb = false;
+        }
+
     }
 
     populateAudios(audioListName:string) {
@@ -30,7 +39,7 @@ export class AudioFileService {
                 if ( Object.keys(this.letters).length < 1 ) { // hasn't yet been populated
                     console.log('populate letters');
                     this.lettersCastillano.alfabeto.forEach( letter  => {
-                        this.letters[letter.letra] = new Audio('/assets/letra_sonidos/' + letter.letra + '.MP3');
+                        this.letters[letter.letra] = new Audio('assets/letra_sonidos/' + letter.letra + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
                     if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
@@ -43,7 +52,7 @@ export class AudioFileService {
                 if ( Object.keys(this.silables).length < 1 ) { // hasn't yet been populated
                     console.log('populate silables');
                     this.silablesCastillano.silables.forEach( silable  => {
-                        this.silables[silable] = new Audio('/assets/silabas/' + silable + '.MP3');
+                        this.silables[silable] = new Audio('assets/silabas/' + silable + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
                     if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
@@ -56,7 +65,7 @@ export class AudioFileService {
                 if ( Object.keys(this.words).length < 1 ) { // hasn't yet been populated
                     console.log('populate words');
                     this.wordsCastillano.words.forEach( word  => {
-                        this.words[word] = new Audio('/assets/palabras/' + word + '.MP3');
+                        this.words[word] = new Audio('assets/palabras/' + word + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
                     if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
@@ -70,7 +79,7 @@ export class AudioFileService {
                     console.log('populate silableWords');
                     this.silablesCastillano.words.forEach( word  => {
                         let wordString = word.join('');
-                        this.silableWords[wordString] = new Audio('/assets/palabras/' + wordString + '.MP3');
+                        this.silableWords[wordString] = new Audio('assets/palabras/' + wordString + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
                     if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
