@@ -68,6 +68,12 @@ bloques {
       width: $blockSize;
       padding-bottom: $blockSize;
       font-size: $blockSize / 4;
+      .platform-iphone.platform-mobileweb & {
+        // width: 110px;
+        // padding-bottom: 110px;
+        // font-size: 30px;
+        -webkit-transform: translate3d(0,0,0);
+      }
       @media (min-width:500px) {
         width: $blockSizeLgScreen;
         padding-bottom: $blockSizeLgScreen;
@@ -79,6 +85,10 @@ bloques {
         width: 90%;
         right: 0;
         top: $blockSize * .4;
+        z-index: 1;
+        // .platform-iphone.platform-mobileweb & {
+        //   top: 47px;
+        // }
         @media (min-width:500px) {
           top: $blockSizeLgScreen * .4;          
         }
