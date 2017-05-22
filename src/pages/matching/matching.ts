@@ -8,8 +8,8 @@ import 'rxjs/add/operator/throttleTime';
 import { NavController, Content, Platform } from 'ionic-angular';
 
 import { PalabrasCastillano } from '../../castillano/palabras.castillano';
-import { AudioFileService } from '../../services/audio.file.service';
-
+import { AudioFileService } from '../../building.blocks/audio.file.service';
+import { Maguito } from '../../building.blocks/maguito.component';
 
 @Component({
   selector: 'matching-game',
@@ -23,7 +23,7 @@ import { AudioFileService } from '../../services/audio.file.service';
     
     <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
       <img id="loader-circle" src="assets/menu/loader.gif">
-      <img #maguito id="maguito" src="assets/menu/maguito.png">
+      <maguito></maguito>
     </div>
 
     <svg  xmlns="http://www.w3.org/2000/svg" #lines id="lines" viewBox="0 0 320 600"></svg>

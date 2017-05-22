@@ -6,7 +6,7 @@ import { LecturaModel } from '../../models/lectura.model';
 import { LecturasContent } from './lecturas.content';
 import { ItemDetailPage } from '../item-detail/item-detail';
 
-import { AudioFileService } from '../../services/audio.file.service';
+import { AudioFileService } from '../../building.blocks/audio.file.service';
 
 @Component({
   selector: 'lecturas',
