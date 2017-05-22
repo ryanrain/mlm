@@ -33,7 +33,7 @@
   }
 }
 
-.jello {
+.maguito-0 {
   animation-name: jello;
   transform-origin: center;
 }
@@ -60,7 +60,7 @@
   }
 }
 
-.tada {
+.maguito-1 {
   animation-name: tada;
 }
 
@@ -86,7 +86,7 @@
   }
 }
 
-.swing {
+.maguito-2 {
   transform-origin: top center;
   animation-name: swing;
 }
@@ -121,7 +121,7 @@
   }
 }
 
-.rubberBand {
+.maguito-3 {
   animation-name: rubberBand;
 }
 
@@ -146,26 +146,26 @@
   }
 }
 
-.bounce {
+.maguito-4 {
   animation-name: bounce;
   transform-origin: center bottom;
 }
 
-// .dance {
-//     animation-name: dance;
-//     animation-duration: 1.5s; 
-//     animation-timing-function: ease-in-out; 
-//     animation-delay: 0s;
-//     animation-direction: normal;
-//     animation-iteration-count: infinite;
-//     animation-fill-mode: none;
-//     animation-play-state: running;
-// }
-// @keyframes dance {
-//   0%, 100% {
-//     transform: rotate(10deg);
-//   }
-//   50% {
-//     transform: rotate(-10deg);
-//   }
-// }
+@keyframes spin {
+  50% {
+    transform: rotate(360deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.maguito-5 {
+  animation-name: spin;
+}
+
+img[class*="maguito"] {
+  animation-play-state: running;
+  animation-duration: 1.5s; 
+}
