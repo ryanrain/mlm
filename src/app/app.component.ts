@@ -5,9 +5,7 @@ import { HomePage } from '../pages/home/home';
 // import * as screenfull from 'screenfull';
 
 @Component({
-  template: `
-    <ion-nav [root]="rootPage"></ion-nav>
-  `
+  templateUrl: 'app.html'
 })
 export class MyApp {
   rootPage = HomePage;
