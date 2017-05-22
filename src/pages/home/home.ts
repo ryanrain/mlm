@@ -1,28 +1,30 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { NavController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/zip';
 
 import { ElegirImagen } from '../elegirImagen/elegirImagen';
 import { Bloques } from '../bloques/bloques';
 import { Matching } from '../matching/matching';
 import { Lectura } from '../lectura/lectura';
 
-import { AudioFileService } from '../../services/audio.file.service';
+import { AudioFileService } from '../../building.blocks/audio.file.service';
+import { Maguito } from '../../building.blocks/maguito.component';
 
 @Component({
   selector: 'page-home',
   // templateUrl: 'home.html'
   template: `
     <ion-content padding>
-      <img #bgImg class="bg-img" src="/assets/fondos/FONDO4.png">
-      <div id="loading" *ngIf="!allLoadedBool">
-        <img id="loader-circle" src="/assets/menu/loader.gif">
-        <img id="maguito" src="/assets/menu/maguito.png">
+      <img #bgImg class="bg-img" src="assets/fondos/FONDO4.png">
+      <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+        <img id="loader-circle" src="assets/menu/loader.gif">
+        <maguito></maguito>
       </div>
-      <div id="mlm"></div>
+      <div id="mlm"><img src="assets/menu/mlm.png"></div>
       <div id="menu-buttons"><div *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div></div>
-      <div #maguito id="maguito"></div>
+      <div id="maguito-menu">
+        <maguito></maguito>
+      </div>
     </ion-content>
   `
 })
@@ -50,54 +52,42 @@ export class HomePage implements AfterViewInit {
     }
   ];
 
-  pageAlreadyLoaded = {};
-  @ViewChild('maguito') maguito:ElementRef;
-  maguitoClicks:Observable<any>;
-  audioChing = new Audio('/assets/ching.mp3');
   buttonAudios = {};
   openPageRunning:boolean = false;
 
-  bgLoaded:Observable<any>;
-  buttonAudiosLoaded:Observable<any>;
-  allLoaded:Observable<any>;
-  allLoadedBool:boolean = false;
   @ViewChild('bgImg') bgImg:ElementRef;
+  bgLoaded:Observable<any>;
+  allLoadedBool:boolean;
 
   constructor(public navCtrl: NavController, public platform: Platform, public afs: AudioFileService) {
+
     this.pages.forEach(page => {
+      // populate page title audios
       // no need to go through service because directly in the "gesture"
       page['audio'] = new Audio("assets/titulos/" + page.audioFileName + '.MP3');
+
+      // when page title audio finishes, nav to the page
       page['audio'].addEventListener('ended', () => {
         this.openPageRunning = false;
         this.navCtrl.push(page.component);
       });
     });
 
+    // populate maguito risa audios
+    this.afs.populateAudios('risa');
   }
 
   ngAfterViewInit() {
-    // CLICKABLE MAGUITO
-    this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
-    this.maguitoClicks.subscribe(event => {
-      this.audioChing.play();
-    });
 
-    // LOADING SCREEN
-        this.allLoadedBool = true;        
-    
-    // this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-    
-    // if (this.platform.is('ios')) {
-    //   this.bgLoaded.subscribe(status => {
-    //     this.allLoadedBool = true;
-    //   });
-    // } else {
-    //   this.buttonAudiosLoaded = Observable.fromEvent(this.buttonAudios[this.pages[this.pages.length - 1].audioFileName], 'canplaythrough');
-    //   this.allLoaded = Observable.zip(this.bgLoaded, this.buttonAudiosLoaded);
-    //   this.allLoaded.subscribe(array => {
-    //     this.allLoadedBool = true;        
-    //   });
-    // }
+    if (this.afs.isWeb ){
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+      
+      this.bgLoaded.subscribe(status => {
+        this.allLoadedBool = true;
+      });
+    }
+
+
   }
 
   openPage(page) {
