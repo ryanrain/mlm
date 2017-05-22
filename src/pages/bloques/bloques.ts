@@ -7,7 +7,8 @@ import 'rxjs/add/operator/filter';
 import {interact} from 'interactjs';
 
 import { SilabasCastillano } from '../../castillano/silabas.castillano';
-import { AudioFileService } from '../../services/audio.file.service';
+import { AudioFileService } from '../../building.blocks/audio.file.service';
+import { Maguito } from '../../building.blocks/maguito.component';
 
 @Component({
   selector: 'bloques',
@@ -18,11 +19,11 @@ import { AudioFileService } from '../../services/audio.file.service';
 
   <ion-content [ngClass]="{woohoo:(woohoo) }">
 
-    <img #bgImg class="bg-img" src="/assets/fondos/FONDO1.png">
+    <img #bgImg class="bg-img" src="assets/fondos/FONDO1.png">
         
-    <div id="loading" *ngIf="!allLoadedBool">
-      <img id="loader-circle" src="/assets/menu/loader.gif">
-      <img #maguito id="maguito" src="/assets/menu/maguito.png">
+    <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+      <img id="loader-circle" src="assets/menu/loader.gif">
+      <maguito></maguito>
     </div>
     
     <ion-row class="row lugares">
@@ -44,7 +45,7 @@ import { AudioFileService } from '../../services/audio.file.service';
     
   </ion-content>
   <div style="display:none;" class="preloader">
-    <img *ngFor="let color of blockColors" src="/assets/cubos/cubo{{color}}.png">
+    <img *ngFor="let color of blockColors" src="assets/cubos/cubo{{color}}.png">
     <img [src]="wordImage">
   </div>
   `
@@ -58,7 +59,6 @@ export class Bloques implements AfterViewInit {
   updatedCurrentBlocks;
   silables = [];
 
-  audioChing = new Audio('/assets/ching.mp3');
   wordImage:string;
   
   blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
@@ -72,13 +72,10 @@ export class Bloques implements AfterViewInit {
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
   
-  maguitoClicks:Observable<any>;
-
   @ViewChildren('blocks') blocksQueryList:QueryList<ElementRef>;
   @ViewChildren('droppable1, droppable2') zonasDroppables:QueryList<ElementRef>;
   @ViewChild('blockArea') blockArea:ElementRef;
   @ViewChild('bgImg') bgImg:ElementRef;
-  @ViewChild('maguito') maguito:ElementRef;
 
   wordStream:Subject<Array<string>> = new Subject();
 
@@ -121,7 +118,7 @@ export class Bloques implements AfterViewInit {
 
         let alert = this.alertCtrl.create({
           title: successWord,
-          message: '<img class="success-word" src="/assets/imagenes/' + successWord + '.png">',
+          message: '<img class="success-word" src="assets/imagenes/' + successWord + '.png">',
           buttons: [
             {
               text: 'Siguente',
@@ -160,17 +157,16 @@ export class Bloques implements AfterViewInit {
     this.makeBlocksDraggable();
     this.createDropZones();
 
-    this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+    if(this.afs.isWeb) {
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-    this.bgLoaded.subscribe(status => {
-      this.allLoadedBool = true;
-      this.afs.playWhenReady(this.afs.instructions['bloques']);
-    });
-
-    this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
-    this.maguitoClicks.subscribe(event => {
-      // make him spin
-    })
+      this.bgLoaded.subscribe(status => {
+        this.allLoadedBool = true;
+        this.afs.playWhenReady(this.afs.instructions['bloques']);
+      });
+    } else {
+      this.afs.playWhenReady(this.afs.instructions['bloques']);      
+    }
 
   }
 
@@ -229,7 +225,8 @@ export class Bloques implements AfterViewInit {
   scatterBlocks(blocks:QueryList<ElementRef>) {
     let blockAreaOffset = this.blockArea.nativeElement.offsetTop,
         blockAreaHeight = this.blockArea.nativeElement.offsetHeight,
-        blockWidth = this.blockArea.nativeElement.offsetWidth / 4; // 25% width set in scss
+        blockWidth = this.blockArea.nativeElement.offsetWidth / 4, // 25% width set in scss
+        blockZIndex = 1;
 
     blocks.forEach( cubo => {
 
@@ -243,16 +240,25 @@ export class Bloques implements AfterViewInit {
 
       // set random block color
       cubo.nativeElement.style.backgroundImage
-       = 'url("/assets/cubos/cubo' + this.shuffle(this.blockColors)[0] + '.png")';
+       = 'url("assets/cubos/cubo' + this.shuffle(this.blockColors)[0] + '.png")';
 
       cubo.nativeElement.classList.remove('currently-placed-block');
+
+      cubo.nativeElement.style.zIndex = blockZIndex;
+      cubo.nativeElement.firstElementChild.style.zIndex = blockZIndex; // iphones
+      blockZIndex++;
+
     });
   }
 
   makeBlocksDraggable() {
 
+    // ****destroy first?
+    // freeze in middle? or freeze happens upon opening an never works
+    
     interact.maxInteractions(Infinity);
-    let blockZIndex = 1;
+
+    let blockZIndex = 6;
     let silableAudios = this.afs.silables;
     
     interact('.cubo', { // use selector context to bubble events and therefore enable re-use upon new blocks 
@@ -277,7 +283,9 @@ export class Bloques implements AfterViewInit {
           event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
           
           // make block visible above others
-          event.target.style.zIndex = blockZIndex++;
+          event.target.style.zIndex = blockZIndex;
+          event.target.firstElementChild.style.zIndex = blockZIndex; // iphones
+          blockZIndex++;
 
           let silable = event.target.innerText;
           silableAudios[silable].play();
