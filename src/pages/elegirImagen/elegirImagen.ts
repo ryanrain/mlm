@@ -9,21 +9,21 @@ import { NavController, Platform } from 'ionic-angular';
 
 import { AlfabetoCastillano } from '../../castillano/alfabeto.castillano';
 import { LetraModel } from '../../models/letra.model';
-import { AudioFileService } from '../../services/audio.file.service';
+import { AudioFileService } from '../../building.blocks/audio.file.service';
+import { Maguito } from '../../building.blocks/maguito.component';
 
 @Component({
   selector: 'page-elegir-imagen',
-  // templateUrl: 'elegirImagen.html'
   template: `
   <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
 
   <ion-content padding [class.arriba]="imagenArriba">
   
-    <img #bgImg class="bg-img" src="/assets/fondos/FONDO4-sky.png">
+    <img #bgImg class="bg-img" src="assets/fondos/FONDO4-sky.png">
     
-    <div id="loading" *ngIf="!allLoadedBool">
-      <img id="loader-circle" src="/assets/menu/loader.gif">
-      <img #maguito id="maguito" src="/assets/menu/maguito.png">
+    <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+      <img id="loader-circle" src="assets/menu/loader.gif">
+      <maguito></maguito>
     </div>
 
     <div #letraAhoraRef id="letra-principal">
@@ -39,7 +39,7 @@ import { AudioFileService } from '../../services/audio.file.service';
     </div>
   </ion-content>
   <div style="display:none;" class="preloader">
-    <img rel="preload" *ngFor="let letra of castillano.alfabeto" src="/assets/imagenes/{{letra.palabra}}.png">
+    <img rel="preload" *ngFor="let letra of castillano.alfabeto" src="assets/imagenes/{{letra.palabra}}.png">
   </div>
   `
 })
@@ -55,9 +55,6 @@ export class ElegirImagen implements AfterViewInit {
   
   bgLoaded:Observable<any>;
   allLoadedBool:boolean = false;
-
-  maguitoClicks:Observable<any>;
-  @ViewChild('maguito') maguito:ElementRef;
 
   @ViewChildren('opcion1,opcion2,opcion3') opcionesBotones:QueryList<ElementRef>;
   @ViewChild('letraAhoraRef') letraAhoraRef:ElementRef;
@@ -143,23 +140,27 @@ export class ElegirImagen implements AfterViewInit {
       })
     ;
 
-    this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+    if(this.afs.isWeb) {
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-    this.bgLoaded.subscribe(status => {
-      this.allLoadedBool = true;
+      this.bgLoaded.subscribe(status => {
+        this.allLoadedBool = true;
+        this.afs.playWhenReady(this.afs.instructions['letras']);
+
+        this.afs.instructions['letras'].addEventListener('ended', () => {
+          this.afs.playWhenReady(this.afs.letters[this.letraAhora]); 
+          this.afs.instructions['letras'].removeEventListener('ended');
+        });
+
+      });
+    } else {
       this.afs.playWhenReady(this.afs.instructions['letras']);
 
       this.afs.instructions['letras'].addEventListener('ended', () => {
         this.afs.playWhenReady(this.afs.letters[this.letraAhora]); 
         this.afs.instructions['letras'].removeEventListener('ended');
       });
-
-    });
-
-    this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
-    this.maguitoClicks.subscribe(event => {
-      //make him spin
-    });
+    }
 
   }
   
