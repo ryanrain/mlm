@@ -81,7 +81,7 @@ bloques {
       }      
       span {
         position: absolute;
-        transform: rotate3d(0,1,1,-3deg);
+        transform: rotate(-3deg);
         width: 90%;
         right: 0;
         top: $blockSize * .4;
