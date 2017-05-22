@@ -15,7 +15,8 @@ import { PalabrasCastillano } from '../castillano/palabras.castillano';
 import { SilabasCastillano } from '../castillano/silabas.castillano';
 import { LecturasContent } from '../pages/lectura/lecturas.content';
 
-import { AudioFileService } from '../services/audio.file.service';
+import { AudioFileService } from '../building.blocks/audio.file.service';
+import { Maguito } from '../building.blocks/maguito.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { AudioFileService } from '../services/audio.file.service';
     Matching,
     Lectura,
     ItemDetailPage, 
+    Maguito
   ],
   imports: [
     IonicModule.forRoot(MyApp)
