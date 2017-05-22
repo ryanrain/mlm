@@ -14,6 +14,7 @@ export class AudioFileService {
     silableWords = {};
     muybien = {};
     instructions = {};
+    risa = {};
 
     isWeb:boolean;
     
@@ -101,6 +102,20 @@ export class AudioFileService {
                     }
                 }
             break;
+
+            case 'risa':
+                if ( Object.keys(this.risa).length < 1 ) { // hasn't yet been populated
+                    console.log('populate risa');
+                    ['0','1','2','3','4'].forEach(number => {
+                        this.risa[number] = new Audio("assets/risa/" + number + '.MP3');
+                    });
+
+                    // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
+                    if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
+                        this.playPause(this.risa);
+                    }
+                }
+            break;
         }
     }
 
@@ -153,6 +168,11 @@ export class AudioFileService {
     playRandomBienAudio(){
         let random = Math.round(Math.random() * 6.2);
         this.muybien[random.toString()].play();
+    }
+
+    playRandomRisaAudio(){
+        let random = Math.round(Math.random() * 4.2);
+        this.risa[random.toString()].play();
     }
 
 }
