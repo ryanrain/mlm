@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { LecturaModel } from '../../models/lectura.model';
-import { LecturasContent } from '../lectura/lecturas.content';
 
 @Component({
   selector: 'page-item-detail',
