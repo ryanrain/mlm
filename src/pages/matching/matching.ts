@@ -238,6 +238,12 @@ export class Matching implements AfterViewInit {
     while (this.lines.nativeElement.firstChild) {
         this.lines.nativeElement.removeChild(this.lines.nativeElement.firstChild);
     }
+
+    // remove all un-clickability
+    this.clickables.forEach((clickable) => {
+      clickable.nativeElement.style.zIndex = '1';
+    });
+
     this.createWords();
   }
 
