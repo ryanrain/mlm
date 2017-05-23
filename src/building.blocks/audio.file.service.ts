@@ -43,9 +43,7 @@ export class AudioFileService {
                         this.letters[letter.letra] = new Audio('assets/letra_sonidos/' + letter.letra + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
-                    if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
-                        this.playPause(this.letters);
-                    }
+                    this.playPause(this.letters);
                 }
             break;
 
@@ -56,9 +54,7 @@ export class AudioFileService {
                         this.silables[silable] = new Audio('assets/silabas/' + silable + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
-                    if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
-                        this.playPause(this.silables);
-                    }
+                    this.playPause(this.silables);
                 }
             break;  
 
@@ -69,9 +65,7 @@ export class AudioFileService {
                         this.words[word] = new Audio('assets/palabras/' + word + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
-                    if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
-                        this.playPause(this.words);
-                    }
+                    this.playPause(this.words);
                 }
             break;
 
@@ -83,9 +77,7 @@ export class AudioFileService {
                         this.silableWords[wordString] = new Audio('assets/palabras/' + wordString + '.MP3');
                     });
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
-                    if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
-                        this.playPause(this.silableWords);
-                    }
+                    this.playPause(this.silableWords);
                 }
             break;
 
@@ -97,9 +89,7 @@ export class AudioFileService {
                     });
 
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
-                    if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
-                        this.playPause(this.muybien);
-                    }
+                    this.playPause(this.muybien);
                 }
             break;
 
@@ -111,9 +101,7 @@ export class AudioFileService {
                     });
 
                     // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
-                    if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
-                        this.playPause(this.risa);
-                    }
+                    this.playPause(this.risa);
                 }
             break;
         }
@@ -131,15 +119,19 @@ export class AudioFileService {
 
     playPause ( audioObject:{} ) {
         console.log('playpause called.');
-        if (typeof(audioObject['playpaused']) === 'undefined') {
-            console.log('playPause run: ', audioObject);
-            for (var key in audioObject) {
-                if (audioObject.hasOwnProperty(key)) {
-                    this.playPauseSingle(audioObject[key]);
+        if ( (this.platform.is('android') && this.platform.is('mobileweb')) 
+        // || this.platform.is('core') // and now also firefox desktop
+        ) { // mobile chrome
+            if (typeof(audioObject['playpaused']) === 'undefined') {
+                console.log('playPause run: ', audioObject);
+                for (var key in audioObject) {
+                    if (audioObject.hasOwnProperty(key)) {
+                        this.playPauseSingle(audioObject[key]);
+                    }
                 }
             }
+            audioObject['playpaused'] = true;
         }
-        audioObject['playpaused'] = true;
     }
 
     playPauseSingle(audio:HTMLAudioElement) {
@@ -154,6 +146,8 @@ export class AudioFileService {
     }
 
     playWhenReady(audio:HTMLAudioElement) {
+        audio.currentTime = 0; // equalize different firefox/chrome behaviour
+
         console.log(audio, audio.readyState);
         if (audio.readyState > 3) {
           audio.play();
@@ -167,7 +161,7 @@ export class AudioFileService {
 
     playRandomBienAudio(){
         let random = Math.round(Math.random() * 6.2);
-        this.muybien[random.toString()].play();
+        this.playWhenReady(this.muybien[random.toString()]);
     }
 
     playRandomRisaAudio(){
