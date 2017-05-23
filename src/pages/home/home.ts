@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { NavController, Platform } from 'ionic-angular';
-import {Observable} from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/zip';
 
 import { ElegirImagen } from '../elegirImagen/elegirImagen';
 import { Bloques } from '../bloques/bloques';
@@ -21,9 +22,17 @@ import { Maguito } from '../../building.blocks/maguito.component';
         <maguito></maguito>
       </div>
       <div id="mlm"><img src="assets/home/mlm.png"></div>
-      <div id="menu-buttons"><div *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div></div>
+      <div id="menu-buttons">
+        <div *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
+      </div>
       <div id="maguito-menu">
-        <maguito></maguito>
+        <maguito *ngIf="entradaEnded"></maguito>
+      </div>
+      <div style="display:none;" class="preloader">
+        <audio #entradaAudio preload="auto" src="assets/home/miLibroMagico.MP3"></audio>
+      </div>
+      <div #entradaContainer id="entrada-container">
+        <img #entrada id="entrada" src="assets/home/maguito-entrada.gif">
       </div>
     </ion-content>
   `
@@ -57,7 +66,14 @@ export class HomePage implements AfterViewInit {
 
   @ViewChild('bgImg') bgImg:ElementRef;
   bgLoaded:Observable<any>;
+  @ViewChild('entrada') entradaImg:ElementRef;
+  @ViewChild('entradaContainer') entradaContainer:ElementRef;
+  entradaLoaded:Observable<any>;
+  @ViewChild('entradaAudio') entradaAudio:ElementRef;
+  entradaAudioLoaded:Observable<any>;
+  allLoaded:Observable<any>;
   allLoadedBool:boolean;
+  entradaEnded:boolean = false;
 
   constructor(public navCtrl: NavController, public platform: Platform, public afs: AudioFileService) {
 
@@ -81,9 +97,23 @@ export class HomePage implements AfterViewInit {
 
     if (this.afs.isWeb ){
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+      this.entradaLoaded = Observable.fromEvent(this.entradaImg.nativeElement, 'load');
+      this.entradaAudioLoaded = Observable.fromEvent(this.entradaAudio.nativeElement, 'canplaythrough');
       
-      this.bgLoaded.subscribe(status => {
+      this.allLoaded = Observable.zip(this.bgLoaded, this.entradaLoaded, this.entradaAudioLoaded);
+
+      this.entradaAudio.nativeElement.addEventListener('ended', () => {
+        this.entradaContainer.nativeElement.classList.remove('show-entrada');
+        this.entradaEnded = true;
+      });
+
+      this.allLoaded.subscribe(status => {
+        console.log('allLoaded');
         this.allLoadedBool = true;
+        
+        this.entradaContainer.nativeElement.classList.add('show-entrada');
+        
+        this.entradaAudio.nativeElement.play();
       });
     }
 

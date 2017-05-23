@@ -43,4 +43,20 @@ page-home {
             max-height: 100%;
         }
     }
+    #entrada-container {
+        position: absolute;
+        top: 25vh;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        display: none;
+        &.show-entrada {
+            display: block;
+        }
+    }
+    #entrada {
+        height: 50vh;
+        width: 50vh;
+        display: inline-block;
+    }
 }
