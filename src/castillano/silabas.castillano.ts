@@ -13,39 +13,44 @@ export class SilabasCastillano {
         'fo',
         'ga',
         'la',
+        'lu',
         'lla',
         'llo',
         'ma',
         'na',
         'ña',
         'ni',
+        'no',
         'o',
         'pa',
+        'pe',
         'pi',
         'po',
+        'ra',
         'ro',
         'sa',
         'so',
         'ta',
         'to',
         'u',
-        'va'
+        'va',
+        'yo'
     ];
 
     words = [
         ['o','so'],
         ['u','va'],
-        // ['si','lla'], // no 'si'
+        // ['si','lla'], // solo un 'si'
         ['lu','na'],
         ['de','do'],
         ['ni','ña'],
         ['ro','sa'],
-        ['que','so'],
+        // ['que','so'], // solo un 'que'
         ['fo','co'],
         ['ca','sa'],
         ['ga','to'],
         ['va','ca'],
-        ['yo','yo'],
+        // ['yo','yo'], // solo aparecera una vez
         ['bo','ca'],
         ['bo','ta'],
         ['ca','ma'],
@@ -55,8 +60,8 @@ export class SilabasCastillano {
         ['go','ma'],
         ['ma','no'],
         ['ma','go'],
-        ['li','ma'],
-        // ['ne','na'], // no 'ne'
+        // ['li','ma'], // solo un li
+        // ['ne','na'], // solo un 'ne'
         ['o','lla'],
         ['lla','ma'],
         ['pi','pa'],
@@ -77,9 +82,9 @@ export class SilabasCastillano {
         ['da','do'],
         ['co','che'],
         ['co','do'],
-        ['lo','ro'],
+        // ['lo','ro'], // solo un 'lo'
         ['ma','pa'],
-        // ['me','sa'], // no 'me'
+        // ['me','sa'], // solo un 'me'
         ['ni','do'],
         ['o','ro'],
         ['pa','la'],
@@ -89,7 +94,7 @@ export class SilabasCastillano {
         ['ro','to'],
         ['ta','co'],
         ['co','pa'],
-        ['co','co'],
+        // ['co','co'], // solo aparecera una vez
         ['co','la'],
         ['co','ro'],
         ['co','sa'],
@@ -99,7 +104,7 @@ export class SilabasCastillano {
         ['go','ta'],
         ['la','va'],
         ['ma','lla'],
-        ['ma','ma'],
+        // ['ma','ma'], // solo aparecera una vez
         ['no','che'],
         ['pe','ra'],
         ['pe','sa'],
@@ -109,3 +114,4 @@ export class SilabasCastillano {
         ['yo','ga']
     ];
 }
+// unwritten automated test: that all silables in SilabasCastillano.words arrays are present in SilabasCastillano.silables
