@@ -60,7 +60,8 @@ export class HomePage implements AfterViewInit {
     },
     { title: 'Lecturas de Comprensión', 
       audioFileName: 'lecturas',
-      component: Lectura
+      component: Lectura,
+      requiredAudios: ['lecturas']      
     }
   ];
 

@@ -5,7 +5,7 @@ export class LecturasContent {
     lecturas: LecturaModel[] = [
         {
             title: 'Gabriel',
-            img: 'gabriel.png',
+            fileName: 'gabriel',
             text: `
 <p>Gabriel, Gabriel, no hay nadie como él.</p>
 <p>Siempre con herramientas en la mano y tomando notas en papel.</p>
@@ -52,7 +52,7 @@ export class LecturasContent {
 
         {
             title: 'Carmen',
-            img: 'carmen.png',
+            fileName: 'carmen',
             text: `
             <p>Carmen ama la limpieza de los pies a la cabeza.</p>
 <p>Al amanecer, Carmen muy bien se asea y en su ropa no hay ninguna impureza.</p>
@@ -110,7 +110,7 @@ export class LecturasContent {
         },        
         {
             title: 'Elizabeth',
-            img: 'elizabeth.png',
+            fileName: 'elizabeth',
             text: `
             <p>Elizabeth es dulce y generosa.</p>
 <p>Elizabeth es una niña cariñosa y bondadosa.</p>
@@ -155,7 +155,7 @@ export class LecturasContent {
         },        
         {
             title: 'Ana María',
-            img: 'ana.png',
+            fileName: 'ana',
             text: `
             <p>Ana María juega y pone cada cosa en su lugar.</p>
 <p>Ana María está llena de vida.</p>
@@ -192,7 +192,7 @@ export class LecturasContent {
         },        
         {
             title: 'Los cinco dedos de la mano',
-            img: '5dedos.png',
+            fileName: '5dedos',
             text: `
             <p>Me gusta jugar con mis manos: las abro y las cierro; las sacudo, y como si fuera un espejo, pongo frente a los dedos de cada mano.</p>
 <p>Cinco dedos en cada mano tengo yo.</p>
@@ -240,7 +240,7 @@ export class LecturasContent {
         },        
         {
             title: 'Mamá',
-            img: 'mama2.png',
+            fileName: 'mama2',
             text: `
             <p>En el cielo falta una estrella, la más luminosa, la más bella.</p>
 <p>Esa estrella vive en mi casa, me arropa en la noche y me asea por la mañana.</p>
@@ -290,7 +290,7 @@ export class LecturasContent {
         },        
         {
             title: 'Abuelita',
-            img: 'abuelita.png',
+            fileName: 'abuelita',
             text: `
             <p>Mi abuelita siempre me besa, a su lado cada día es una sorpresa.</p>
 <p>Un día le pregunté: -¿Por qué tu cabello es gris abuelita?</p>
@@ -336,7 +336,7 @@ export class LecturasContent {
         },        
         {
             title: 'Roco',
-            img: 'roco.png',
+            fileName: 'roco',
             text: `
             <p>Roco es de nuestros amigos el mejor</p>
 <p>Nos acompaña al parque, a la escuela y al doctor.</p>
@@ -377,7 +377,7 @@ export class LecturasContent {
         },        
         {
             title: 'Carmelita',
-            img: 'carmelita.png',
+            fileName: 'carmelita',
             text: `
             <p>Carmelita es una niña de ocho años, es muy inquieta e inteligente.</p>
 <p>Con su gran imaginación y sentido musical se ha convertido en una gran escritora.</p>
@@ -420,7 +420,7 @@ export class LecturasContent {
         },        
         {
             title: 'Marco',
-            img: 'marco.png',
+            fileName: 'marco',
             text: `
             <p>Marco es un niño amable y juguetón, tiene un amigo con el que se divierte mucho, se llama Mauricio. Él es muy bromista y Marco se ríe de sus ocurrencias.</p>
 <p>Mauricio es también su compañero en la escuela, por eso todos los días hacen juntos la tarea, luego juegan en las tardes.</p>
@@ -462,7 +462,7 @@ export class LecturasContent {
         },        
         {
             title: 'Fer y Lizzy',
-            img: 'fer-y-lizy.png',
+            fileName: 'fer-y-lizy',
             text: `
             <p>A Lizzy le gusta estar con Fer.</p>
 <p>Juntas juegan como grandes amigas.</p>
@@ -504,7 +504,7 @@ export class LecturasContent {
         },        
         {
             title: 'Boltar',
-            img: 'boltar.png',
+            fileName: 'boltar',
             text: `
             <p>Boltar es muy pequeño aún, pero sabe cuidar y respetar a los animales.</p>
 <p>El día de su cumpleaños sus papás le regalaron un perro, al que por su pelo café, lo llamó Canelo.</p>
@@ -541,7 +541,7 @@ export class LecturasContent {
         },        
         {
             title: 'Heidi',
-            img: 'heidy.png',
+            fileName: 'heidy',
             text: `
             <p>Una niña muy linda es Heidi.</p>
 <p>Con sus grandes ojos azules, la naturaleza le gusta admirar.</p>
@@ -591,7 +591,7 @@ export class LecturasContent {
         },        
         {
             title: 'Los primos',
-            img: 'primos.png',
+            fileName: 'primos',
             text: `
             <p>Rodrigo, Erik, Geraldine, Jaime y Gabo son primos de verdad.</p>
 <p>Cuando llega la hora de jugar, todoas quieren participar y cuando los juguetes deben levantar todoas comienzan a ayudar.</p>

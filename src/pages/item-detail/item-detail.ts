@@ -13,7 +13,7 @@ import { LecturaModel } from '../../models/lectura.model';
 
     <ion-content padding>
 
-      <div class="item-profile" text-center [style.background-image]="'url(assets/lecturas/' + lectura.img + ')'"></div>
+      <div class="item-profile" text-center [style.background-image]="'url(assets/lecturas/' + lectura.fileName + '.png)'"></div>
 
       <h1>{{lectura.title}}</h1>
       <div class="story-text" [innerHTML]="lectura.text"></div>

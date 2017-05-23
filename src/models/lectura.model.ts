@@ -9,6 +9,6 @@ export interface LecturaPreguntaModel {
 export interface LecturaModel {
     title:string;
     text:string;
-    img:string;
+    fileName:string;
     preguntas: LecturaPreguntaModel[];
 }

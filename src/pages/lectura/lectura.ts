@@ -21,7 +21,7 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
     <ion-content padding>
       <div id="lecturas-list">
         <div *ngFor="let lectura of lecturas.lecturas" (click)="openItem(lectura)">
-          <img src="assets/lecturas/{{lectura.img}}">
+          <img src="assets/lecturas/{{lectura.fileName}}.png">
           <h5>{{lectura.title}}</h5>
         </div>
       </div>
@@ -42,6 +42,9 @@ export class Lectura implements AfterViewInit {
   }
 
   openItem(lectura: LecturaModel) {
+    
+    this.afs.playWhenReady(this.afs.lecturas[lectura.fileName]);
+
     this.navCtrl.push(ItemDetailPage, {
       lectura: lectura
     });
