@@ -23,16 +23,19 @@ import { Maguito } from '../../building.blocks/maguito.component';
       </div>
       <div id="mlm"><img src="assets/home/mlm.png"></div>
       <div id="menu-buttons">
-        <div *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
+        <div class="home-button" *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
       </div>
       <div id="maguito-menu">
-        <maguito *ngIf="entradaEnded"></maguito>
-      </div>
-      <div style="display:none;" class="preloader">
-        <audio #entradaAudio preload="auto" src="assets/home/miLibroMagico.MP3"></audio>
+        <a class="home-button" href="http://milibromagico.com.mx/">Sitio web</a>
+        <a class="home-button" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
+        <a class="home-button" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
+        <maguito [class.maguitohidden]="!entradaEnded"></maguito>
       </div>
       <div #entradaContainer id="entrada-container">
         <img #entrada id="entrada" src="assets/home/maguito-entrada.gif">
+      </div>
+      <div style="display:none;" class="preloader">
+        <audio #entradaAudio preload="auto" src="assets/home/miLibroMagico.MP3"></audio>
       </div>
     </ion-content>
   `

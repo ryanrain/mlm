@@ -20,28 +20,49 @@ page-home {
         margin: 3vh 0;
         > div {
             flex: 0 0 40%;
-            background: rgba($yellow, .85);
-            border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 4vh 5%;
             margin-bottom: 20px;
             cursor:pointer;
-            color: white;
-            text-shadow: 1px 1px #b9474a, -1px 1px #b9474a, 1px -1px #b9474a, -1px -1px #b9474a;
+            padding: 4vh 5%;
             font-size: 3vh;
-            text-align: center;
+            border-radius: 20px;
         }
+    }
+    .home-button {
+        background: rgba($yellow, .85);
+        border-radius: 10px;
+        color: white;
+        text-shadow: 1px 1px #b9474a, -1px 1px #b9474a, 1px -1px #b9474a, -1px -1px #b9474a;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 4em;
+        font-size: 1.1rem;
+        text-decoration: none;
+        padding: 0.5em;
     }
     #maguito-menu {
         height: 20vh;
         width: 100%;
-        text-align: right;
-        img {
-            max-height: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        maguito {
+            height: 100%;
         }
+        img {
+            height: 20vh;
+            width: auto;
+        }
+    }
+    .maguitohidden {
+        max-height: 1px;
+        overflow: hidden;
     }
     #entrada-container {
         position: absolute;
