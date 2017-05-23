@@ -155,6 +155,7 @@ export class Matching implements AfterViewInit {
               this.drawLine(clickEvent.target);              
               this.deselectAll();
               if(this.numberCorrectSoFar === 5) {
+                  this.numberCorrectSoFar = 0;
                   this.celebrate();
               }
             } else {
