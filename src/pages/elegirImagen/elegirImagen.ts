@@ -22,7 +22,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
     <img #bgImg class="bg-img" src="assets/fondos/FONDO4-sky.png">
     
     <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
-      <img id="loader-circle" src="assets/menu/loader.gif">
+      <img id="loader-circle" src="assets/maguito/loader.gif">
       <maguito></maguito>
     </div>
 

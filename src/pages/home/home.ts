@@ -17,10 +17,10 @@ import { Maguito } from '../../building.blocks/maguito.component';
     <ion-content padding>
       <img #bgImg class="bg-img" src="assets/fondos/FONDO4.png">
       <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
-        <img id="loader-circle" src="assets/menu/loader.gif">
+        <img id="loader-circle" src="assets/maguito/loader.gif">
         <maguito></maguito>
       </div>
-      <div id="mlm"><img src="assets/menu/mlm.png"></div>
+      <div id="mlm"><img src="assets/home/mlm.png"></div>
       <div id="menu-buttons"><div *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div></div>
       <div id="maguito-menu">
         <maguito></maguito>
@@ -86,7 +86,6 @@ export class HomePage implements AfterViewInit {
         this.allLoadedBool = true;
       });
     }
-
 
   }
 
