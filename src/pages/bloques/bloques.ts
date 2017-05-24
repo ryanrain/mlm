@@ -14,6 +14,8 @@ import { Maguito } from '../../building.blocks/maguito.component';
   selector: 'bloques',
   template: `
   <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
+  <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
   <button class="nav-button bulb" (click)="hint()"><ion-icon name="bulb"></ion-icon></button>
   <button class="nav-button refresh" (click)="newSilables()"><ion-icon name="refresh"></ion-icon></button>
 

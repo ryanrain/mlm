@@ -15,6 +15,8 @@ import { Maguito } from '../../building.blocks/maguito.component';
   selector: 'page-home',
   // templateUrl: 'home.html'
   template: `
+    <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
+    <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
     <ion-content padding>
       <img #bgImg class="bg-img" src="assets/fondos/FONDO4.png">
       <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
@@ -75,6 +77,7 @@ export class HomePage implements AfterViewInit {
   entradaLoaded:Observable<any>;
   @ViewChild('entradaAudio') entradaAudio:ElementRef;
   entradaAudioLoaded:Observable<any>;
+  backgroundAudioLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean;
   entradaEnded:boolean = false;
@@ -99,28 +102,40 @@ export class HomePage implements AfterViewInit {
 
   ngAfterViewInit() {
 
+    // when entradaAudio finishes, hide entrada gif, show maguito below
+    this.entradaAudio.nativeElement.addEventListener('ended', () => {
+      this.entradaContainer.nativeElement.classList.remove('show-entrada');
+      this.entradaEnded = true;
+    });
+
+    this.afs.backgroundMusic.autoplay = true;
+    this.afs.backgroundMusic.loop = true;
+    this.afs.backgroundMusic.volume = 0.2;
+    this.afs.backgroundMusic.pause();
+
     if (this.afs.isWeb ){
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
       this.entradaLoaded = Observable.fromEvent(this.entradaImg.nativeElement, 'load');
       this.entradaAudioLoaded = Observable.fromEvent(this.entradaAudio.nativeElement, 'canplaythrough');
+      this.backgroundAudioLoaded = Observable.fromEvent(this.afs.backgroundMusic, 'canplaythrough');
       
       this.allLoaded = Observable.zip(this.bgLoaded, this.entradaLoaded, this.entradaAudioLoaded);
-
-      this.entradaAudio.nativeElement.addEventListener('ended', () => {
-        this.entradaContainer.nativeElement.classList.remove('show-entrada');
-        this.entradaEnded = true;
-      });
 
       this.allLoaded.subscribe(status => {
         console.log('allLoaded');
         this.allLoadedBool = true;
-        
-        this.entradaContainer.nativeElement.classList.add('show-entrada');
-        
-        this.entradaAudio.nativeElement.play();
+        this.startEntrada();
       });
+    } else {
+        this.startEntrada();
     }
 
+  }
+
+  startEntrada() {
+      this.entradaContainer.nativeElement.classList.add('show-entrada');  
+      this.entradaAudio.nativeElement.play();
+      this.afs.backgroundMusic.play();
   }
 
   openPage(page) {

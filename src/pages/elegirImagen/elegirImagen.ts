@@ -16,6 +16,8 @@ import { Maguito } from '../../building.blocks/maguito.component';
   selector: 'page-elegir-imagen',
   template: `
   <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
+  <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
 
   <ion-content padding [class.arriba]="imagenArriba">
   

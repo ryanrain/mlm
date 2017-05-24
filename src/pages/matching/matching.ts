@@ -16,7 +16,9 @@ import { Maguito } from '../../building.blocks/maguito.component';
   template: `
   <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
-
+  <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
+  <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+  
   <ion-content padding>
     
     <img #bgImg class="bg-img" src="assets/fondos/FONDO6.png">
@@ -52,7 +54,7 @@ export class Matching implements AfterViewInit {
   numberCorrectSoFar:number = 0;
   notYetRun:boolean;
 
-  audioBell = new Audio('assets/bell.mp3');
+  audioBell = new Audio('assets/muybien/bell.mp3');
 
   bgLoaded:Observable<any>;
   firstAudiosLoaded:Observable<any>;

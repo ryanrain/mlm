@@ -17,6 +17,8 @@ export class AudioFileService {
     muybien = {};
     instructions = {};
     risa = {};
+    backgroundMusic:HTMLAudioElement = new Audio('assets/HappyBee.mp3');
+    backgroundMusicPlaying:boolean = true;
 
     isWeb:boolean;
     
@@ -174,4 +176,14 @@ export class AudioFileService {
         this.risa[random.toString()].play();
     }
 
+    playBackgroundMusic(){
+        this.backgroundMusic.play();
+        // not use play when ready because want resume where left off...
+        this.backgroundMusicPlaying = true;
+    }
+
+    pauseBackgroundMusic(){
+        this.backgroundMusic.pause();
+        this.backgroundMusicPlaying = false;
+    }
 }

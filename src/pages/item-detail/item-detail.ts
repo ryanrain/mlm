@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { LecturaModel } from '../../models/lectura.model';
+import { AudioFileService } from '../../building.blocks/audio.file.service';
+
 
 @Component({
   selector: 'page-item-detail',
@@ -9,6 +11,8 @@ import { LecturaModel } from '../../models/lectura.model';
       <ion-navbar>
         <ion-title>{{ lectura.title }}</ion-title>
       </ion-navbar>
+      <button *ngIf="afs.backgroundMusicPlaying" right class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
+      <button *ngIf="!afs.backgroundMusicPlaying" right class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
     </ion-header>
 
     <ion-content padding>
@@ -57,7 +61,7 @@ export class ItemDetailPage {
   buttonText = 'LISTO';
   hitFinished = false;
 
-  constructor(public navCtrl: NavController, navParams: NavParams) {
+  constructor(public navCtrl: NavController, navParams: NavParams, public afs: AudioFileService ) {
     this.lectura = navParams.get('lectura');
     
     this.lectura.preguntas.forEach((pregunta) => {
