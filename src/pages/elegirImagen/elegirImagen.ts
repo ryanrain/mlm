@@ -19,16 +19,13 @@ import { Maguito } from '../../building.blocks/maguito.component';
   <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
   <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+  <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+    <img id="loader-circle" src="assets/maguito/loader.gif">
+    <maguito></maguito>
+  </div>
 
   <ion-content padding [class.arriba]="imagenArriba">
-  
     <img #bgImg class="bg-img" src="assets/fondos/FONDO4-sky.png">
-    
-    <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
-      <img id="loader-circle" src="assets/maguito/loader.gif">
-      <maguito></maguito>
-    </div>
-
     <div #letraAhoraRef id="letra-principal">
       <div>
         <span *ngIf="palabraAhora == ''">{{letraAhora}}</span>

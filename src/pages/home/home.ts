@@ -17,12 +17,12 @@ import { Maguito } from '../../building.blocks/maguito.component';
   template: `
     <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
     <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+    <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+      <img id="loader-circle" src="assets/maguito/loader.gif">
+      <maguito></maguito>
+    </div>
     <ion-content padding>
       <img #bgImg class="bg-img" src="assets/fondos/FONDO4.png">
-      <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
-        <img id="loader-circle" src="assets/maguito/loader.gif">
-        <maguito></maguito>
-      </div>
       <div id="mlm"><img src="assets/home/mlm.png"></div>
       <div id="menu-buttons">
         <div class="home-button" *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
@@ -160,15 +160,15 @@ export class HomePage implements AfterViewInit {
 
       page.audio.play();
 
+      this.afs.populateInstruction(page.audioFileName);
+
       if (page.hasOwnProperty('requiredAudios') && typeof(page.requiredAudios === "array")) {
         page.requiredAudios.forEach(requiredAudio => {
           // console.log('from openPage(): ', requiredAudio);
           this.afs.populateAudios(requiredAudio);
         });
       }
-
-      this.afs.populateInstruction(page.audioFileName);
     }
   }
-
+  
 }

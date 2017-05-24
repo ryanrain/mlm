@@ -18,15 +18,14 @@ import { Maguito } from '../../building.blocks/maguito.component';
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
   <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
   <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+  <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+    <img id="loader-circle" src="assets/maguito/loader.gif">
+    <maguito></maguito>
+  </div>
   
   <ion-content padding>
     
-    <img #bgImg class="bg-img" src="assets/fondos/FONDO6.png">
-    
-    <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
-      <img id="loader-circle" src="assets/maguito/loader.gif">
-      <maguito></maguito>
-    </div>
+    <img #bgImg class="bg-img" src="assets/fondos/FONDO6.png"> 
 
     <svg  xmlns="http://www.w3.org/2000/svg" #lines id="lines" viewBox="0 0 320 600"></svg>
     
@@ -57,7 +56,7 @@ export class Matching implements AfterViewInit {
   audioBell = new Audio('assets/muybien/bell.mp3');
 
   bgLoaded:Observable<any>;
-  firstAudiosLoaded:Observable<any>;
+  instructionLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
 
@@ -87,13 +86,36 @@ export class Matching implements AfterViewInit {
 
     this.makeButtonsClickable(this.clickables); // first run
 
-    this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+    // LOADING LOGIC
+    if(this.afs.isWeb) {
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-    this.bgLoaded.subscribe(status => {
-      this.allLoadedBool = true;
+      if ( this.afs.instructions['pares'].readyState > 1 ) {
+        
+        console.log('instruction ready ', this.afs.instructions['pares'].readyState);
+        this.bgLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['pares']);
+        });
+
+      } else {
+        
+        console.log('instruction not yet ready ', this.afs.instructions['pares'].readyState);
+        this.instructionLoaded = Observable.fromEvent(this.afs.instructions['pares'], 'canplaythrough');
+        this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
+
+        this.allLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['pares']);
+        });
+
+      } 
+
+    } else {
+
       this.afs.playWhenReady(this.afs.instructions['pares']);
-    });
 
+    }
   }
 
   makeButtonsClickable(buttons:QueryList<ElementRef>) {

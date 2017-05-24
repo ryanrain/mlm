@@ -18,15 +18,14 @@ import { Maguito } from '../../building.blocks/maguito.component';
   <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
   <button class="nav-button bulb" (click)="hint()"><ion-icon name="bulb"></ion-icon></button>
   <button class="nav-button refresh" (click)="newSilables()"><ion-icon name="refresh"></ion-icon></button>
+  <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+    <img id="loader-circle" src="assets/maguito/loader.gif">
+    <maguito></maguito>
+  </div>
 
   <ion-content [ngClass]="{woohoo:(woohoo) }">
 
     <img #bgImg class="bg-img" src="assets/fondos/FONDO1.png">
-        
-    <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
-      <img id="loader-circle" src="assets/maguito/loader.gif">
-      <maguito></maguito>
-    </div>
     
     <ion-row class="row lugares">
       <ion-col class="lugar">
@@ -69,7 +68,6 @@ export class Bloques implements AfterViewInit {
   notYetRun: boolean;
 
   bgLoaded:Observable<any>;
-  firstAudiosLoaded:Observable<any>;
   instructionLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
@@ -159,15 +157,35 @@ export class Bloques implements AfterViewInit {
     this.makeBlocksDraggable();
     this.createDropZones();
 
+    // LOADING LOGIC
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      this.bgLoaded.subscribe(status => {
-        this.allLoadedBool = true;
-        this.afs.playWhenReady(this.afs.instructions['bloques']);
-      });
+      if ( this.afs.instructions['bloques'].readyState > 1 ) {
+        
+        console.log('instruction ready ', this.afs.instructions['bloques'].readyState);
+        this.bgLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['bloques']);
+        });
+
+      } else {
+        
+        console.log('instruction not yet ready ', this.afs.instructions['bloques'].readyState);
+        this.instructionLoaded = Observable.fromEvent(this.afs.instructions['bloques'], 'canplaythrough');
+        this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
+
+        this.allLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['bloques']);
+        });
+
+      } 
+
     } else {
-      this.afs.playWhenReady(this.afs.instructions['bloques']);      
+
+      this.afs.playWhenReady(this.afs.instructions['bloques']);
+
     }
 
   }
