@@ -42,7 +42,7 @@ export class Maguito {
             event.target.src = 'assets/maguito/maguito-rie.gif';
         }
 
-        let random = Math.round(Math.random() * 5.2);
+        let random = Math.round(Math.random() * 5.4999);
         let animationClassName = 'maguito-' + random;
         event.target.classList.add(animationClassName);
 
