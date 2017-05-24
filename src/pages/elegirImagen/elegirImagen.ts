@@ -1,6 +1,7 @@
 import { Component, ViewChildren, ViewChild, AfterViewInit, QueryList, ElementRef } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/zip';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
@@ -56,6 +57,8 @@ export class ElegirImagen implements AfterViewInit {
   letraClicks:Observable<any>;
   
   bgLoaded:Observable<any>;
+  instructionLoaded:Observable<any>;
+  allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
 
   @ViewChildren('opcion1,opcion2,opcion3') opcionesBotones:QueryList<ElementRef>;
@@ -72,6 +75,45 @@ export class ElegirImagen implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+
+    // empieza con la letra... ___
+    this.afs.instructions['letras'].addEventListener('ended', () => {
+      this.afs.playWhenReady(this.afs.letters[this.letraAhora]); 
+      this.afs.instructions['letras'].removeEventListener('ended');
+    });
+
+    // LOADING LOGIC
+    if(this.afs.isWeb) {
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+
+      if ( this.afs.instructions['letras'].readyState > 1 ) {
+        
+        console.log('instruction ready ', this.afs.instructions['letras'].readyState);
+        this.bgLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['letras']);
+        });
+
+      } else {
+        
+        console.log('instruction not yet ready ', this.afs.instructions['letras'].readyState);
+        this.instructionLoaded = Observable.fromEvent(this.afs.instructions['letras'], 'canplaythrough');
+        this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
+
+        this.allLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['letras']);
+        });
+
+      } 
+
+    } else {
+
+      this.afs.playWhenReady(this.afs.instructions['letras']);
+
+    }
+
+
     // que un 'click' en la letra haga sonar el audio de la letra
     this.letraClicks = Observable.fromEvent(this.letraAhoraRef.nativeElement, 'click');
     this.letraClicks
@@ -141,28 +183,6 @@ export class ElegirImagen implements AfterViewInit {
         }
       })
     ;
-
-    if(this.afs.isWeb) {
-      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-
-      this.bgLoaded.subscribe(status => {
-        this.allLoadedBool = true;
-        this.afs.playWhenReady(this.afs.instructions['letras']);
-
-        this.afs.instructions['letras'].addEventListener('ended', () => {
-          this.afs.playWhenReady(this.afs.letters[this.letraAhora]); 
-          this.afs.instructions['letras'].removeEventListener('ended');
-        });
-
-      });
-    } else {
-      this.afs.playWhenReady(this.afs.instructions['letras']);
-
-      this.afs.instructions['letras'].addEventListener('ended', () => {
-        this.afs.playWhenReady(this.afs.letters[this.letraAhora]); 
-        this.afs.instructions['letras'].removeEventListener('ended');
-      });
-    }
 
   }
   
