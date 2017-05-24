@@ -35,8 +35,13 @@ $yellow: #fbed75;
     ion-app {
         font-family: 'linotte', "Roboto", "Helvetica Neue", sans-serif;
     }
+    .scroll-content {
+        overflow-y: auto;
+    }
 }
 $navButtonSize: 35px;
+$navButtonHorizPadding: 10px;
+
 .nav-button {
     z-index: 10;
     position: absolute;

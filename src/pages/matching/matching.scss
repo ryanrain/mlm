@@ -4,12 +4,16 @@ matching-game {
       left:auto;
       right:0;
     }
+    .volume {
+        left: auto;
+        right: ($navButtonSize + $navButtonHorizPadding);
+    }
     .scroll-content {
         display: flex;
         height: 100%;
         width: 100%;
         #libro-magico-container & {
-            padding-top:2.5em; // top nav buttons
+            padding-top:4em; // top nav buttons
         }
     }
     #words, #images {

@@ -26,6 +26,10 @@ page-elegir-imagen {
             flex: 0 0 50%;
         }
     }
+    .volume {
+      left:auto;
+      right:0;
+    }
     #letra-principal {
         @media (min-width:700px) {
             height: calc(100vh - (700px / 3));

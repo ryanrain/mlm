@@ -12,8 +12,13 @@ bloques {
     }
     .bulb {
       left:auto;
-      right: $navButtonSize;
+      right: ($navButtonSize + $navButtonHorizPadding);
       font-size: $navButtonSize - 5;
+    }
+    .volume {
+      left:auto;
+      right: ($navButtonSize + $navButtonHorizPadding) * 2;
+      font-size: $navButtonSize - 5;      
     }
     .hint {
       box-shadow: 0 0 10px 2px yellow, 0 0 10px 2px yellow inset;
