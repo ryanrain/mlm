@@ -7,7 +7,7 @@ import { AudioFileService } from './audio.file.service';
 @Component({
     selector: 'maguito',
       template: `
-        <img #maguito click="randomMaguitoTrick" id="maguito" src="assets/maguito/maguito-parpadea.gif">
+        <img #maguito id="maguito" src="assets/maguito/maguito-parpadea.gif">
         <div style="display:none;" class="preloader">
             <img rel="preload" src="assets/maguito/maguito-rie.gif">
             <img rel="preload" src="assets/maguito/maguito-wooo.gif">
@@ -25,7 +25,6 @@ export class Maguito {
     }
 
     ngAfterViewInit() {
-
         this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
         this.maguitoClicks
             .throttleTime(this.duration)
@@ -47,7 +46,12 @@ export class Maguito {
         let animationClassName = 'maguito-' + random;
         event.target.classList.add(animationClassName);
 
-        this.afs.playRandomRisaAudio();
+        if ( Object.keys(this.afs.risa).length < 1 ) { // afs.risa not populated yet
+            this.afs.populateAudios('risa');
+            this.afs.playWhenReady(this.afs.risa[0]);
+        } else {
+            this.afs.playRandomRisaAudio();
+        }
 
         setTimeout(() => {
             event.target.src = 'assets/maguito/maguito-parpadea.gif'            

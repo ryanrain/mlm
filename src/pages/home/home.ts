@@ -96,8 +96,6 @@ export class HomePage implements AfterViewInit {
       });
     });
 
-    // populate maguito risa audios
-    this.afs.populateAudios('risa');
   }
 
   ngAfterViewInit() {
@@ -118,7 +116,7 @@ export class HomePage implements AfterViewInit {
       this.entradaLoaded = Observable.fromEvent(this.entradaImg.nativeElement, 'load');
       this.entradaAudioLoaded = Observable.fromEvent(this.entradaAudio.nativeElement, 'canplaythrough');
       this.backgroundAudioLoaded = Observable.fromEvent(this.afs.backgroundMusic, 'canplaythrough');
-      
+
       this.allLoaded = Observable.zip(this.bgLoaded, this.entradaLoaded, this.entradaAudioLoaded);
 
       this.allLoaded.subscribe(status => {
