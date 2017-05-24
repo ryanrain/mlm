@@ -33,10 +33,10 @@ import { Maguito } from '../../building.blocks/maguito.component';
         <a class="home-button" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
         <maguito [class.maguitohidden]="!entradaEnded"></maguito>
       </div>
-      <div #entradaContainer id="entrada-container">
+      <div *ngIf="!isMobileWeb" #entradaContainer id="entrada-container">
         <img #entrada id="entrada" src="assets/home/maguito-entrada.gif">
       </div>
-      <div style="display:none;" class="preloader">
+      <div *ngIf="!isMobileWeb" style="display:none;" class="preloader">
         <audio #entradaAudio preload="auto" src="assets/home/miLibroMagico.MP3"></audio>
       </div>
     </ion-content>
@@ -70,6 +70,7 @@ export class HomePage implements AfterViewInit {
   buttonAudios = {};
   openPageRunning:boolean = false;
 
+  isMobileWeb:boolean;
   @ViewChild('bgImg') bgImg:ElementRef;
   bgLoaded:Observable<any>;
   @ViewChild('entrada') entradaImg:ElementRef;
@@ -77,7 +78,7 @@ export class HomePage implements AfterViewInit {
   entradaLoaded:Observable<any>;
   @ViewChild('entradaAudio') entradaAudio:ElementRef;
   entradaAudioLoaded:Observable<any>;
-  backgroundAudioLoaded:Observable<any>;
+  backgroundMusicLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean;
   entradaEnded:boolean = false;
@@ -96,36 +97,54 @@ export class HomePage implements AfterViewInit {
       });
     });
 
+    this.isMobileWeb = platform.is('mobileweb');
+
   }
 
   ngAfterViewInit() {
 
-    // when entradaAudio finishes, hide entrada gif, show maguito below
-    this.entradaAudio.nativeElement.addEventListener('ended', () => {
-      this.entradaContainer.nativeElement.classList.remove('show-entrada');
-      this.entradaEnded = true;
-    });
-
-    this.afs.backgroundMusic.autoplay = true;
-    this.afs.backgroundMusic.loop = true;
-    this.afs.backgroundMusic.volume = 0.2;
-    this.afs.backgroundMusic.pause();
-
     if (this.afs.isWeb ){
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+    } else {
+      this.startEntrada();
+    }
+
+    if ( this.isMobileWeb ) {
+
+      // don't show entrada
+      this.bgLoaded.subscribe(() => {
+        console.log('allLoaded mobileweb');
+        this.allLoadedBool = true;
+        this.entradaEnded = true;        
+      });
+
+    } else {
+
+      // when entradaAudio finishes, hide entrada gif, show maguito below
+      this.entradaAudio.nativeElement.addEventListener('ended', () => {
+        this.entradaContainer.nativeElement.classList.remove('show-entrada');
+        this.entradaEnded = true;
+        this.afs.playBackgroundMusic();
+      });
+
+    }
+
+    if ( this.platform.is('core') ) {
+      // background music attributes
+      this.afs.backgroundMusic.loop = true;
+      this.afs.backgroundMusic.volume = 0.2;
+      
       this.entradaLoaded = Observable.fromEvent(this.entradaImg.nativeElement, 'load');
       this.entradaAudioLoaded = Observable.fromEvent(this.entradaAudio.nativeElement, 'canplaythrough');
-      this.backgroundAudioLoaded = Observable.fromEvent(this.afs.backgroundMusic, 'canplaythrough');
+      this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusic, 'canplaythrough');
 
-      this.allLoaded = Observable.zip(this.bgLoaded, this.entradaLoaded, this.entradaAudioLoaded);
+      this.allLoaded = Observable.zip(this.bgLoaded, this.entradaLoaded, this.entradaAudioLoaded, this.backgroundMusicLoaded);
 
       this.allLoaded.subscribe(status => {
         console.log('allLoaded');
         this.allLoadedBool = true;
         this.startEntrada();
       });
-    } else {
-        this.startEntrada();
     }
 
   }
@@ -133,7 +152,6 @@ export class HomePage implements AfterViewInit {
   startEntrada() {
       this.entradaContainer.nativeElement.classList.add('show-entrada');  
       this.entradaAudio.nativeElement.play();
-      this.afs.backgroundMusic.play();
   }
 
   openPage(page) {
@@ -149,8 +167,7 @@ export class HomePage implements AfterViewInit {
         });
       }
 
-      this.afs.populateInstructions(page.audioFileName);
-
+      this.afs.populateInstruction(page.audioFileName);
     }
   }
 
