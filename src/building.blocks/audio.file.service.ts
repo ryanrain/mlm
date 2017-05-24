@@ -18,7 +18,7 @@ export class AudioFileService {
     instructions = {};
     risa = {};
     backgroundMusic:HTMLAudioElement = new Audio('assets/HappyBee.mp3');
-    backgroundMusicPlaying:boolean = true;
+    backgroundMusicPlaying:boolean = false;
 
     isWeb:boolean;
     
@@ -114,7 +114,7 @@ export class AudioFileService {
         }
     }
 
-    populateInstructions(audioFileName:string) {
+    populateInstruction(audioFileName:string) {
         if (typeof(this.instructions[audioFileName]) === 'undefined') {
             this.instructions[audioFileName] = new Audio("assets/instrucciones/" + audioFileName + '.MP3');
 
@@ -122,6 +122,7 @@ export class AudioFileService {
                 this.playPauseSingle(this.instructions[audioFileName]);
             }
         }
+        console.log('populateInstruction called. After: ', this.instructions);
     }
 
     playPause ( audioObject:{} ) {
