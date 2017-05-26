@@ -14,8 +14,10 @@ import { Maguito } from '../../building.blocks/maguito.component';
   selector: 'bloques',
   template: `
   <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
-  <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
-  <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+  <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+    <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+    <ion-icon name="musical-notes"></ion-icon>
+  </button>
   <button class="nav-button bulb" (click)="hint()"><ion-icon name="bulb"></ion-icon></button>
   <button class="nav-button refresh" (click)="newSilables()"><ion-icon name="refresh"></ion-icon></button>
   <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
@@ -405,21 +407,21 @@ export class Bloques implements AfterViewInit {
   }
   
   ditchBlock(block){
-      block.classList.add('long-transition');
-      let height = 30 + Math.random() * 4;
-      block.style.marginTop = height + 'vh';
-      let width = (Math.random() - 1) * 4;
-      block.style.marginLeft = width + 'vh';
-      setTimeout(() =>{
-        block.style.top = block.offsetTop + 'px';
-        block.style.left = block.offsetLeft + 'px';
-        block.setAttribute('data-x', block.offsetLeft);
-        block.setAttribute('data-y', block.offsetTop);
-        block.style.marginTop = '';
-        block.style.marginLeft = '';        
-        block.classList.remove('long-transition');
-        block.classList.remove('currently-placed-block');
-      },800);
+    block.classList.add('long-transition');
+    let height = 30 + Math.random() * 4;
+    block.style.marginTop = height + 'vh';
+    let width = (Math.random() - 1) * 4;
+    block.style.marginLeft = width + 'vh';
+    setTimeout(() =>{
+      block.style.top = block.offsetTop + 'px';
+      block.style.left = block.offsetLeft + 'px';
+      block.setAttribute('data-x', block.offsetLeft);
+      block.setAttribute('data-y', block.offsetTop);
+      block.style.marginTop = '';
+      block.style.marginLeft = '';        
+      block.classList.remove('long-transition');
+      block.classList.remove('currently-placed-block');
+    },800);
   }
 
   notAWord(){
@@ -440,6 +442,9 @@ export class Bloques implements AfterViewInit {
         this.ditchBlock(block.nativeElement);
       }
     });
+
+    // crush their spirits
+    this.afs.playRandomIncorrectoAudio();
 
     // re-habilitate make dropzones 
     // this.dropzoneInteractables.forEach(dropzone => {
@@ -499,6 +504,7 @@ export class Bloques implements AfterViewInit {
   }
   
   volver() {
+    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 

@@ -16,8 +16,10 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
         <ion-icon name="home"></ion-icon>
       </button>
       <ion-title>Lecturas</ion-title>
-      <button *ngIf="afs.backgroundMusicPlaying" right class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
-      <button *ngIf="!afs.backgroundMusicPlaying" right class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+      <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+        <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+        <ion-icon name="musical-notes"></ion-icon>
+      </button>
     </ion-header>
 
     <ion-content padding>
@@ -53,6 +55,7 @@ export class Lectura implements AfterViewInit {
   }
 
   volver() {
+    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 

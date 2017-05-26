@@ -9,12 +9,14 @@ import { LecturasContent } from '../pages/lectura/lecturas.content';
 @Injectable()
 export class AudioFileService {
 
+    homePageButtons = {}
     letters = {};
     silables = {};
     words = {};
     silableWords = {};
     lecturas = {}
     muybien = {};
+    incorrecto = {};
     instructions = {};
     risa = {};
     backgroundMusic:HTMLAudioElement = new Audio('assets/HappyBee.mp3');
@@ -102,6 +104,16 @@ export class AudioFileService {
                 }
             break;
 
+            case 'incorrecto':
+                if ( Object.keys(this.incorrecto).length < 1 ) { // hasn't yet been populated
+                    console.log('populate incorrecto');
+                    ['0','1'].forEach(number => {
+                        this.incorrecto[number] = new Audio("assets/incorrecto/" + number + '.MP3');
+                    });
+                    this.playPause(this.incorrecto);
+                }
+            break;
+
             case 'risa':
                 if ( Object.keys(this.risa).length < 1 ) { // hasn't yet been populated
                     console.log('populate risa');
@@ -118,7 +130,7 @@ export class AudioFileService {
         if (typeof(this.instructions[audioFileName]) === 'undefined') {
             this.instructions[audioFileName] = new Audio("assets/instrucciones/" + audioFileName + '.MP3');
 
-            if ( this.platform.is('android') && this.platform.is('mobileweb') ) { 
+            if ( this.platform.is('mobileweb') ) { 
                 this.playPauseSingle(this.instructions[audioFileName]);
             }
         }
@@ -128,8 +140,7 @@ export class AudioFileService {
     playPause ( audioObject:{} ) {
         console.log('playpause called.');
 
-        // note: haven't confirmed that ios devices don't also throw "API can only be initiated by a user gesture." error. Just can't see anything in BrowserStack console
-        if ( this.platform.is('android') && this.platform.is('mobileweb') ) { // mobile chrome
+        if ( this.platform.is('mobileweb') ) { // mobile chrome
             if (typeof(audioObject['playpaused']) === 'undefined') {
                 console.log('playPause run: ', audioObject);
                 for (var key in audioObject) {
@@ -168,8 +179,13 @@ export class AudioFileService {
     }
 
     playRandomBienAudio(){
-        let random = Math.round(Math.random() * 6.2);
+        let random = Math.round(Math.random() * 6.499);
         this.playWhenReady(this.muybien[random.toString()]);
+    }
+
+    playRandomIncorrectoAudio(){
+        let random = Math.round(Math.random());
+        this.playWhenReady(this.incorrecto[random.toString()]);
     }
 
     playRandomRisaAudio(){
@@ -177,14 +193,14 @@ export class AudioFileService {
         this.risa[random.toString()].play();
     }
 
-    playBackgroundMusic(){
-        this.backgroundMusic.play();
-        // not use play when ready because want resume where left off...
-        this.backgroundMusicPlaying = true;
-    }
-
-    pauseBackgroundMusic(){
-        this.backgroundMusic.pause();
-        this.backgroundMusicPlaying = false;
+    playPauseBackgroundMusic(){
+        if (!this.backgroundMusicPlaying) {
+            // not use playWhenReady because want resume where left off...
+            this.backgroundMusic.play();
+            this.backgroundMusicPlaying = true;
+        } else {
+            this.backgroundMusic.pause();
+            this.backgroundMusicPlaying = false;
+        }
     }
 }

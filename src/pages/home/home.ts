@@ -15,8 +15,10 @@ import { Maguito } from '../../building.blocks/maguito.component';
   selector: 'page-home',
   // templateUrl: 'home.html'
   template: `
-    <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
-    <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+    <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+      <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+      <ion-icon name="musical-notes"></ion-icon>
+    </button>
     <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
       <img id="loader-circle" src="assets/maguito/loader.gif">
       <maguito></maguito>
@@ -48,17 +50,17 @@ export class HomePage implements AfterViewInit {
     { title: 'Letras', 
       audioFileName: 'letras',
       component: ElegirImagen,
-      requiredAudios: ['letters', 'words', 'muybien']
+      requiredAudios: ['letters', 'words', 'muybien', 'incorrecto']
     },
     { title: 'Bloques', 
       audioFileName: 'bloques',
       component: Bloques,
-      requiredAudios: ['silables', 'silableWords', 'muybien']
+      requiredAudios: ['silables', 'silableWords', 'muybien', 'incorrecto']
     },
     { title: 'Pares', 
       audioFileName: 'pares',
       component: Matching,
-      requiredAudios: ['words', 'muybien']
+      requiredAudios: ['words', 'muybien', 'incorrecto']
     },
     { title: 'Lecturas de Comprensión', 
       audioFileName: 'lecturas',
@@ -86,15 +88,10 @@ export class HomePage implements AfterViewInit {
   constructor(public navCtrl: NavController, public platform: Platform, public afs: AudioFileService) {
 
     this.pages.forEach(page => {
-      // populate page title audios
-      // no need to go through service because directly in the "gesture"
-      page['audio'] = new Audio("assets/titulos/" + page.audioFileName + '.MP3');
 
-      // when page title audio finishes, nav to the page
-      page['audio'].addEventListener('ended', () => {
-        this.openPageRunning = false;
-        this.navCtrl.push(page.component);
-      });
+      // populate page title audios
+      this.afs.homePageButtons[page.audioFileName] = new Audio("assets/titulos/" + page.audioFileName + '.MP3');
+
     });
 
     this.isMobileWeb = platform.is('mobileweb');
@@ -124,7 +121,7 @@ export class HomePage implements AfterViewInit {
       this.entradaAudio.nativeElement.addEventListener('ended', () => {
         this.entradaContainer.nativeElement.classList.remove('show-entrada');
         this.entradaEnded = true;
-        this.afs.playBackgroundMusic();
+        this.afs.playPauseBackgroundMusic();
       });
 
     }
@@ -158,7 +155,7 @@ export class HomePage implements AfterViewInit {
     if (!this.openPageRunning) {
       this.openPageRunning = true;
 
-      page.audio.play();
+      this.afs.playWhenReady(this.afs.homePageButtons[page.audioFileName]);
 
       this.afs.populateInstruction(page.audioFileName);
 
@@ -168,7 +165,15 @@ export class HomePage implements AfterViewInit {
           this.afs.populateAudios(requiredAudio);
         });
       }
+
+      let durationMiliseconds = this.afs.homePageButtons[page.audioFileName].duration * 1000;
+      console.log(durationMiliseconds);
+
+      setTimeout(() => {
+        this.openPageRunning = false;
+        this.navCtrl.push(page.component);
+      }, durationMiliseconds);
     }
   }
-  
+
 }

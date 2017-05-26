@@ -16,8 +16,10 @@ import { Maguito } from '../../building.blocks/maguito.component';
   template: `
   <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
-  <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
-  <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+  <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+    <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+    <ion-icon name="musical-notes"></ion-icon>
+  </button>
   <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
     <img id="loader-circle" src="assets/maguito/loader.gif">
     <maguito></maguito>
@@ -183,7 +185,10 @@ export class Matching implements AfterViewInit {
                   this.celebrate();
               }
             } else {
-              console.log('incorrect');
+              setTimeout(()=>{
+                this.afs.playRandomIncorrectoAudio();
+              }, 800);
+
               this.deselectAll();
             }
           }, 250);
@@ -286,6 +291,7 @@ export class Matching implements AfterViewInit {
   }
 
   volver() {
+    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 

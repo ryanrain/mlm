@@ -17,8 +17,10 @@ import { Maguito } from '../../building.blocks/maguito.component';
   selector: 'page-elegir-imagen',
   template: `
   <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
-  <button *ngIf="afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.pauseBackgroundMusic()"><ion-icon name="volume-up"></ion-icon></button>
-  <button *ngIf="!afs.backgroundMusicPlaying" class="nav-button volume" (click)="afs.playBackgroundMusic()"><ion-icon name="volume-off"></ion-icon></button>
+  <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+    <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+    <ion-icon name="musical-notes"></ion-icon>
+  </button>
   <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
     <img id="loader-circle" src="assets/maguito/loader.gif">
     <maguito></maguito>
@@ -177,6 +179,13 @@ export class ElegirImagen implements AfterViewInit {
             },
             delay4
           );
+        } else {
+          setTimeout(
+            ()=>{
+              this.afs.playRandomIncorrectoAudio();
+            },
+            1000
+          );
         }
       })
     ;
@@ -238,6 +247,7 @@ export class ElegirImagen implements AfterViewInit {
 
 
   volver() {
+    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 
