@@ -35,8 +35,10 @@ $yellow: #fbed75;
     ion-app {
         font-family: 'linotte', "Roboto", "Helvetica Neue", sans-serif;
     }
-    .scroll-content {
-        overflow-y: auto;
+    page-elegir-imagen, bloques, matching-game, page-home {
+        .scroll-content {
+            overflow-y: hidden;
+        }
     }
 }
 $navButtonSize: 35px;
@@ -52,6 +54,21 @@ $navButtonHorizPadding: 10px;
     padding: 5px;
     color: white;
     text-shadow: 1px 1px darkgreen, -1px 1px darkgreen, 1px -1px darkgreen, -1px -1px darkgreen;
+    &.volume {
+        padding-right: 10px;
+    }
+}
+#music-off {
+    font-size: 200%;
+    position: absolute;
+    font-family: "Times New Roman", sans-serif;
+    transform: rotate(-20deg);
+    top: -10px;
+    left: 11px;
+    ion-header & {
+        top: -6px;
+        left: 10px;
+    }
 }
 #libro-magico-container ion-alert {
     .alert-wrapper {
