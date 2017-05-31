@@ -105,7 +105,7 @@ export class AlfabetoCastillano {
         },
         {
             letra: 'z',
-            palabra: 'zapata'
+            palabra: 'zapato'
         }  
     ];
 }

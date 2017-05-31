@@ -59,7 +59,7 @@ export class PalabrasCastillano {
         'venado',
         'xochitl',
         'yoyo',
-        'zapata',
+        // 'zapata',
         'zapato',
         'codo',
         'loro',
