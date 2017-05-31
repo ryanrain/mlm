@@ -179,14 +179,7 @@ export class ElegirImagen implements AfterViewInit {
             },
             delay4
           );
-        } else {
-          setTimeout(
-            ()=>{
-              this.afs.playRandomIncorrectoAudio();
-            },
-            1000
-          );
-        }
+        } 
       })
     ;
 
