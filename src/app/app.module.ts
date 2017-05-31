@@ -1,6 +1,7 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -18,6 +19,12 @@ import { LecturasContent } from '../pages/lectura/lecturas.content';
 import { AudioFileService } from '../building.blocks/audio.file.service';
 import { Maguito } from '../building.blocks/maguito.component';
 
+const cloudSettings: CloudSettings = {
+  'core': {
+    'app_id': '90d21b23'
+  }
+};
+
 @NgModule({
   declarations: [
     MyApp,
@@ -30,7 +37,8 @@ import { Maguito } from '../building.blocks/maguito.component';
     Maguito
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    CloudModule.forRoot(cloudSettings)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
