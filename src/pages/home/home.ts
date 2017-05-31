@@ -30,9 +30,9 @@ import { Maguito } from '../../building.blocks/maguito.component';
         <div class="home-button" *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
       </div>
       <div id="maguito-menu">
-        <a class="home-button" href="http://milibromagico.com.mx/">Sitio web</a>
-        <a class="home-button" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
-        <a class="home-button" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
+        <a class="home-button" target="_blank" href="http://milibromagico.com.mx/">Sitio web</a>
+        <a class="home-button" target="_blank" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
+        <a class="home-button" target="_blank" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
         <maguito [class.maguitohidden]="!entradaEnded"></maguito>
       </div>
       <div *ngIf="!isMobileWeb" #entradaContainer id="entrada-container">
