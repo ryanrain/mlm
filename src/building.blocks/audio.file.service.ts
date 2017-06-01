@@ -19,6 +19,8 @@ export class AudioFileService {
     incorrecto = {};
     instructions = {};
     risa = {};
+    beep:HTMLAudioElement = new Audio("assets/muybien/beep.mp3");
+    bell:HTMLAudioElement = new Audio("assets/muybien/bell.mp3");
     backgroundMusic:HTMLAudioElement = new Audio('assets/HappyBee.mp3');
     backgroundMusicPlaying:boolean = false;
 
@@ -123,6 +125,20 @@ export class AudioFileService {
                     this.playPause(this.risa);
                 }
             break;
+
+            case 'beep':
+                console.log('populate beep');
+                if ( this.beep.readyState > 0 ) { // hasn't yet been populated
+                    this.playPauseSingle(this.beep);
+                }
+            break;
+
+            case 'bell':
+                console.log('populate bell');
+                if ( this.bell.readyState > 0 ) { // hasn't yet been populated
+                    this.playPauseSingle(this.bell);
+                }
+            break;
         }
     }
 
@@ -140,7 +156,7 @@ export class AudioFileService {
     playPause ( audioObject:{} ) {
         console.log('playpause called.');
 
-        if ( this.platform.is('mobileweb') ) { // mobile chrome
+        if ( this.platform.is('mobileweb') ) { // browser on phone  
             if (typeof(audioObject['playpaused']) === 'undefined') {
                 console.log('playPause run: ', audioObject);
                 for (var key in audioObject) {
@@ -154,14 +170,20 @@ export class AudioFileService {
     }
 
     playPauseSingle(audio:HTMLAudioElement) {
-        audio.volume = 0;
-        audio.play();
-        audio.addEventListener('canplay', () => {
-            // console.log('playpaused: ', audio);
-            audio.pause();
-            audio.volume = 1;
-            audio.removeEventListener('canplay');
-        });       
+        if (audio.played.length === 0) {
+            audio.volume = 0;
+            audio.play();
+            // console.log('readyState: ', audio, audio.readyState);
+
+            let pauseAndVolumeUp = () => {
+                // console.log('playpaused: ', audio);
+                audio.pause();
+                audio.volume = 1;
+                audio.removeEventListener('canplay', pauseAndVolumeUp); 
+            }
+
+            audio.addEventListener('canplay', pauseAndVolumeUp);
+        }
     }
 
     playWhenReady(audio:HTMLAudioElement) {
