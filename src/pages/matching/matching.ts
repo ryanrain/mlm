@@ -254,7 +254,9 @@ export class Matching implements AfterViewInit {
   }
 
   celebrate() {
-    this.afs.playRandomBienAudio();
+    setTimeout(()=> {
+      this.afs.playRandomBienAudio();
+    },1000);
     setTimeout(()=> {
       this.reset();
     },3000);
