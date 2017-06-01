@@ -179,7 +179,14 @@ export class ElegirImagen implements AfterViewInit {
             },
             delay4
           );
-        } 
+        } else {
+          setTimeout(
+            ()=>{
+              this.afs.playWhenReady(this.afs.beep);
+            },
+            900
+          );
+        }
       })
     ;
 
@@ -187,6 +194,9 @@ export class ElegirImagen implements AfterViewInit {
   
   celebrar(boton){
     boton.classList.add('woohoo');
+    setTimeout(() => {
+      this.afs.playWhenReady(this.afs.bell);
+    }, 350);
     setTimeout(() => {
       this.afs.playRandomBienAudio();
     }, 500);
