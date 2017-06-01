@@ -16,6 +16,9 @@
 // automatically applied to the <body> element in the app.
 
 $yellow: #fbed75;
+$blue: #b4e5df;
+$red: #b9474a;
+
 @import 'animations.scss';
 
 @font-face {
@@ -88,7 +91,8 @@ $navButtonHorizPadding: 10px;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba($yellow, .9);
+    background: $blue;
+    // background: rgba($yellow, .9);
     z-index: 100;
     display: flex;
     justify-content: space-around;
