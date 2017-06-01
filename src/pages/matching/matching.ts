@@ -1,7 +1,6 @@
 import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
-// import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
 
@@ -54,8 +53,6 @@ export class Matching implements AfterViewInit {
   imgOrText:string = '';
   numberCorrectSoFar:number = 0;
   notYetRun:boolean;
-
-  audioBell = new Audio('assets/muybien/bell.mp3');
 
   bgLoaded:Observable<any>;
   instructionLoaded:Observable<any>;
@@ -177,7 +174,7 @@ export class Matching implements AfterViewInit {
             if ( this.wordAttempted === currentAttempt ) {
               console.log('if the next one is correct');
               this.numberCorrectSoFar++;
-              this.audioBell.play();
+              this.afs.playWhenReady(this.afs.bell);
               this.drawLine(clickEvent.target);              
               this.deselectAll();
               if(this.numberCorrectSoFar === 5) {
