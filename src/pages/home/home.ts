@@ -15,31 +15,30 @@ import { Maguito } from '../../building.blocks/maguito.component';
   selector: 'page-home',
   // templateUrl: 'home.html'
   template: `
-    <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-      <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
-      <ion-icon name="musical-notes"></ion-icon>
-    </button>
     <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
       <img id="loader-circle" src="assets/maguito/loader.gif">
       <maguito></maguito>
     </div>
     <ion-content padding>
-      <img #bgImg class="bg-img" src="assets/fondos/FONDO4.png">
-      <div id="mlm"><img src="assets/home/mlm.png"></div>
-      <div id="menu-buttons">
-        <div class="home-button" *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
+      <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+        <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+        <ion-icon name="musical-notes"></ion-icon>
+      </button>
+      <div id="home-container" [class.show-content]="isMobileWeb || entradaEnded">
+        <img #bgImg class="bg-img" src="assets/fondos/FONDO4.png">
+        <div id="mlm"><img src="assets/home/mlm.png"></div>
+        <div id="menu-buttons">
+          <div class="home-button" *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
+        </div>
+        <div id="maguito-menu">
+          <a class="home-button" target="_blank" href="http://milibromagico.com.mx/">Sitio web</a>
+          <a class="home-button" target="_blank" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
+          <a class="home-button" target="_blank" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
+          <maguito [class.maguitohidden]="!entradaEnded"></maguito>
+        </div>
       </div>
-      <div id="maguito-menu">
-        <a class="home-button" target="_blank" href="http://milibromagico.com.mx/">Sitio web</a>
-        <a class="home-button" target="_blank" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
-        <a class="home-button" target="_blank" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
-        <maguito [class.maguitohidden]="!entradaEnded"></maguito>
-      </div>
-      <div *ngIf="!isMobileWeb" #entradaContainer id="entrada-container">
-        <img #entrada id="entrada" src="assets/home/maguito-entrada.gif">
-      </div>
-      <div *ngIf="!isMobileWeb" style="display:none;" class="preloader">
-        <audio #entradaAudio preload="auto" src="assets/home/miLibroMagico.MP3"></audio>
+      <div #entradaContainer id="entrada-container" [class.entrada-fade-out]="entradaEnded">
+        <video *ngIf="!isMobileWeb" #entradaVideo id="entrada" preload="auto" src="assets/home/entrada.mp4"></video>
       </div>
     </ion-content>
   `
@@ -75,15 +74,14 @@ export class HomePage implements AfterViewInit {
   isMobileWeb:boolean;
   @ViewChild('bgImg') bgImg:ElementRef;
   bgLoaded:Observable<any>;
-  @ViewChild('entrada') entradaImg:ElementRef;
   @ViewChild('entradaContainer') entradaContainer:ElementRef;
   entradaLoaded:Observable<any>;
-  @ViewChild('entradaAudio') entradaAudio:ElementRef;
-  entradaAudioLoaded:Observable<any>;
+  @ViewChild('entradaVideo') entradaVideo:ElementRef;
+  entradaVideoLoaded:Observable<any>;
   backgroundMusicLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean;
-  entradaEnded:boolean = false;
+  entradaEnded:boolean;
 
   constructor(public navCtrl: NavController, public platform: Platform, public afs: AudioFileService) {
 
@@ -95,6 +93,7 @@ export class HomePage implements AfterViewInit {
     });
 
     this.isMobileWeb = platform.is('mobileweb');
+    this.entradaEnded = false;
 
   }
 
@@ -111,16 +110,18 @@ export class HomePage implements AfterViewInit {
       // don't show entrada
       this.bgLoaded.subscribe(() => {
         console.log('allLoaded mobileweb');
+        // remove loading
         this.allLoadedBool = true;
-        this.entradaEnded = true;        
+        // hide entrada video, show maguito below
+        this.endEntrada();
       });
 
     } else {
 
-      // when entradaAudio finishes, hide entrada gif, show maguito below
-      this.entradaAudio.nativeElement.addEventListener('ended', () => {
-        this.entradaContainer.nativeElement.classList.remove('show-entrada');
-        this.entradaEnded = true;
+      // when entradaVideo finishes, hide entrada video, show maguito below
+      this.entradaVideo.nativeElement.addEventListener('ended', () => {
+        this.endEntrada();
+        // music
         this.afs.playPauseBackgroundMusic();
       });
 
@@ -131,11 +132,10 @@ export class HomePage implements AfterViewInit {
       this.afs.backgroundMusic.loop = true;
       this.afs.backgroundMusic.volume = 0.2;
       
-      this.entradaLoaded = Observable.fromEvent(this.entradaImg.nativeElement, 'load');
-      this.entradaAudioLoaded = Observable.fromEvent(this.entradaAudio.nativeElement, 'canplaythrough');
+      this.entradaVideoLoaded = Observable.fromEvent(this.entradaVideo.nativeElement, 'canplaythrough');
       this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusic, 'canplaythrough');
 
-      this.allLoaded = Observable.zip(this.bgLoaded, this.entradaLoaded, this.entradaAudioLoaded, this.backgroundMusicLoaded);
+      this.allLoaded = Observable.zip(this.bgLoaded, this.entradaVideoLoaded, this.backgroundMusicLoaded);
 
       this.allLoaded.subscribe(status => {
         console.log('allLoaded');
@@ -147,8 +147,14 @@ export class HomePage implements AfterViewInit {
   }
 
   startEntrada() {
-      this.entradaContainer.nativeElement.classList.add('show-entrada');  
-      this.entradaAudio.nativeElement.play();
+      this.entradaVideo.nativeElement.play();
+  }
+
+  endEntrada() {
+      this.entradaEnded = true;
+      setTimeout(()=> {
+        this.entradaContainer.nativeElement.style.display = 'none';
+      }, 1000)
   }
 
   openPage(page) {

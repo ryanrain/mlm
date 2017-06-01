@@ -1,13 +1,29 @@
 page-home {
+    background-color: #b4e5df;
     .volume {
       left:auto;
       right:0;
     }
-    .scroll-content {
+    #home-container {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        // avoid initial flash of content
+        > * {
+            opacity: 0;
+        }
+        &.show-content {
+            > * {
+                opacity: 1;
+            }
+        }
     }
     #mlm {
         height: 25vh;
@@ -68,19 +84,24 @@ page-home {
         overflow: hidden;
     }
     #entrada-container {
-        position: absolute;
-        top: 25vh;
-        left: 0;
-        width: 100%;
+        position:absolute;
+        left:0;
+        top:0;
+        text-align:center;
         text-align: center;
-        display: none;
-        &.show-entrada {
-            display: block;
+        transition: 1s all;
+        z-index: 15;
+        &.entrada-fade-out {
+            opacity: 0;
         }
     }
+
     #entrada {
-        height: 50vh;
-        width: 50vh;
-        display: inline-block;
+        height: 100vh;
+        @media (max-aspect-ratio: 3/4) {
+            position: relative;
+            left: calc(-420px + 50vw);
+        }
+        // width: calc(100vh / 1.333);
     }
 }
