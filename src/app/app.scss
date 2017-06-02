@@ -74,7 +74,7 @@ $navButtonHorizPadding: 10px;
     }
 }
 #libro-magico-container ion-alert {
-    .alert-wrapper {
+    &.bloques-alert .alert-wrapper {
       max-width: none;
     }
     .alert-message {

@@ -105,3 +105,48 @@ page-home {
         // width: calc(100vh / 1.333);
     }
 }
+#creditos {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: white;
+    text-shadow: 0.6px 0.6px darkgreen, -0.6px 0.6px darkgreen, 0.6px -0.6px darkgreen, -0.6px -0.6px darkgreen;
+    font-size: 2vh;
+}
+.creditos-alert {
+    .alert-title{ 
+        #libro-magico-container & {
+            font-size: 2.4rem;
+        }
+    }
+    .alert-message {
+        overflow-y: auto;
+        text-align: left;
+        .ios & {
+            font-family: -apple-system, "Helvetica Neue", "Roboto", sans-serif;
+        }
+        .md & {
+            font-family: "Roboto", "Helvetica Neue", sans-serif;
+        }
+    }
+    .button-effect {
+        display: none;
+    }
+}
+.alert-button.cerrar-creditos {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+    min-width: auto;
+    color: black;
+    margin: 0;
+    ::after {
+        font-family: "Ionicons";
+        // content: "\f406"; // without circle
+        content: " \f14d";
+        display: inline-block;
+        padding: 0.3em;
+        font-size: 2rem;
+    }
+}

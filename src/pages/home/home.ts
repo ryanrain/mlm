@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { NavController, Platform } from 'ionic-angular';
+import { NavController, AlertController, Platform } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/zip';
 
@@ -40,6 +40,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
       <div #entradaContainer id="entrada-container" [class.entrada-fade-out]="entradaEnded">
         <video *ngIf="!isMobileWeb" #entradaVideo id="entrada" preload="auto" src="assets/home/entrada.mp4"></video>
       </div>
+      <span id="creditos" (click)="openCredits()">Creditos</span>
     </ion-content>
   `
 })
@@ -49,7 +50,7 @@ export class HomePage implements AfterViewInit {
     { title: 'Letras', 
       audioFileName: 'letras',
       component: ElegirImagen,
-      requiredAudios: ['letters', 'words', 'muybien', 'incorrecto']
+      requiredAudios: ['letters', 'words', 'muybien', 'beep', 'bell']
     },
     { title: 'Bloques', 
       audioFileName: 'bloques',
@@ -59,7 +60,7 @@ export class HomePage implements AfterViewInit {
     { title: 'Pares', 
       audioFileName: 'pares',
       component: Matching,
-      requiredAudios: ['words', 'muybien', 'incorrecto']
+      requiredAudios: ['words', 'muybien', 'incorrecto', 'bell']
     },
     { title: 'Lecturas de Comprensión', 
       audioFileName: 'lecturas',
@@ -83,7 +84,12 @@ export class HomePage implements AfterViewInit {
   allLoadedBool:boolean;
   entradaEnded:boolean;
 
-  constructor(public navCtrl: NavController, public platform: Platform, public afs: AudioFileService) {
+  constructor(
+    public navCtrl: NavController, 
+    public platform: Platform, 
+    public afs: AudioFileService,
+    private alertCtrl: AlertController
+    ) {
 
     this.pages.forEach(page => {
 
@@ -180,6 +186,22 @@ export class HomePage implements AfterViewInit {
         this.navCtrl.push(page.component);
       }, durationMiliseconds);
     }
+  }
+
+  openCredits() {
+    let alert = this.alertCtrl.create({
+      title: 'Creditos',
+      message: 'Applicación por Bikit Puy Comunicación y Diseño. Contactenos al <a href="mailto:bikitpuy@gmail.com">bikitpuy@gmail.com</a>',
+      cssClass: 'creditos-alert',
+      buttons: [
+        {
+          text: ' ',
+          role: 'cancel',
+          cssClass: 'cerrar-creditos'
+        }
+      ]
+    });
+    alert.present();
   }
 
 }

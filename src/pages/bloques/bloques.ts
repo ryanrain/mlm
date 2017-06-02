@@ -121,6 +121,7 @@ export class Bloques implements AfterViewInit {
         let alert = this.alertCtrl.create({
           title: successWord,
           message: '<img class="success-word" src="assets/imagenes/' + successWord + '.png">',
+          cssClass: 'bloques-alert',
           buttons: [
             {
               text: 'Siguente',
