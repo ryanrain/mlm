@@ -48,7 +48,7 @@ export class Maguito {
 
         if ( Object.keys(this.afs.risa).length < 1 ) { // afs.risa not populated yet
             this.afs.populateAudios('risa');
-            this.afs.playWhenReady(this.afs.risa[0]);
+            // this.afs.playWhenReady(this.afs.risa[0]); // presents error in firefox, let's just have silence the first time
         } else {
             this.afs.playRandomRisaAudio();
         }
