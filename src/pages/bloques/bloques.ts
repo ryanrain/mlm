@@ -281,7 +281,7 @@ export class Bloques implements AfterViewInit {
     interact.maxInteractions(Infinity);
 
     let blockZIndex = 6;
-    let silableAudios = this.afs.silables;
+    let silableAudios = this.afs.silables;   
     
     interact('.cubo', { // use selector context to bubble events and therefore enable re-use upon new blocks 
                       // http://interactjs.io/docs/#selector-contexts
@@ -309,7 +309,7 @@ export class Bloques implements AfterViewInit {
           event.target.firstElementChild.style.zIndex = blockZIndex; // iphones
           blockZIndex++;
 
-          let silable = event.target.innerText;
+          let silable = event.target.firstElementChild.innerHTML;
           silableAudios[silable].play();
       })
       .on('dragmove', function (event) {
