@@ -95,6 +95,9 @@ page-home {
             opacity: 0;
         }
     }
+    .show-content ~ #entrada-container {
+        display: none; // redundance
+    }
 
     #entrada {
         height: 100vh;
