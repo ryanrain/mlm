@@ -178,13 +178,22 @@ export class HomePage implements AfterViewInit {
         });
       }
 
-      let durationMiliseconds = this.afs.homePageButtons[page.audioFileName].duration * 1000;
-      console.log(durationMiliseconds);
+      if (typeof(this.afs.homePageButtons[page.audioFileName]) === 'object' 
+        && this.afs.homePageButtons[page.audioFileName].duration > 0 ) {
 
-      setTimeout(() => {
+        let durationMiliseconds = this.afs.homePageButtons[page.audioFileName].duration * 1000;
+        console.log(durationMiliseconds); 
+        setTimeout(() => {
+          this.openPageRunning = false;
+          this.navCtrl.push(page.component);
+        }, durationMiliseconds);
+
+      } else {
+        
         this.openPageRunning = false;
         this.navCtrl.push(page.component);
-      }, durationMiliseconds);
+
+      }
     }
   }
 
