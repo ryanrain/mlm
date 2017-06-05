@@ -31,8 +31,8 @@ bloques {
     }
     .block-area { 
       flex: 0 0 68%;
-      .ios & {
-        flex: 0 0 63%;
+      .platform-mobileweb & {
+        flex: 0 0 60%;
       }
     }
     .bloque {
