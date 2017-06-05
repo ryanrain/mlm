@@ -89,21 +89,21 @@ export class Matching implements AfterViewInit {
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      if ( this.afs.instructions['pares'].readyState > 1 ) {
-        
-        console.log('instruction ready ', this.afs.instructions['pares'].readyState);
-        this.bgLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['pares']);
-        });
-
-      } else {
+      if ( this.afs.instructions['pares'].networkState === 1 && this.afs.instructions['pares'].buffered.length === 0  ) {
         
         console.log('instruction not yet ready ', this.afs.instructions['pares'].readyState);
         this.instructionLoaded = Observable.fromEvent(this.afs.instructions['pares'], 'canplaythrough');
         this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
 
         this.allLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['pares']);
+        });
+
+      } else {
+        
+        console.log('instruction ready ', this.afs.instructions['pares'].readyState);
+        this.bgLoaded.subscribe(status => {
           this.allLoadedBool = true;
           this.afs.playWhenReady(this.afs.instructions['pares']);
         });

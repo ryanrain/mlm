@@ -164,21 +164,23 @@ export class Bloques implements AfterViewInit {
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      if ( this.afs.instructions['bloques'].readyState > 1 ) {
-        
-        console.log('instruction ready ', this.afs.instructions['bloques'].readyState);
-        this.bgLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['bloques']);
-        });
+      console.log(this.afs.instructions['bloques'].networkState, this.afs.instructions['bloques'].readyState, this.afs.instructions['bloques'].buffered);
 
-      } else {
+      if ( this.afs.instructions['bloques'].networkState === 1 && this.afs.instructions['bloques'].buffered.length === 0  ) {
         
         console.log('instruction not yet ready ', this.afs.instructions['bloques'].readyState);
         this.instructionLoaded = Observable.fromEvent(this.afs.instructions['bloques'], 'canplaythrough');
         this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
 
         this.allLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['bloques']);
+        });
+
+      } else {
+        
+        console.log('instruction ready ', this.afs.instructions['bloques'].readyState);
+        this.bgLoaded.subscribe(status => {
           this.allLoadedBool = true;
           this.afs.playWhenReady(this.afs.instructions['bloques']);
         });
@@ -309,7 +311,6 @@ export class Bloques implements AfterViewInit {
           event.target.style.zIndex = blockZIndex;
           event.target.firstElementChild.style.zIndex = blockZIndex; // iphones
           blockZIndex++;
-          console.log(event);
           let silable = event.target.firstElementChild.innerHTML;
           silableAudios[silable].play();
       })

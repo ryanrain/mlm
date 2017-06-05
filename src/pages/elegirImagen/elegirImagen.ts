@@ -85,21 +85,21 @@ export class ElegirImagen implements AfterViewInit {
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      if ( this.afs.instructions['letras'].readyState > 1 ) {
-        
-        console.log('instruction ready ', this.afs.instructions['letras'].readyState);
-        this.bgLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['letras']);
-        });
-
-      } else {
+      if ( this.afs.instructions['letras'].networkState === 1 && this.afs.instructions['letras'].buffered.length === 0 ) {
         
         console.log('instruction not yet ready ', this.afs.instructions['letras'].readyState);
         this.instructionLoaded = Observable.fromEvent(this.afs.instructions['letras'], 'canplaythrough');
         this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
 
         this.allLoaded.subscribe(status => {
+          this.allLoadedBool = true;
+          this.afs.playWhenReady(this.afs.instructions['letras']);
+        });
+
+      } else {
+        
+        console.log('instruction ready ', this.afs.instructions['letras'].readyState);
+        this.bgLoaded.subscribe(status => {
           this.allLoadedBool = true;
           this.afs.playWhenReady(this.afs.instructions['letras']);
         });
