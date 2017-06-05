@@ -236,7 +236,7 @@ export class Bloques implements AfterViewInit {
   hint(){
     let blocks:QueryList<ElementRef> = this.updatedCurrentBlocks || this.blocksQueryList;
     blocks.forEach(block => {
-      if(this.wordHint.indexOf(block.nativeElement.innerText) >= 0) {
+      if(this.wordHint.indexOf(block.nativeElement.firstElementChild.innerHTML) >= 0) {
         block.nativeElement.classList.add('hint');
         setTimeout(() => {
           block.nativeElement.classList.remove('hint');          
@@ -309,7 +309,7 @@ export class Bloques implements AfterViewInit {
           event.target.style.zIndex = blockZIndex;
           event.target.firstElementChild.style.zIndex = blockZIndex; // iphones
           blockZIndex++;
-
+          console.log(event);
           let silable = event.target.firstElementChild.innerHTML;
           silableAudios[silable].play();
       })
@@ -352,7 +352,7 @@ export class Bloques implements AfterViewInit {
           },
           ondragleave: event => {
             
-            this.removeFromWord(event.relatedTarget.innerText);
+            this.removeFromWord(event.relatedTarget.firstElementChild.innerHTML);
 
             // set for onDrop later
             this.activeDropZone = 2;
@@ -379,7 +379,7 @@ export class Bloques implements AfterViewInit {
 
   onDrop(event) {
 
-    let silable = event.relatedTarget.innerText;
+    let silable = event.relatedTarget.firstElementChild.innerHTML;
     // console.log('activeDropZone at start: ' + this.activeDropZone);
 
     // if no block already in space, add it
