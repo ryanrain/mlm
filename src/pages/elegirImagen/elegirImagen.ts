@@ -85,9 +85,11 @@ export class ElegirImagen implements AfterViewInit {
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      if ( this.afs.instructions['letras'].networkState === 1 && this.afs.instructions['letras'].buffered.length === 0 ) {
+      console.log('networkState: ', this.afs.instructions['letras'].networkState, 'readyState: ', this.afs.instructions['letras'].readyState, this.afs.instructions['letras'].buffered, 'currentSrc: ', this.afs.instructions['letras'].currentSrc);
+
+      if ( this.afs.instructions['letras'].networkState === 1 && this.afs.instructions['letras'].buffered.length === 0 && this.afs.instructions['pares'].currentSrc !== '') {
         
-        console.log('instruction not yet ready ', this.afs.instructions['letras'].readyState);
+        console.log('wait to load instruction and bg ', this.afs.instructions['letras'].readyState);
         this.instructionLoaded = Observable.fromEvent(this.afs.instructions['letras'], 'canplaythrough');
         this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
 
@@ -98,7 +100,7 @@ export class ElegirImagen implements AfterViewInit {
 
       } else {
         
-        console.log('instruction ready ', this.afs.instructions['letras'].readyState);
+        console.log('wait for bg only ', this.afs.instructions['letras'].readyState);
         this.bgLoaded.subscribe(status => {
           this.allLoadedBool = true;
           this.afs.playWhenReady(this.afs.instructions['letras']);
@@ -139,7 +141,10 @@ export class ElegirImagen implements AfterViewInit {
     this.intentos
       .throttleTime(1000)    
       .subscribe(clickEvent => {
-        // console.log(clickEvent);
+
+        console.log(clickEvent);
+        clickEvent.target.style.boxShadow = '0 0 2vh 0.3vh brown inset';
+
 
         let letra = clickEvent.target.id;
         let palabra = clickEvent.target.classList[0];
@@ -154,6 +159,7 @@ export class ElegirImagen implements AfterViewInit {
 
           setTimeout(
             ()=>{
+              clickEvent.target.style.boxShadow = '';              
               this.celebrar(clickEvent.target);
               this.subirImagen();
             },
@@ -182,6 +188,7 @@ export class ElegirImagen implements AfterViewInit {
         } else {
           setTimeout(
             ()=>{
+              clickEvent.target.style.boxShadow = '';               
               this.afs.playWhenReady(this.afs.beep);
             },
             900

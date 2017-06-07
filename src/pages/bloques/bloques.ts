@@ -164,11 +164,12 @@ export class Bloques implements AfterViewInit {
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      console.log(this.afs.instructions['bloques'].networkState, this.afs.instructions['bloques'].readyState, this.afs.instructions['bloques'].buffered);
+      console.log('networkState: ', this.afs.instructions['bloques'].networkState, 'readyState: ', this.afs.instructions['bloques'].readyState, this.afs.instructions['bloques'].buffered, 'currentSrc: ', this.afs.instructions['bloques'].currentSrc);
 
-      if ( this.afs.instructions['bloques'].networkState === 1 && this.afs.instructions['bloques'].buffered.length === 0  ) {
+
+      if ( this.afs.instructions['bloques'].networkState === 1 && this.afs.instructions['bloques'].buffered.length === 0 && this.afs.instructions['bloques'].currentSrc !== '' ) { // note: buffered doesn't exist in safari
         
-        console.log('instruction not yet ready ', this.afs.instructions['bloques'].readyState);
+        console.log('wait to load instruction and bg ', this.afs.instructions['bloques'].readyState);
         this.instructionLoaded = Observable.fromEvent(this.afs.instructions['bloques'], 'canplaythrough');
         this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
 
@@ -179,7 +180,7 @@ export class Bloques implements AfterViewInit {
 
       } else {
         
-        console.log('instruction ready ', this.afs.instructions['bloques'].readyState);
+        console.log('wait for bg only ', this.afs.instructions['bloques'].readyState);
         this.bgLoaded.subscribe(status => {
           this.allLoadedBool = true;
           this.afs.playWhenReady(this.afs.instructions['bloques']);

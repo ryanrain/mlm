@@ -89,9 +89,11 @@ export class Matching implements AfterViewInit {
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      if ( this.afs.instructions['pares'].networkState === 1 && this.afs.instructions['pares'].buffered.length === 0  ) {
+      console.log('networkState: ', this.afs.instructions['pares'].networkState, 'readyState: ', this.afs.instructions['pares'].readyState, this.afs.instructions['pares'].buffered, 'currentSrc: ', this.afs.instructions['pares'].currentSrc) ;
+
+      if ( this.afs.instructions['pares'].networkState === 1 && this.afs.instructions['pares'].buffered.length === 0 && this.afs.instructions['pares'].currentSrc !== '' ) {
         
-        console.log('instruction not yet ready ', this.afs.instructions['pares'].readyState);
+        console.log('wait to load instruction and bg ', this.afs.instructions['pares'].readyState);
         this.instructionLoaded = Observable.fromEvent(this.afs.instructions['pares'], 'canplaythrough');
         this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
 
@@ -102,7 +104,7 @@ export class Matching implements AfterViewInit {
 
       } else {
         
-        console.log('instruction ready ', this.afs.instructions['pares'].readyState);
+        console.log('wait for bg only ', this.afs.instructions['pares'].readyState);
         this.bgLoaded.subscribe(status => {
           this.allLoadedBool = true;
           this.afs.playWhenReady(this.afs.instructions['pares']);
