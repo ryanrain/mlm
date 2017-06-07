@@ -167,8 +167,10 @@ export class HomePage implements AfterViewInit {
     if (!this.openPageRunning) {
       this.openPageRunning = true;
 
-      this.afs.playWhenReady(this.afs.homePageButtons[page.audioFileName]);
-
+      if ( this.afs.homePageButtons[page.audioFileName].readyState > 0 ){
+        this.afs.homePageButtons[page.audioFileName].play(); // playWhenReady played upon playPause triggered by volver();
+      }
+      
       this.afs.populateInstruction(page.audioFileName);
 
       if (page.hasOwnProperty('requiredAudios') && typeof(page.requiredAudios === "array")) {
