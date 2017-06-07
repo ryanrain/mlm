@@ -21,6 +21,8 @@ export class AudioFileService {
     risa = {};
     beep:HTMLAudioElement = new Audio("assets/muybien/beep.mp3");
     bell:HTMLAudioElement = new Audio("assets/muybien/bell.mp3");
+    beeped:boolean = false;
+    belled:boolean = false;
     backgroundMusic:HTMLAudioElement = new Audio('assets/HappyBee.mp3');
     backgroundMusicPlaying:boolean = false;
 
@@ -127,16 +129,18 @@ export class AudioFileService {
             break;
 
             case 'beep':
-                console.log('populate beep');
-                if ( this.beep.readyState > 0 ) { // hasn't yet been populated
+                if ( this.platform.is('mobileweb') && !this.beeped) { // hasn't yet been populated
+                    console.log('populate beep');
                     this.playPauseSingle(this.beep);
+                    this.beeped = true;
                 }
             break;
 
             case 'bell':
-                console.log('populate bell');
-                if ( this.bell.readyState > 0 ) { // hasn't yet been populated
+                if ( this.platform.is('mobileweb') && !this.belled ) { // hasn't yet been populated
+                    console.log('populate bell');
                     this.playPauseSingle(this.bell);
+                    this.belled = true;
                 }
             break;
         }
@@ -145,7 +149,6 @@ export class AudioFileService {
     populateInstruction(audioFileName:string) {
         if (typeof(this.instructions[audioFileName]) === 'undefined') {
             this.instructions[audioFileName] = new Audio("assets/instrucciones/" + audioFileName + '.MP3');
-
             if ( this.platform.is('mobileweb') ) { 
                 this.playPauseSingle(this.instructions[audioFileName]);
             }
