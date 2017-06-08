@@ -19,6 +19,8 @@ import { LecturasContent } from '../pages/lectura/lecturas.content';
 import { AudioFileService } from '../building.blocks/audio.file.service';
 import { Maguito } from '../building.blocks/maguito.component';
 
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+
 const cloudSettings: CloudSettings = {
   'core': {
     'app_id': '90d21b23'
@@ -56,7 +58,8 @@ const cloudSettings: CloudSettings = {
     SilabasCastillano,
     PalabrasCastillano,
     LecturasContent,
-    AudioFileService
+    AudioFileService,
+    InAppBrowser
   ]
 })
 export class AppModule {}
