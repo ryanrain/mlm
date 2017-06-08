@@ -11,6 +11,8 @@ import { Lectura } from '../lectura/lectura';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { Maguito } from '../../building.blocks/maguito.component';
 
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+
 @Component({
   selector: 'page-home',
   // templateUrl: 'home.html'
@@ -31,9 +33,9 @@ import { Maguito } from '../../building.blocks/maguito.component';
           <div class="home-button" *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
         </div>
         <div id="maguito-menu">
-          <a class="home-button" target="_blank" href="http://milibromagico.com.mx/">Sitio web</a>
-          <a class="home-button" target="_blank" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
-          <a class="home-button" target="_blank" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
+          <a (click)="openLink($event)" class="home-button" target="_blank" href="http://milibromagico.com.mx/">Sitio web</a>
+          <a (click)="openLink($event)" class="home-button" target="_blank" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
+          <a (click)="openLink($event)" class="home-button" target="_blank" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
           <maguito [class.maguitohidden]="!entradaEnded"></maguito>
         </div>
       </div>
@@ -88,7 +90,8 @@ export class HomePage implements AfterViewInit {
     public navCtrl: NavController, 
     public platform: Platform, 
     public afs: AudioFileService,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private iab: InAppBrowser
     ) {
 
     this.pages.forEach(page => {
@@ -104,6 +107,10 @@ export class HomePage implements AfterViewInit {
   }
 
   ngAfterViewInit() {
+
+    // background music attributes
+    this.afs.backgroundMusic.loop = true;
+    this.afs.backgroundMusic.volume = 0.2;
 
     if (this.afs.isWeb ){
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
@@ -133,11 +140,7 @@ export class HomePage implements AfterViewInit {
 
     }
 
-    if ( this.platform.is('core') ) {
-      // background music attributes
-      this.afs.backgroundMusic.loop = true;
-      this.afs.backgroundMusic.volume = 0.2;
-      
+    if ( this.platform.is('core') ) {      
       this.entradaVideoLoaded = Observable.fromEvent(this.entradaVideo.nativeElement, 'canplaythrough');
       this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusic, 'canplaythrough');
 
@@ -167,35 +170,49 @@ export class HomePage implements AfterViewInit {
     if (!this.openPageRunning) {
       this.openPageRunning = true;
 
-      if ( this.afs.homePageButtons[page.audioFileName].readyState > 0 ){
-        this.afs.homePageButtons[page.audioFileName].play(); // playWhenReady played upon playPause triggered by volver();
-      }
-      
-      this.afs.populateInstruction(page.audioFileName);
-
-      if (page.hasOwnProperty('requiredAudios') && typeof(page.requiredAudios === "array")) {
-        page.requiredAudios.forEach(requiredAudio => {
-          // console.log('from openPage(): ', requiredAudio);
-          this.afs.populateAudios(requiredAudio);
-        });
-      }
-
       if (typeof(this.afs.homePageButtons[page.audioFileName]) === 'object' 
-        && this.afs.homePageButtons[page.audioFileName].duration > 0 ) {
+        && this.afs.homePageButtons[page.audioFileName].duration > 0 
+        && this.afs.homePageButtons[page.audioFileName].readyState > 0 ) {
 
-        let durationMiliseconds = this.afs.homePageButtons[page.audioFileName].duration * 1000;
-        console.log(durationMiliseconds); 
+        this.afs.homePageButtons[page.audioFileName].play(); // playWhenReady played upon playPause triggered by volver();
+
+        let durationButtonAudio = this.afs.homePageButtons[page.audioFileName].duration * 1000;
+        console.log('durationButtonAudio: ', durationButtonAudio); 
+        
+        // "play() can only be initiated by a user gesture." error seems to have a limit of a second.
+        if (durationButtonAudio > 950) { 
+          this.populatePage(page);
+        }
+
+        // but we still want to let the phone chill and play the button audio smooth before the populatePage perf hit
         setTimeout(() => {
+          if (durationButtonAudio < 950) {
+            this.populatePage(page);
+          }
           this.openPageRunning = false;
           this.navCtrl.push(page.component);
-        }, durationMiliseconds);
+        }, durationButtonAudio);
 
       } else {
-        
+
+        this.populatePage(page);        
         this.openPageRunning = false;
         this.navCtrl.push(page.component);
 
       }
+      
+      
+    }
+  }
+
+  populatePage(page){
+    this.afs.populateInstruction(page.audioFileName);
+
+    if (page.hasOwnProperty('requiredAudios') && typeof(page.requiredAudios === "array")) {
+      page.requiredAudios.forEach(requiredAudio => {
+        // console.log('from openPage(): ', requiredAudio);
+        this.afs.populateAudios(requiredAudio);
+      });
     }
   }
 
@@ -213,6 +230,13 @@ export class HomePage implements AfterViewInit {
       ]
     });
     alert.present();
+  }
+
+  openLink(event) {
+    if (this.platform.is('cordova')) {
+      event.preventDefault();
+      this.iab.create(event.target.href, 'system');
+    }
   }
 
 }
