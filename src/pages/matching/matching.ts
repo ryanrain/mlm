@@ -13,7 +13,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
 @Component({
   selector: 'matching-game',
   template: `
-  <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
     <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>

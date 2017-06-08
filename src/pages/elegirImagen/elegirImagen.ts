@@ -16,7 +16,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
 @Component({
   selector: 'page-elegir-imagen',
   template: `
-  <button class="nav-button" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
     <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
     <ion-icon name="musical-notes"></ion-icon>
@@ -191,7 +191,7 @@ export class ElegirImagen implements AfterViewInit {
               clickEvent.target.style.boxShadow = '';               
               this.afs.playWhenReady(this.afs.beep);
             },
-            900
+            1200
           );
         }
       })

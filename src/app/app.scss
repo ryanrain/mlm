@@ -60,6 +60,9 @@ $navButtonHorizPadding: 10px;
     &.volume {
         padding-right: 10px;
     }
+    &.home {
+        z-index: 30;
+    }
 }
 #music-off {
     font-size: 200%;
@@ -93,7 +96,7 @@ $navButtonHorizPadding: 10px;
     bottom: 0;
     background: $blue;
     // background: rgba($yellow, .9);
-    z-index: 100;
+    z-index: 20;
     display: flex;
     justify-content: space-around;
     align-items: center;
