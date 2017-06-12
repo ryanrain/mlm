@@ -129,7 +129,7 @@ export class AudioFileService {
             break;
 
             case 'beep':
-                if ( this.platform.is('mobileweb') && !this.beeped) { // hasn't yet been populated
+                if ( this.platform.is('mobileweb') && this.platform.is('android') && !this.beeped) { // hasn't yet been populated
                     console.log('populate beep');
                     this.playPauseSingle(this.beep);
                     this.beeped = true;
@@ -137,7 +137,7 @@ export class AudioFileService {
             break;
 
             case 'bell':
-                if ( this.platform.is('mobileweb') && !this.belled ) { // hasn't yet been populated
+                if ( this.platform.is('mobileweb')  && this.platform.is('android') && !this.belled ) { // hasn't yet been populated
                     console.log('populate bell');
                     this.playPauseSingle(this.bell);
                     this.belled = true;
@@ -149,7 +149,7 @@ export class AudioFileService {
     populateInstruction(audioFileName:string) {
         if (typeof(this.instructions[audioFileName]) === 'undefined') {
             this.instructions[audioFileName] = new Audio("assets/instrucciones/" + audioFileName + '.MP3');
-            if ( this.platform.is('mobileweb') ) { 
+            if ( this.platform.is('mobileweb') && this.platform.is('android') ) { 
                 this.playPauseSingle(this.instructions[audioFileName]);
             }
         }
@@ -159,7 +159,7 @@ export class AudioFileService {
     playPause ( audioObject:{} ) {
         console.log('playpause called.');
 
-        if ( this.platform.is('mobileweb') ) { // browser on phone  
+        if ( this.platform.is('mobileweb') && this.platform.is('android') ) { // browser on android phones
             if (typeof(audioObject['playpaused']) === 'undefined') {
                 console.log('playPause run: ', audioObject);
                 for (var key in audioObject) {
