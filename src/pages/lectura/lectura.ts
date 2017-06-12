@@ -39,6 +39,9 @@ export class Lectura implements AfterViewInit {
     public lecturas: LecturasContent, 
     public afs: AudioFileService
       ) {
+
+    this.afs.populatePageAudios('lecturas');
+
   }
   
   ngAfterViewInit () {

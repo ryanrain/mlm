@@ -73,6 +73,8 @@ export class Matching implements AfterViewInit {
       public afs: AudioFileService
       ) {
       this.createWords();
+
+      this.afs.populatePageAudios('pares');
   }
 
   ngAfterViewInit() {

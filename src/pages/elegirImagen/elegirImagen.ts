@@ -71,6 +71,9 @@ export class ElegirImagen implements AfterViewInit {
     public afs: AudioFileService
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
+
+    this.afs.populatePageAudios('letras');
+
   }
 
   ngAfterViewInit() {

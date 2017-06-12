@@ -14,7 +14,7 @@ export class AudioFileService {
     silables = {};
     words = {};
     silableWords = {};
-    lecturas = {}
+    lecturas = {};
     muybien = {};
     incorrecto = {};
     instructions = {};
@@ -25,8 +25,14 @@ export class AudioFileService {
     belled:boolean = false;
     backgroundMusic:HTMLAudioElement = new Audio('assets/HappyBee.mp3');
     backgroundMusicPlaying:boolean = false;
-
     isWeb:boolean;
+
+    requiredAudios = {
+        letras :    ['letters', 'words', 'muybien', 'beep', 'bell'],
+        bloques :   ['silables', 'silableWords', 'muybien', 'incorrecto'],
+        pares :     ['words', 'muybien', 'incorrecto', 'bell'],
+        lecturas :  ['lecturas']
+    }
     
     constructor(public platform: Platform,
                 public lettersCastillano: AlfabetoCastillano,
@@ -35,6 +41,7 @@ export class AudioFileService {
                 public lecturasCastillano: LecturasContent
                 ) {
         console.log('ionic platforms: ', this.platform.platforms());
+        console.log(this.requiredAudios);
 
         if (platform.is('mobileweb') || platform.is('core')) {
             this.isWeb = true;
@@ -42,6 +49,15 @@ export class AudioFileService {
             this.isWeb = false;
         }
 
+    }
+
+    populatePageAudios(pageAudioFileName){
+        this.populateInstruction(pageAudioFileName);
+
+        this.requiredAudios[pageAudioFileName].forEach(requiredAudio => {
+            // console.log('from openPage(): ', requiredAudio);
+            this.populateAudios(requiredAudio);
+        });
     }
 
     populateAudios(audioListName:string) {

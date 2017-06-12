@@ -91,6 +91,8 @@ export class Bloques implements AfterViewInit {
     this.createSilables();
     this.preloadWordImage(this.wordHint.join(''));
 
+    this.afs.populatePageAudios('bloques');
+
     this.wordStream
       .filter(attempt => { 
         if (attempt.indexOf('') < 0) { // complete words only

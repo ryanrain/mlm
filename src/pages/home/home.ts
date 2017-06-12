@@ -47,27 +47,26 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
   `
 })
 export class HomePage implements AfterViewInit {
-  
+
   pages: any[] = [
-    { title: 'Letras', 
-      audioFileName: 'letras',
-      component: ElegirImagen,
-      requiredAudios: ['letters', 'words', 'muybien', 'beep', 'bell']
+    { 
+        title: 'Letras', 
+        audioFileName: 'letras',
+        component: ElegirImagen    },
+    { 
+        title: 'Bloques', 
+        audioFileName: 'bloques',
+        component: Bloques
     },
-    { title: 'Bloques', 
-      audioFileName: 'bloques',
-      component: Bloques,
-      requiredAudios: ['silables', 'silableWords', 'muybien', 'incorrecto']
+    { 
+        title: 'Pares', 
+        audioFileName: 'pares',
+        component: Matching
     },
-    { title: 'Pares', 
-      audioFileName: 'pares',
-      component: Matching,
-      requiredAudios: ['words', 'muybien', 'incorrecto', 'bell']
-    },
-    { title: 'Lecturas de Comprensión', 
-      audioFileName: 'lecturas',
-      component: Lectura,
-      requiredAudios: ['lecturas']      
+    { 
+        title: 'Lecturas de Comprensión', 
+        audioFileName: 'lecturas',
+        component: Lectura
     }
   ];
 
@@ -179,40 +178,33 @@ export class HomePage implements AfterViewInit {
         let durationButtonAudio = this.afs.homePageButtons[page.audioFileName].duration * 1000;
         console.log('durationButtonAudio: ', durationButtonAudio); 
         
-        // "play() can only be initiated by a user gesture." error seems to have a limit of a second.
-        if (durationButtonAudio > 950) { 
-          this.populatePage(page);
-        }
-
-        // but we still want to let the phone chill and play the button audio smooth before the populatePage perf hit
-        setTimeout(() => {
-          if (durationButtonAudio < 950) {
-            this.populatePage(page);
+        // for android phones, have to populate audio from here to avoid "play() can only be initiated by a user gesture." error
+        if ( this.platform.is('android') && this.isMobileWeb ) {
+          // seems chrome gives us 1 second.
+          if (durationButtonAudio > 950) { 
+            setTimeout(() => {              
+              this.afs.populatePageAudios(page.audioFileName);
+            }, 950);
+          } else {
+            setTimeout(() => {  
+                this.afs.populatePageAudios(page.audioFileName);
+            }, durationButtonAudio);
           }
+        } 
+
+        setTimeout(() => {  // "ended" event listener got complicated
           this.openPageRunning = false;
           this.navCtrl.push(page.component);
         }, durationButtonAudio);
 
       } else {
 
-        this.populatePage(page);        
+        this.afs.populatePageAudios(page.audioFileName);        
         this.openPageRunning = false;
         this.navCtrl.push(page.component);
 
       }
       
-      
-    }
-  }
-
-  populatePage(page){
-    this.afs.populateInstruction(page.audioFileName);
-
-    if (page.hasOwnProperty('requiredAudios') && typeof(page.requiredAudios === "array")) {
-      page.requiredAudios.forEach(requiredAudio => {
-        // console.log('from openPage(): ', requiredAudio);
-        this.afs.populateAudios(requiredAudio);
-      });
     }
   }
 
