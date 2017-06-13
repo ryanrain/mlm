@@ -267,6 +267,8 @@ export class Matching implements AfterViewInit {
   }
 
   reset() {
+    this.deselectAll();
+
     // erase all lines
     while (this.lines.nativeElement.firstChild) {
         this.lines.nativeElement.removeChild(this.lines.nativeElement.firstChild);
