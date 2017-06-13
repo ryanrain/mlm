@@ -79,13 +79,6 @@ export class LecturasContent {
                     respuestaCorrecta: 'princesa',
                 },
                 {
-                    pregunta: '¿Qué es lo que más ama Carmen?',
-                    respuesta1: 'jugar',
-                    respuesta2: 'limpiar',
-                    respuesta3: 'cantar',
-                    respuestaCorrecta: 'limpiar',
-                },
-                {
                     pregunta: '¿Con qué juega?',
                     respuesta1: 'muñecas',
                     respuesta2: 'tacitas de té',
@@ -227,7 +220,7 @@ export class LecturasContent {
                     respuesta1: 'índice',
                     respuesta2: 'anular',
                     respuesta3: 'pulgar',
-                    respuestaCorrecta: 'índice',
+                    respuestaCorrecta: 'pulgar',
                 },
                 {
                     pregunta: '¿Cuál dedo se adorna con anillos?',
@@ -307,9 +300,9 @@ export class LecturasContent {
                 {
                     pregunta: '¿De qué color es el cabello de la abuelita?',
                     respuesta1: 'negro',
-                    respuesta2: 'blanco',
+                    respuesta2: 'cafe',
                     respuesta3: 'gris',
-                    respuestaCorrecta: 'blanco',
+                    respuestaCorrecta: 'gris',
                 },
                 {
                     pregunta: '¿En las historias que la abuelita contará habrá?',
@@ -357,7 +350,7 @@ export class LecturasContent {
                     respuesta1: 'al parque, escuela y doctor',
                     respuesta2: 'al parque, escuela y mercado',
                     respuesta3: 'al parque, dentista y escuela',
-                    respuestaCorrecta: 'al parque, escuela y mercado',
+                    respuestaCorrecta: 'al parque, escuela y doctor',
                 },
                 {
                     pregunta: '¿Con qué bañan a Roco?',
