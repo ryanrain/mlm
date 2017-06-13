@@ -85,7 +85,7 @@ export class PalabrasCastillano {
         'helado',
         'lava',
         'malla',
-        'mama',
+        'mamá',
         'noche',
         'pera',
         'pesa',
