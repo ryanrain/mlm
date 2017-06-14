@@ -9,9 +9,9 @@ export class SilabasCastillano {
         'da',     
         'de',
         'do',
-        'go',
         'fo',
         'ga',
+        'go',
         'la',
         'lu',
         'lla',
@@ -38,19 +38,25 @@ export class SilabasCastillano {
     ];
 
     words = [
+        // ['si','lla'], // solo un 'si'
+        // ['que','so'], // solo un 'que'
+        // ['yo','yo'], // solo aparecera una vez
+        // ['li','ma'], // solo un li
+        // ['ne','na'], // solo un 'ne'
+        // ['lo','ro'], // solo un 'lo'
+        // ['me','sa'], // solo un 'me'
+        // ['co','co'], // solo aparecera una vez
+        // ['ma','ma'], // solo aparecera una vez
         ['o','so'],
         ['u','va'],
-        // ['si','lla'], // solo un 'si'
         ['lu','na'],
         ['de','do'],
         ['ni','ña'],
         ['ro','sa'],
-        // ['que','so'], // solo un 'que'
         ['fo','co'],
         ['ca','sa'],
         ['ga','to'],
         ['va','ca'],
-        // ['yo','yo'], // solo aparecera una vez
         ['bo','ca'],
         ['bo','ta'],
         ['ca','ma'],
@@ -60,8 +66,6 @@ export class SilabasCastillano {
         ['go','ma'],
         ['ma','no'],
         ['ma','go'],
-        // ['li','ma'], // solo un li
-        // ['ne','na'], // solo un 'ne'
         ['o','lla'],
         ['lla','ma'],
         ['pi','pa'],
@@ -82,9 +86,7 @@ export class SilabasCastillano {
         ['da','do'],
         ['co','che'],
         ['co','do'],
-        // ['lo','ro'], // solo un 'lo'
         ['ma','pa'],
-        // ['me','sa'], // solo un 'me'
         ['ni','do'],
         ['o','ro'],
         ['pa','la'],
@@ -94,7 +96,6 @@ export class SilabasCastillano {
         ['ro','to'],
         ['ta','co'],
         ['co','pa'],
-        // ['co','co'], // solo aparecera una vez
         ['co','la'],
         ['co','ro'],
         ['co','sa'],
@@ -104,14 +105,40 @@ export class SilabasCastillano {
         ['go','ta'],
         ['la','va'],
         ['ma','lla'],
-        // ['ma','ma'], // solo aparecera una vez
         ['no','che'],
         ['pe','ra'],
         ['pe','sa'],
         ['pi','la'],
         ['ra','yo'],
         ['sa','co'],
-        ['yo','ga']
+        ['yo','ga'],
+        // sigue ora si
+        ['ca','ña'],
+        ['ca','ra'],
+        ['co','no'],
+        ['la','go'],
+        ['la','na'],
+        ['lu','pa'],
+        ['lu','pe'],
+        ['lla','no'],
+        ['ma','ni'],
+        ['ma','ta'],
+        ['na','ta'],
+        ['o','ca'],
+        ['o','la'],
+        ['pa','co'],
+        ['pe','ña'],
+        ['pe','so'],
+        ['pi','co'],
+        ['ra','ma'],
+        ['ra','ta'],
+        ['ro','ca'],
+        ['ro','co'],
+        ['ro','llo'],
+        ['so','ga'],
+        ['ta','che'],
+        ['ta','llo'],
+        ['to','pe']
     ];
 }
 // unwritten automated test: that all silables in SilabasCastillano.words arrays are present in SilabasCastillano.silables
