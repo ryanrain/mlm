@@ -211,7 +211,7 @@ export class HomePage implements AfterViewInit {
   openCredits() {
     let alert = this.alertCtrl.create({
       title: 'Creditos',
-      message: 'Applicación por Bikit Puy Comunicación y Diseño. Contactenos al <a href="mailto:bikitpuy@gmail.com">bikitpuy@gmail.com</a>',
+      message: '<p>Applicación por Bikit Puy Comunicación y Diseño. <br>Contacto: <a href="mailto:bikitpuy@gmail.com">bikitpuy@gmail.com</a></p><p>"Happy Bee - Surf" Kevin MacLeod (incompetech.com)<br>Con licencia <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0</a></p>',
       cssClass: 'creditos-alert',
       buttons: [
         {
