@@ -36,13 +36,11 @@ import { Maguito } from '../../building.blocks/maguito.component';
     
     <div id="images">
       <div *ngFor="let word of words">
-        <img #images [class]="word" src="assets/imagenes/{{word}}.png" [attr.data-word]="word">
+        <img #images [class]="word" src="assets/imagenes/{{afs.transliterate(word)}}.png" [attr.data-word]="word">
       </div>      
     </div>
 
   </ion-content>
-  <div style="display:none;" class="preloader">
-  </div>
   `
 })
 export class Matching implements AfterViewInit {

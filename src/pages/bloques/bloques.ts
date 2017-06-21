@@ -49,7 +49,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
   </ion-content>
   <div style="display:none;" class="preloader">
     <img *ngFor="let color of blockColors" src="assets/cubos/cubo{{color}}.png">
-    <img [src]="wordImage">
+    <img [src]="afs.transliterate(preloadedWordImagePath)">
   </div>
   `
 })
@@ -63,6 +63,7 @@ export class Bloques implements AfterViewInit {
   silables = [];
 
   wordImage:string;
+  preloadedWordImagePath:string;
   
   blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
   activeDropZone:number;
@@ -114,6 +115,7 @@ export class Bloques implements AfterViewInit {
       })
       .subscribe(wordArray => {
         let successWord = wordArray.join('');
+        let safeSuccessWord = this.afs.transliterate(successWord);
         this.wordImage = successWord;
         
         setTimeout(() => {
@@ -122,7 +124,7 @@ export class Bloques implements AfterViewInit {
 
         let alert = this.alertCtrl.create({
           title: successWord,
-          message: '<img class="success-word" src="assets/imagenes/' + successWord + '.png">',
+          message: '<img class="success-word" src="assets/imagenes/' + safeSuccessWord + '.png">',
           cssClass: 'bloques-alert',
           buttons: [
             {
@@ -140,7 +142,7 @@ export class Bloques implements AfterViewInit {
           alert.present();
         }, 2000);
         setTimeout(() => {
-          // console.log(this.afs.silableWords[successWord], successWord)
+          console.log(this.afs.silableWords, successWord)
           this.afs.playWhenReady( this.afs.silableWords[successWord] );
         }, 3000);
         setTimeout(() => {
@@ -225,7 +227,6 @@ export class Bloques implements AfterViewInit {
     this.silables = this.wordHint.concat( randomSilables.slice(0,3) );
     
     this.alreadyRefreshed = false;
-
   }
 
   newSilables() {
@@ -235,7 +236,7 @@ export class Bloques implements AfterViewInit {
   }
   
   preloadWordImage(word:string) {
-    this.wordImage = "assets/imagenes/" + word + ".png";
+    this.preloadedWordImagePath = "assets/imagenes/" + word + ".png";
   }
 
   hint(){
@@ -329,7 +330,7 @@ export class Bloques implements AfterViewInit {
       })
     ;
   }
- dropzoneInteractables = [];
+  dropzoneInteractables = [];
 
   createDropZones(){
 

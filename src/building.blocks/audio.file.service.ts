@@ -41,7 +41,6 @@ export class AudioFileService {
                 public lecturasCastillano: LecturasContent
                 ) {
         console.log('ionic platforms: ', this.platform.platforms());
-        console.log(this.requiredAudios);
 
         if (platform.is('mobileweb') || platform.is('core')) {
             this.isWeb = true;
@@ -49,6 +48,15 @@ export class AudioFileService {
             this.isWeb = false;
         }
 
+    }
+
+    transliterate(fileName:string) {
+        return fileName.replace('ñ', 'ni')
+            .replace('á','a')
+            .replace('é','e')
+            .replace('í','i')
+            .replace('ó','o')
+            .replace('ú','u');
     }
 
     populatePageAudios(pageAudioFileName){
@@ -64,48 +72,51 @@ export class AudioFileService {
         switch (audioListName) {
 
             case 'letters':
-                if ( Object.keys(this.letters).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.letters).length < 1 ) { 
                     console.log('populate letters');
                     this.lettersCastillano.alfabeto.forEach( letter  => {
-                        this.letters[letter.letra] = new Audio('assets/letra_sonidos/' + letter.letra + '.MP3');
+                        this.letters[letter.letra] = new Audio('assets/letra_sonidos/' + letter.letra + '.MP3'); // no transliteration cuz ñ not included
                     });
                     this.playPause(this.letters);
                 }
             break;
 
             case 'silables':
-                if ( Object.keys(this.silables).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.silables).length < 1 ) { 
                     console.log('populate silables');
                     this.silablesCastillano.silables.forEach( silable  => {
-                        this.silables[silable] = new Audio('assets/silabas/' + silable + '.MP3');
+                        let safeSilable = this.transliterate(silable);
+                        this.silables[silable] = new Audio('assets/silabas/' + safeSilable + '.MP3');
                     });
                     this.playPause(this.silables);
                 }
             break;  
 
             case 'words':
-                if ( Object.keys(this.words).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.words).length < 1 ) { 
                     console.log('populate words');
                     this.wordsCastillano.words.forEach( word  => {
-                        this.words[word] = new Audio('assets/palabras/' + word + '.MP3');
+                        let safeWord = this.transliterate(word);
+                        this.words[word] = new Audio('assets/palabras/' + safeWord + '.MP3');
                     });
                     this.playPause(this.words);
                 }
             break;
 
             case 'silableWords':
-                if ( Object.keys(this.silableWords).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.silableWords).length < 1 ) { 
                     console.log('populate silableWords');
                     this.silablesCastillano.words.forEach( word  => {
                         let wordString = word.join('');
-                        this.silableWords[wordString] = new Audio('assets/palabras/' + wordString + '.MP3');
+                        let safeWordString = this.transliterate(wordString);
+                        this.silableWords[wordString] = new Audio('assets/palabras/' + safeWordString + '.MP3');
                     });
                     this.playPause(this.silableWords);
                 }
             break;
 
             case 'lecturas':
-                if ( Object.keys(this.lecturas).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.lecturas).length < 1 ) { 
                     console.log('populate lecturas');
                     this.lecturasCastillano.lecturas.forEach( lectura  => {
                         this.lecturas[lectura.fileName] = new Audio('assets/lecturas_audio/' + lectura.fileName + '.MP3');
@@ -115,7 +126,7 @@ export class AudioFileService {
             break;
 
             case 'muybien':
-                if ( Object.keys(this.muybien).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.muybien).length < 1 ) { 
                     console.log('populate muybien');
                     ['0','1','2','3','4','5','6'].forEach(number => {
                         this.muybien[number] = new Audio("assets/muybien/" + number + '.MP3');
@@ -125,7 +136,7 @@ export class AudioFileService {
             break;
 
             case 'incorrecto':
-                if ( Object.keys(this.incorrecto).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.incorrecto).length < 1 ) { 
                     console.log('populate incorrecto');
                     ['0','1'].forEach(number => {
                         this.incorrecto[number] = new Audio("assets/incorrecto/" + number + '.MP3');
@@ -135,7 +146,7 @@ export class AudioFileService {
             break;
 
             case 'risa':
-                if ( Object.keys(this.risa).length < 1 ) { // hasn't yet been populated
+                if ( Object.keys(this.risa).length < 1 ) { 
                     console.log('populate risa');
                     ['0','1','2','3','4'].forEach(number => {
                         this.risa[number] = new Audio("assets/risa/" + number + '.MP3');
@@ -145,7 +156,7 @@ export class AudioFileService {
             break;
 
             case 'beep':
-                if ( this.platform.is('mobileweb') && this.platform.is('android') && !this.beeped) { // hasn't yet been populated
+                if ( this.platform.is('mobileweb') && this.platform.is('android') && !this.beeped) { 
                     console.log('populate beep');
                     this.playPauseSingle(this.beep);
                     this.beeped = true;
@@ -153,7 +164,7 @@ export class AudioFileService {
             break;
 
             case 'bell':
-                if ( this.platform.is('mobileweb')  && this.platform.is('android') && !this.belled ) { // hasn't yet been populated
+                if ( this.platform.is('mobileweb')  && this.platform.is('android') && !this.belled ) { 
                     console.log('populate bell');
                     this.playPauseSingle(this.bell);
                     this.belled = true;
@@ -175,7 +186,7 @@ export class AudioFileService {
     playPause ( audioObject:{} ) {
         console.log('playpause called.');
 
-        if ( this.platform.is('mobileweb') && this.platform.is('android') ) { // browser on android phones
+        if ( this.platform.is('mobileweb') && this.platform.is('android') ) { // browser on android phones only, although 1 report of audios missing on iphone5
             if (typeof(audioObject['playpaused']) === 'undefined') {
                 console.log('playPause run: ', audioObject);
                 for (var key in audioObject) {

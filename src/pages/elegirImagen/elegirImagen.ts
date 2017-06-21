@@ -35,13 +35,13 @@ import { Maguito } from '../../building.blocks/maguito.component';
       </div>
     </div>
     <div id="imagenes-letra">
-      <img #opcion1 src="assets/imagenes/{{opciones[0].palabra}}.png" [id]="opciones[0].letra" [class]="opciones[0].palabra">
-      <img #opcion2 src="assets/imagenes/{{opciones[1].palabra}}.png" [id]="opciones[1].letra" [class]="opciones[1].palabra">
-      <img #opcion3 src="assets/imagenes/{{opciones[2].palabra}}.png" [id]="opciones[2].letra" [class]="opciones[2].palabra">
+      <img #opcion1 src="assets/imagenes/{{afs.transliterate(opciones[0].palabra)}}.png" [id]="opciones[0].letra" [class]="opciones[0].palabra">
+      <img #opcion2 src="assets/imagenes/{{afs.transliterate(opciones[1].palabra)}}.png" [id]="opciones[1].letra" [class]="opciones[1].palabra">
+      <img #opcion3 src="assets/imagenes/{{afs.transliterate(opciones[2].palabra)}}.png" [id]="opciones[2].letra" [class]="opciones[2].palabra">
     </div>
   </ion-content>
   <div style="display:none;" class="preloader">
-    <img rel="preload" *ngFor="let letra of castillano.alfabeto" src="assets/imagenes/{{letra.palabra}}.png">
+    <img rel="preload" *ngFor="let letra of castillano.alfabeto" src="assets/imagenes/{{afs.transliterate(letra.palabra)}}.png">
   </div>
   `
 })
