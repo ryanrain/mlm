@@ -100,7 +100,7 @@ export class SilabasCastillano {
         ['co','ro'],
         ['co','sa'],
         ['da','ma'],
-        ['do','ña'],
+        // ['do','ña'],
         ['fo','to'],
         ['go','ta'],
         ['la','va'],
