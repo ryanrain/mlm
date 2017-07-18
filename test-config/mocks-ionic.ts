@@ -64,6 +64,10 @@ export class PlatformMock {
   public getActiveElement(): any {
     return document['activeElement'];
   }
+
+  public platforms(): Array<string> {
+    return ['mockPlatform1','mockPlatform2'];
+  }
 }
 
 // export class StatusBarMock extends StatusBar {
