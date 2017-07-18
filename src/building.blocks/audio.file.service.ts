@@ -59,13 +59,18 @@ export class AudioFileService {
             .replace('ú','u');
     }
 
-    populatePageAudios(pageAudioFileName){
-        this.populateInstruction(pageAudioFileName);
+    populatePageAudios(pageAudioFileName){      
 
-        this.requiredAudios[pageAudioFileName].forEach(requiredAudio => {
-            // console.log('from openPage(): ', requiredAudio);
-            this.populateAudios(requiredAudio);
-        });
+        if (pageAudioFileName !== 'videos') {
+            this.populateInstruction(pageAudioFileName);
+        }
+
+        if (typeof(this.requiredAudios[pageAudioFileName]) !== 'undefined' ) {
+            this.requiredAudios[pageAudioFileName].forEach(requiredAudio => {
+                // console.log('from openPage(): ', requiredAudio);
+                this.populateAudios(requiredAudio);
+            });
+        }
     }
 
     populateAudios(audioListName:string) {

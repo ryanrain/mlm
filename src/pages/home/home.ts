@@ -7,6 +7,7 @@ import { ElegirImagen } from '../elegirImagen/elegirImagen';
 import { Bloques } from '../bloques/bloques';
 import { Matching } from '../matching/matching';
 import { Lectura } from '../lectura/lectura';
+import { Videos } from '../videos/videos';
 
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { Maguito } from '../../building.blocks/maguito.component';
@@ -67,6 +68,11 @@ export class HomePage implements AfterViewInit {
         title: 'Lecturas de Comprensión', 
         audioFileName: 'lecturas',
         component: Lectura
+    },
+    { 
+        title: 'Videos', 
+        audioFileName: 'lecturas',
+        component: Videos
     }
   ];
 
