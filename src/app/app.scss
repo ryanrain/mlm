@@ -29,21 +29,27 @@ $red: #b9474a;
     font-style: normal;
 }
 
-#libro-magico-container {
+#libro-magico-container .ion-page {
     margin: 0 auto;
     position: relative;
     height: 100vh;
     width: 75vh;
     max-width: 100vw;
-    ion-app {
-        font-family: 'linotte', "Roboto", "Helvetica Neue", sans-serif;
-    }
-    page-elegir-imagen, bloques, matching-game, page-home {
-        .scroll-content {
-            overflow-y: hidden;
-        }
+}
+#libro-magico-container page-video-player.ion-page {
+    width: 100vw;
+}
+
+
+ion-app {
+    font-family: 'linotte', "Roboto", "Helvetica Neue", sans-serif;
+}
+page-elegir-imagen, bloques, matching-game, page-home {
+    .scroll-content {
+        overflow-y: hidden;
     }
 }
+
 $navButtonSize: 35px;
 $navButtonHorizPadding: 10px;
 
