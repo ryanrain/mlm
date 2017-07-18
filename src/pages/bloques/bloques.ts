@@ -3,6 +3,7 @@ import { NavController, AlertController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/throttleTime';
 
 import {interact} from 'interactjs';
 
@@ -156,11 +157,14 @@ export class Bloques implements AfterViewInit {
   }
  
   ngAfterViewInit () {
-    this.blocksQueryList.changes.subscribe(blocks => {
-      this.scatterBlocks(blocks);
-      this.updatedCurrentBlocks = blocks;
-    });
-    this.scatterBlocks(this.blocksQueryList); // no change event yet
+    this.blocksQueryList.changes
+      .throttleTime(1000)
+      .subscribe(blocks => {
+        console.log('change');
+        this.scatterBlocks(blocks);
+        this.updatedCurrentBlocks = blocks;
+      }
+    );
     this.makeBlocksDraggable();
     this.createDropZones();
 
@@ -256,7 +260,7 @@ export class Bloques implements AfterViewInit {
         blockAreaHeight = this.blockArea.nativeElement.offsetHeight,
         blockWidth = this.blockArea.nativeElement.offsetWidth / 4, // 25% width set in scss
         blockZIndex = 1;
-
+    
     blocks.forEach( cubo => {
 
       let top = Math.round( Math.random() * (blockAreaHeight - blockWidth) ) + blockAreaOffset,
@@ -281,9 +285,6 @@ export class Bloques implements AfterViewInit {
   }
 
   makeBlocksDraggable() {
-
-    // ****destroy first?
-    // freeze in middle? or freeze happens upon opening an never works
     
     interact.maxInteractions(Infinity);
 
@@ -297,6 +298,7 @@ export class Bloques implements AfterViewInit {
       // interact(cubo.nativeElement)
       .draggable({ 
         max: Infinity,
+        inertia: true,
         restrict: { // prevent dragging them off-screen
           restriction: '.scroll-content',
           elementRect: { 
