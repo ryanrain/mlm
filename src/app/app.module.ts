@@ -1,6 +1,6 @@
 // CORE
 import { NgModule, ErrorHandler } from '@angular/core';
-import { HttpModule } from '@angular/http'
+import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 
 // IONIC
@@ -31,6 +31,7 @@ import { YoutubePlayerModule } from 'ng2-youtube-player';
 
 // CORDOVA PLUGINS
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { Network } from '@ionic-native/network';
 
 const cloudSettings: CloudSettings = {
   'core': {
@@ -77,7 +78,8 @@ const cloudSettings: CloudSettings = {
     PalabrasCastillano,
     LecturasContent,
     AudioFileService, 
-    InAppBrowser
+    InAppBrowser,
+    Network
   ]
 })
 export class AppModule {}

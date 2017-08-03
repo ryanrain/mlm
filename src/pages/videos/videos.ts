@@ -1,10 +1,19 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Modal, NavController, Alert } from 'ionic-angular';
+import 'rxjs/add/operator/retry';
+
+import { Network } from '@ionic-native/network';
+import { Modal, NavController, Alert, Platform } from 'ionic-angular';
 
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { VideoPlayerPage } from '../video-player/video-player';
+
+
+interface YoutubeResponse {
+  snippet: Array<any>;
+  title: string;
+}
 
 @Component({
   selector: 'videos',
@@ -13,22 +22,39 @@ import { VideoPlayerPage } from '../video-player/video-player';
       <button ion-button icon-only (click)="volver()">
         <ion-icon name="home"></ion-icon>
       </button>
-      <ion-title>Lecturas</ion-title>
+      <ion-title>Cuentos Mágicos</ion-title>
       <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
         <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
         <ion-icon name="musical-notes"></ion-icon>
       </button>
     </ion-header>
 
-    <ion-content padding>
-      <ion-list>
+    <ion-content>
 
-        <ion-item *ngFor="let video of videos" (click)="openItem(video)">
-          <h5>{{video.snippet.title}}</h5>
-          <img [src]="video.snippet.thumbnails.default.url">
-        </ion-item>
+      <div *ngIf="videos.length === 0 && connection === ''" id="loading">
+        <img id="loader-circle" src="assets/maguito/loader.gif">
+        <maguito></maguito>
+      </div>
 
-      </ion-list>
+      <div *ngIf="videos.length === 0 && connection === 'none'" class="connectivity-error">
+        <div *ngIf="intentando">
+          <img id="loader-circle" src="assets/maguito/loader.gif">
+        </div>
+        <p *ngIf="!intentando">
+          Parece que no hay conexión al internet.
+        </p>
+        <button (click)="intentarDeNuevo()" #intentarButton>
+          {{buttonText}} 
+        </button>
+      </div>
+
+      <ion-card class="" *ngFor="let video of videos" (click)="openItem(video, $event)">
+        <ion-card-content>
+          <img [src]="video.snippet.thumbnails.medium.url">
+          <h1>{{video.snippet.title}}</h1>
+        </ion-card-content>
+      </ion-card>
+
     </ion-content>
   `
 })
@@ -37,16 +63,41 @@ export class Videos {
   playlistId: string = 'PLlDRAccUbAY8x0MnTkvLqQB9RbspCi4o0';
   googleAPIKey: string = 'AIzaSyDs8v5byR03viYXwf072r7gXLarXTZvzXI';
   maxResults:number = 10;
-
-  videos = [];
+  // loadedYoutube:boolean = false;
+  videos:Array<any> = [];
+  connection:string = '';
+  buttonText = 'Intentar de nuevo';
+  intentando:boolean = false;
+  @ViewChild('intentarButton') intentarButton:ElementRef;
 
   constructor (
     public navCtrl:NavController, 
     public afs: AudioFileService,
-    public http: Http
+    public http: Http,
+    public platform: Platform,
+    public network: Network,
       ) {
+  
     this.afs.populatePageAudios('videos');
+    
+    if (platform.is('cordova')) {
+      console.log(network.type);
+      // watch network for a connection
+      let connectSubscription = this.network.onConnect().subscribe(() => {
+        console.log('network connected!');
+        // We just got a connection but we need to wait briefly
+        // before we determine the connection type. Might need to wait.
+        // prior to doing any api requests as well.
+        setTimeout(() => {
+          this.connection = this.network.type;
+        }, 3000);
+      });
+    }
+
+
     this.getYoutubePlaylist();
+
+
   }
   
   // ngAfterViewInit () {
@@ -69,24 +120,37 @@ export class Videos {
     // }
 
     this.http.get(url)
+      .retry(2)
       .map(res => res.json())
-      .subscribe(data => {
-      
-      console.log (data.items);
-      // *** Get individual video data like comments, likes and viewCount. Enable this if you want it.
-      // let newArray = data.items.map((entry) => {
-      //   let videoUrl = 'https://www.googleapis.com/youtube/v3/videos?part=id,snippet,contentDetails,statistics&id=' + entry.id.videoId + '&key=' + this.googleAPIKey;
-      //   this.http.get(videoUrl).map(videoRes => videoRes.json()).subscribe(videoData => {
-      //     console.log (videoData);
-      //     this.posts = this.posts.concat(videoData.items);
-      //     return entry.extra = videoData.items;
-      //   });
-      // });
-      this.videos = this.videos.concat(data.items);
-    });
+      .subscribe(
+        data => {
+          this.videos = this.videos.concat(data.items);
+          this.videos.map(video => {
+            video.snippet.title = video.snippet.title.replace(/[|&;$%@"<>()+,.-] Mis cuentos mágicos/g,'');
+          });
+        }, 
+        error => {
+          this.connection = 'none';
+          setTimeout( () => {
+            this.intentando = false;
+            if(this.intentarButton) {
+              this.intentarButton.nativeElement.classList.remove('focus');
+              this.buttonText = 'Intentar de nuevo';
+            }
+          },500);
+        }
+      );
   }
 
-  openItem(video: any) {
+  intentarDeNuevo() {
+    this.intentando = true;
+    this.intentarButton.nativeElement.classList.add('focus');
+    this.buttonText = 'Intentando...';
+    this.getYoutubePlaylist();
+  }
+
+  openItem(video: any, $event) {
+    console.log($event);
     this.navCtrl.push(VideoPlayerPage, {
       video: video
     });

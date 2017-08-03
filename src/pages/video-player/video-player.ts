@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
+import { AudioFileService } from '../../building.blocks/audio.file.service';
 
 
 @Component({
@@ -9,10 +10,15 @@ import { NavController, NavParams } from 'ionic-angular';
       <ion-navbar>
         <ion-title>{{ video.snippet.title }}</ion-title>
       </ion-navbar>
+      <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+        <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+        <ion-icon name="musical-notes"></ion-icon>
+      </button>
     </ion-header>
 
     <ion-content>
 
+      <img *ngIf="!ready" id="loader-circle" src="assets/maguito/loader.gif">
       <youtube-player 
         [videoId]="video.snippet.resourceId.videoId" 
         (ready)="savePlayer($event)"
@@ -25,14 +31,27 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class VideoPlayerPage {
 
+  ready:boolean = false;
   video:any;
   private player;
   private ytEvent;
 
-  constructor(public navCtrl: NavController, navParams: NavParams ) {
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams,
+    public afs: AudioFileService ) {
+
     // turn off music
+    this.pauseMusic();
+
     this.video = navParams.get('video');
-    console.log(this.video);
+  }
+
+  pauseMusic() {
+    if (this.afs.backgroundMusicPlaying) {
+        this.afs.backgroundMusic.pause();
+        this.afs.backgroundMusicPlaying = false;
+    }
   }
 
   playVideo() {
@@ -41,6 +60,7 @@ export class VideoPlayerPage {
   
   savePlayer(player) {
     this.player = player;
+    this.ready = true;
   }
   
   onStateChange(event) {

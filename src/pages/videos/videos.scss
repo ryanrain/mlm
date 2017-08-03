@@ -13,7 +13,54 @@ videos {
             text-shadow: 1px 1px darkgreen, -1px 1px darkgreen, 1px -1px darkgreen, -1px -1px darkgreen;
         }
     }
-}
-#libro-magico-container videos .scroll-content {
-  padding-bottom: 100px;
+    .content, .toolbar-title {
+        background: $blue;
+        color: darkgreen;
+        text-align: center;
+    }
+    .scroll-content {
+        @media (min-width:400px) {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 0 1%;
+            > * {
+                flex: 0 0 48%;
+                margin: 1%;
+            }
+        }
+    }
+    .connectivity-error {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 4vh;
+        line-height: 1.5;
+        padding: 2%;
+        > *:first-child {
+            height: 15vh;
+            margin: 0 0 3vh 0;
+        }
+        button {
+            @extend .home-button;
+            font-size: 4vh;        
+            width: 80%;
+            margin: 0 0 20vh 0;
+            &.focus {
+                box-shadow: 0 0 50px -10px $red inset;
+            }
+        }
+    }
+    .item {
+        background: transparent;
+    }
+    h1 {
+        text-align: center;
+        padding-top: 13px;
+    }
 }

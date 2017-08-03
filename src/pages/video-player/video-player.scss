@@ -1,6 +1,26 @@
 page-video-player {
+  .content, .toolbar-title, .toolbar-background, button.back-button {
+    background: $blue;
+    color: darkgreen;
+    text-align: center;
+  }
+  .volume {
+    left: auto;
+    right: 12px;
+    font-size: 2.2rem;
+    top: 10px;
+  }
+  #loader-circle {
+    position: absolute;
+    top: 10vh;
+    left: calc(50vw - 40px)
+  }
   iframe {
-    width: 100vw;
+    width: 100%;
     height: calc(100vw * 9 / 16);
+    max-height: 100%;
+    @media (min-width:1024px) {
+      height: calc(1024px * 9 / 16);
+    }
   }
 }
