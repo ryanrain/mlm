@@ -29,19 +29,21 @@ $red: #b9474a;
     font-style: normal;
 }
 
-#libro-magico-container .ion-page {
-    margin: 0 auto;
-    position: relative;
-    height: 100vh;
-    width: 75vh;
-    max-width: 100vw;
-}
-#libro-magico-container page-video-player.ion-page {
-    width: 100vw;
+#libro-magico-container {
+    .ion-page {
+        margin: 0 auto;
+        position: relative;
+        height: 100vh;
+        width: 75vh;
+        max-width: 100vw;
+    }
+    page-video-player.ion-page, videos.ion-page {
+        width: 100vw;
+        max-width: 1024px;
+    }
 }
 
-
-ion-app {
+body ion-app.app-root {
     font-family: 'linotte', "Roboto", "Helvetica Neue", sans-serif;
 }
 page-elegir-imagen, bloques, matching-game, page-home {
@@ -122,4 +124,19 @@ $navButtonHorizPadding: 10px;
     width: auto;
     min-width: calc(100% + 64px);
     z-index: -1;
+}
+.home-button {
+    background: rgba($yellow, .85);
+    border-radius: 10px;
+    color: white;
+    text-shadow: 1px 1px #b9474a, -1px 1px #b9474a, 1px -1px #b9474a, -1px -1px #b9474a;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 4em;
+    font-size: 2vh;
+    text-decoration: none;
+    padding: 0.5em;
 }
