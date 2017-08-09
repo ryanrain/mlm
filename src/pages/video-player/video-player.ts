@@ -34,7 +34,6 @@ export class VideoPlayerPage {
   ready:boolean = false;
   video:any;
   private player;
-  private ytEvent;
 
   constructor(
     public navCtrl: NavController, 
@@ -48,9 +47,8 @@ export class VideoPlayerPage {
   }
 
   pauseMusic() {
-    if (this.afs.backgroundMusicPlaying) {
-        this.afs.backgroundMusic.pause();
-        this.afs.backgroundMusicPlaying = false;
+    if (this.afs.backgroundMusicHowl.playing()) {
+        this.afs.backgroundMusicHowl.pause();
     }
   }
 

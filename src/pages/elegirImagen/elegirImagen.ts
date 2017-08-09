@@ -1,4 +1,4 @@
-import { Component, ViewChildren, ViewChild, AfterViewInit, QueryList, ElementRef } from '@angular/core';
+import { Component, ViewChildren, ViewChild, AfterViewInit, QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/zip';
@@ -13,21 +13,24 @@ import { LetraModel } from '../../models/letra.model';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { Maguito } from '../../building.blocks/maguito.component';
 
+import { Howl } from 'howler';
+var letrasSprite = require('../../assets/audios/letras/letrasSprite.json');
+
 @Component({
   selector: 'page-elegir-imagen',
   template: `
   <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-    <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+    <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
     <ion-icon name="musical-notes"></ion-icon>
   </button>
-  <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
+  <div *ngIf="afs.isWeb && !audioLoaded" id="loading">
     <img id="loader-circle" src="assets/maguito/loader.gif">
     <maguito></maguito>
   </div>
 
   <ion-content padding [class.arriba]="imagenArriba">
-    <img #bgImg class="bg-img" src="assets/fondos/FONDO4-sky.png">
+    <img class="bg-img" src="assets/fondos/FONDO4-sky.jpg">
     <div #letraAhoraRef id="letra-principal">
       <div>
         <span *ngIf="palabraAhora == ''">{{letraAhora}}</span>
@@ -55,78 +58,85 @@ export class ElegirImagen implements AfterViewInit {
   intentos:Observable<any>;
   letraClicks:Observable<any>;
   
-  bgLoaded:Observable<any>;
-  instructionLoaded:Observable<any>;
-  allLoaded:Observable<any>;
-  allLoadedBool:boolean = false;
+  audioLoaded:boolean = false;
 
   @ViewChildren('opcion1,opcion2,opcion3') opcionesBotones:QueryList<ElementRef>;
   @ViewChild('letraAhoraRef') letraAhoraRef:ElementRef;
-  @ViewChild('bgImg') bgImg:ElementRef;
+
+  letrasHowl:Howl;
 
   constructor(
     public navCtrl: NavController,
     public castillano: AlfabetoCastillano,
     public platform: Platform, 
-    public afs: AudioFileService
+    public afs: AudioFileService,
+    private change: ChangeDetectorRef
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
 
-    this.afs.populatePageAudios('letras');
+    if (platform.is('cordova')) {
+      this.letrasHowl = new Howl({
+        src: [
+          "assets/audios/letras/letrasSprite.webm",
+          "assets/audios/letras/letrasSprite.mp3"
+        ],
+        sprite: letrasSprite.sprite,
+        html5: true
+      });
+    } else {
+      this.letrasHowl = new Howl({
+        src: [
+          "assets/audios/letras/letrasSprite.webm",
+          "assets/audios/letras/letrasSprite.mp3"
+        ],
+        sprite: letrasSprite.sprite
+      });
+    }
 
   }
 
   ngAfterViewInit() {
-
-    // empieza con la letra... ___
-    this.afs.instructions['letras'].addEventListener('ended', () => {
-      this.afs.playWhenReady(this.afs.letters[this.letraAhora]); 
-      this.afs.instructions['letras'].removeEventListener('ended');
-    });
-
+    
+    //
     // LOADING LOGIC
-    if(this.afs.isWeb) {
-      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-
-      console.log('networkState: ', this.afs.instructions['letras'].networkState, 'readyState: ', this.afs.instructions['letras'].readyState, this.afs.instructions['letras'].buffered, 'currentSrc: ', this.afs.instructions['letras'].currentSrc);
-
-      if ( this.afs.instructions['letras'].networkState === 1 && this.afs.instructions['letras'].buffered.length === 0 && this.afs.instructions['pares'].currentSrc !== '') {
-        
-        console.log('wait to load instruction and bg ', this.afs.instructions['letras'].readyState);
-        this.instructionLoaded = Observable.fromEvent(this.afs.instructions['letras'], 'canplaythrough');
-        this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
-
-        this.allLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['letras']);
+    // wait until audio sprite has loaded before removing the loading panel
+    //
+    switch (this.letrasHowl.state()) {
+      
+      case 'loading' :
+        console.log('loading letras sprite');
+        this.letrasHowl.on('load', () => {
+          console.log('letras sprite loaded');          
+          this.clearLoadingPlayInstruction(this.letraAhora);
         });
+      break;
 
-      } else {
-        
-        console.log('wait for bg only ', this.afs.instructions['letras'].readyState);
-        this.bgLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['letras']);
-        });
+      case 'loaded' :
+        console.log('letras sprite loaded');      
+        this.clearLoadingPlayInstruction(this.letraAhora);
+      break;
 
-      } 
-
-    } else {
-
-      this.afs.playWhenReady(this.afs.instructions['letras']);
+      case 'unloaded' :
+        console.log('letras sprite unloaded...');
+      break;
 
     }
 
+    //
+    // CLICK EVENTS SETUP
+    //
 
-    // que un 'click' en la letra haga sonar el audio de la letra
+    // BIG LETTER
     this.letraClicks = Observable.fromEvent(this.letraAhoraRef.nativeElement, 'click');
     this.letraClicks
       .throttleTime(1000)
       .subscribe(clickEvent => {
-        this.afs.playWhenReady(this.afs.letters[this.letraAhora]);        
-      });
-
-    // loop through QueryList and return a single Observable of events
+        this.letrasHowl.play(this.letraAhora);
+      })
+    ;
+    
+    // IMAGES BELOW
+    // Set up single Observable of click events on any of the image choices
     this.opcionesBotones.reduce( (acc, boton) => {
         let current = Observable.fromEvent(boton.nativeElement, 'click');
         if ( acc === null) {
@@ -140,21 +150,22 @@ export class ElegirImagen implements AfterViewInit {
       null
     );
 
-    // act on button clicks
+    // Subscribe to that single observable to act on button clicks
     this.intentos
       .throttleTime(1000)    
       .subscribe(clickEvent => {
-
-        console.log(clickEvent);
+        // visual indication of click
         clickEvent.target.style.boxShadow = '0 0 2vh 0.3vh brown inset';
 
-
-        let letra = clickEvent.target.id;
+        // play audio word of clicked image
         let palabra = clickEvent.target.classList[0];
-        this.afs.playWhenReady(this.afs.words[palabra]);
+        this.afs.palabrasHowl.play(this.afs.transliterate(palabra));
 
+        // if correct choice, start CHAIN OF SUCCESS EVENTS
+        let letra = clickEvent.target.id;
         if( letra === this.letraAhora ) {
-          // note these setTimeout execute 
+
+          // note these setTimeout all start at the same time.
           let delay1 = 500,
               delay2 = delay1 + 2000,
               delay3 = delay2 + 1500,
@@ -168,19 +179,22 @@ export class ElegirImagen implements AfterViewInit {
             },
             delay1
           );
+
           setTimeout(
             () => {
-              this.afs.playWhenReady(this.afs.letters[letra]);              
+              this.letrasHowl.play(letra);              
             },
             delay2
           );
+
           setTimeout(
             () => {
               this.mostrarPalabra(palabra);
-              this.afs.playWhenReady(this.afs.words[palabra]);              
+              this.afs.palabrasHowl.play(this.afs.transliterate(palabra)); 
             },
             delay3
           );
+          // and finally reset game to new letter
           setTimeout(
             () => {
               this.reset();
@@ -188,11 +202,12 @@ export class ElegirImagen implements AfterViewInit {
             },
             delay4
           );
+        // or if INCORRECT image choice
         } else {
           setTimeout(
             ()=>{
               clickEvent.target.style.boxShadow = '';               
-              this.afs.playWhenReady(this.afs.beep);
+              this.afs.appHowl.play('beep');
             },
             1200
           );
@@ -200,12 +215,26 @@ export class ElegirImagen implements AfterViewInit {
       })
     ;
 
+  } // ngAfterViewInit
+
+  clearLoadingPlayInstruction(letra:string){
+    this.audioLoaded = true;
+    // tell angular to trigger change detection.
+    // necessary for Web Audio API or angular will wait for subsequent click
+    this.change.detectChanges();
+    
+    setTimeout(() => {
+      let instructionId = this.letrasHowl.play('instruccion');
+      this.letrasHowl.once('end', () => {
+        this.letrasHowl.play(letra)
+      }, instructionId);
+    },1000);
   }
   
   celebrar(boton){
     boton.classList.add('woohoo');
     setTimeout(() => {
-      this.afs.playWhenReady(this.afs.bell);
+      this.afs.appHowl.play('bell');
     }, 350);
     setTimeout(() => {
       this.afs.playRandomBienAudio();
@@ -227,7 +256,7 @@ export class ElegirImagen implements AfterViewInit {
     this.imagenArriba = false;
     this.opcionesBotones.forEach(boton => {
       boton.nativeElement.classList.remove('woohoo');
-    })
+    });
   }
 
   nuevaLetra(alfabeto){
@@ -260,7 +289,6 @@ export class ElegirImagen implements AfterViewInit {
 
 
   volver() {
-    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 

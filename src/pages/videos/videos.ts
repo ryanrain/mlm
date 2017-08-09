@@ -24,7 +24,7 @@ interface YoutubeResponse {
       </button>
       <ion-title>Cuentos Mágicos</ion-title>
       <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-        <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+        <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
         <ion-icon name="musical-notes"></ion-icon>
       </button>
     </ion-header>
@@ -77,9 +77,7 @@ export class Videos {
     public platform: Platform,
     public network: Network,
       ) {
-  
-    this.afs.populatePageAudios('videos');
-    
+      
     if (platform.is('cordova')) {
       console.log(network.type);
       // watch network for a connection
@@ -157,7 +155,6 @@ export class Videos {
   }
 
   volver() {
-    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 

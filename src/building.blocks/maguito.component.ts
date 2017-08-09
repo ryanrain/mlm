@@ -20,9 +20,7 @@ export class Maguito {
     maguitoClicks:Observable<any>;
     duration:number = 1500;
 
-    constructor(public afs: AudioFileService) {
-
-    }
+    constructor(public afs: AudioFileService) {}
 
     ngAfterViewInit() {
         this.maguitoClicks = Observable.fromEvent(this.maguito.nativeElement, 'click');
@@ -33,8 +31,10 @@ export class Maguito {
         });
 
     }
+
     randomMaguitoTrick(event:any) {
 
+        // swap image
         let randomSrc = Math.random();
         if ( randomSrc > 0.5 ) {
             event.target.src = 'assets/maguito/maguito-wooo.gif';
@@ -42,21 +42,22 @@ export class Maguito {
             event.target.src = 'assets/maguito/maguito-rie.gif';
         }
 
-        let random = Math.round(Math.random() * 5.4999);
-        let animationClassName = 'maguito-' + random;
+        // random css transition
+        let randomTransitionNumber = Math.round(Math.random() * 5.4999);
+        let animationClassName = 'maguito-' + randomTransitionNumber;
         event.target.classList.add(animationClassName);
 
-        if ( Object.keys(this.afs.risa).length < 1 ) { // afs.risa not populated yet
-            this.afs.populateAudios('risa');
-            // this.afs.playWhenReady(this.afs.risa[0]); // presents error in firefox, let's just have silence the first time
-        } else {
-            this.afs.playRandomRisaAudio();
-        }
+        // play random risa
+        let randomRisaNumber = Math.round(Math.random() * 4.4999),
+            randomRisa = 'risa' + randomRisaNumber.toString();
+        this.afs.appHowl.play(randomRisa);
 
+        // back to normal
         setTimeout(() => {
             event.target.src = 'assets/maguito/maguito-parpadea.gif'            
             event.target.classList.remove(animationClassName);         
         },this.duration);
+        
     }
     
 }

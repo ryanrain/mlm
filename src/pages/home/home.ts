@@ -24,11 +24,11 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
     </div>
     <ion-content padding>
       <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-        <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+        <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
         <ion-icon name="musical-notes"></ion-icon>
       </button>
       <div id="home-container" [class.show-content]="isMobileWeb || entradaEnded">
-        <img #bgImg class="bg-img" src="assets/fondos/FONDO4.png">
+        <img #bgImg class="bg-img" src="assets/fondos/FONDO4.jpg">
         <div id="mlm"><img src="assets/home/mlm.png"></div>
         <div id="menu-buttons">
           <div class="home-button" *ngFor="let p of pages" (click)="openPage(p)" [attr.data-audio]="p.audioFileName">{{p.title}}</div>
@@ -76,9 +76,6 @@ export class HomePage implements AfterViewInit {
     }
   ];
 
-  buttonAudios = {};
-  openPageRunning:boolean = false;
-
   isMobileWeb:boolean;
   @ViewChild('bgImg') bgImg:ElementRef;
   bgLoaded:Observable<any>;
@@ -99,13 +96,6 @@ export class HomePage implements AfterViewInit {
     private iab: InAppBrowser
     ) {
 
-    this.pages.forEach(page => {
-
-      // populate page title audios
-      this.afs.homePageButtons[page.audioFileName] = new Audio("assets/titulos/" + page.audioFileName + '.MP3');
-
-    });
-
     this.isMobileWeb = platform.is('mobileweb');
     this.entradaEnded = false;
 
@@ -113,14 +103,16 @@ export class HomePage implements AfterViewInit {
 
   ngAfterViewInit() {
 
-    // background music attributes
-    this.afs.backgroundMusic.loop = true;
-    this.afs.backgroundMusic.volume = 0.2;
+    //
+    // LOADING LOGIC
+    //
 
-    if (this.afs.isWeb ){
-      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-    } else {
+    // if not viewed in web browser, start video right away
+    if (!this.afs.isWeb ){
       this.startEntrada();
+    // if viewed in web browser, watch background image load
+    } else {
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
     }
 
     if ( this.isMobileWeb ) {
@@ -147,7 +139,8 @@ export class HomePage implements AfterViewInit {
 
     if ( this.platform.is('core') ) {      
       this.entradaVideoLoaded = Observable.fromEvent(this.entradaVideo.nativeElement, 'canplaythrough');
-      this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusic, 'canplaythrough');
+
+      this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusicHowl, 'load'); // usable here since will only load once.
 
       this.allLoaded = Observable.zip(this.bgLoaded, this.entradaVideoLoaded, this.backgroundMusicLoaded);
 
@@ -172,46 +165,8 @@ export class HomePage implements AfterViewInit {
   }
 
   openPage(page) {
-    if (!this.openPageRunning) {
-      this.openPageRunning = true;
-
-      if (typeof(this.afs.homePageButtons[page.audioFileName]) === 'object' 
-        && this.afs.homePageButtons[page.audioFileName].duration > 0 
-        && this.afs.homePageButtons[page.audioFileName].readyState > 0 ) {
-
-        this.afs.homePageButtons[page.audioFileName].play(); // playWhenReady played upon playPause triggered by volver();
-
-        let durationButtonAudio = this.afs.homePageButtons[page.audioFileName].duration * 1000;
-        console.log('durationButtonAudio: ', durationButtonAudio); 
-        
-        // for android phones, have to populate audio from here to avoid "play() can only be initiated by a user gesture." error
-        if ( this.platform.is('android') && this.isMobileWeb ) {
-          // seems chrome gives us 1 second.
-          if (durationButtonAudio > 950) { 
-            setTimeout(() => {              
-              this.afs.populatePageAudios(page.audioFileName);
-            }, 950);
-          } else {
-            setTimeout(() => {  
-                this.afs.populatePageAudios(page.audioFileName);
-            }, durationButtonAudio);
-          }
-        } 
-
-        setTimeout(() => {  // "ended" event listener got complicated
-          this.openPageRunning = false;
-          this.navCtrl.push(page.component);
-        }, durationButtonAudio);
-
-      } else {
-
-        this.afs.populatePageAudios(page.audioFileName);        
-        this.openPageRunning = false;
-        this.navCtrl.push(page.component);
-
-      }
-      
-    }
+      this.afs.appHowl.play(page.audioFileName)
+      this.navCtrl.push(page.component);
   }
 
   openCredits() {

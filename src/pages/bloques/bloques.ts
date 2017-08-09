@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener } from '@angular/core';
+import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener, ChangeDetectorRef } from '@angular/core';
 import { NavController, AlertController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
@@ -11,12 +11,15 @@ import { SilabasCastillano } from '../../castillano/silabas.castillano';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { Maguito } from '../../building.blocks/maguito.component';
 
+import { Howl } from 'howler';
+var silabasSprite = require('../../assets/audios/silabas/silabasSprite.json');
+
 @Component({
   selector: 'bloques',
   template: `
   <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-    <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+    <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
     <ion-icon name="musical-notes"></ion-icon>
   </button>
   <button class="nav-button bulb" (click)="hint()"><ion-icon name="bulb"></ion-icon></button>
@@ -28,7 +31,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
 
   <ion-content [ngClass]="{woohoo:(woohoo) }">
 
-    <img #bgImg class="bg-img" src="assets/fondos/FONDO1.png">
+    <img #bgImg class="bg-img" src="assets/fondos/FONDO1.jpg">
     
     <ion-row class="row lugares">
       <ion-col class="lugar">
@@ -72,7 +75,7 @@ export class Bloques implements AfterViewInit {
   notYetRun: boolean;
 
   bgLoaded:Observable<any>;
-  instructionLoaded:Observable<any>;
+  silabasLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
   
@@ -83,17 +86,37 @@ export class Bloques implements AfterViewInit {
 
   wordStream:Subject<Array<string>> = new Subject();
 
+  silabasHowl:Howl;
+
   constructor(
     public navCtrl: NavController,
     private alertCtrl: AlertController,
     public castillano: SilabasCastillano, 
     public platform: Platform, 
-    public afs: AudioFileService
+    public afs: AudioFileService, 
+    private change: ChangeDetectorRef
   ) {
     this.createSilables();
     this.preloadWordImage(this.wordHint.join(''));
 
-    this.afs.populatePageAudios('bloques');
+    if (platform.is('cordova')) {
+      this.silabasHowl = new Howl({
+        src: [
+          "assets/audios/silabas/silabasSprite.webm",
+          "assets/audios/silabas/silabasSprite.mp3"
+        ],
+        sprite: silabasSprite.sprite,
+        html5: true
+      });
+    } else {
+        this.silabasHowl = new Howl({
+        src: [
+          "assets/audios/silabas/silabasSprite.webm",
+          "assets/audios/silabas/silabasSprite.mp3"
+        ],
+        sprite: silabasSprite.sprite
+      });
+    }
 
     this.wordStream
       .filter(attempt => { 
@@ -144,7 +167,7 @@ export class Bloques implements AfterViewInit {
         }, 2000);
         setTimeout(() => {
           console.log(this.afs.silableWords, successWord)
-          this.afs.playWhenReady( this.afs.silableWords[successWord] );
+          this.afs.palabrasHowl.play( this.afs.transliterate(successWord) );
         }, 3000);
         setTimeout(() => {
           if(!this.alreadyRefreshed) {
@@ -168,40 +191,38 @@ export class Bloques implements AfterViewInit {
     this.makeBlocksDraggable();
     this.createDropZones();
 
+    //
     // LOADING LOGIC
+    //
     if(this.afs.isWeb) {
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
-
-      console.log('networkState: ', this.afs.instructions['bloques'].networkState, 'readyState: ', this.afs.instructions['bloques'].readyState, this.afs.instructions['bloques'].buffered, 'currentSrc: ', this.afs.instructions['bloques'].currentSrc);
-
-
-      if ( this.afs.instructions['bloques'].networkState === 1 && this.afs.instructions['bloques'].buffered.length === 0 && this.afs.instructions['bloques'].currentSrc !== '' ) { // note: buffered doesn't exist in safari
-        
-        console.log('wait to load instruction and bg ', this.afs.instructions['bloques'].readyState);
-        this.instructionLoaded = Observable.fromEvent(this.afs.instructions['bloques'], 'canplaythrough');
-        this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
-
+      
+      if ( this.silabasHowl.state() === 'loading' ) {
+        this.silabasLoaded = Observable.fromEvent(this.silabasHowl, 'load');
+        this.allLoaded = Observable.zip(this.bgLoaded, this.silabasLoaded);
         this.allLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['bloques']);
+          this.clearLoadingPlayInstruction();
         });
-
       } else {
-        
-        console.log('wait for bg only ', this.afs.instructions['bloques'].readyState);
-        this.bgLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['bloques']);
+        this.bgLoaded.subscribe(() => {
+          this.clearLoadingPlayInstruction();          
         });
-
-      } 
+      }
 
     } else {
-
-      this.afs.playWhenReady(this.afs.instructions['bloques']);
-
+      this.clearLoadingPlayInstruction();
     }
 
+  }
+
+  clearLoadingPlayInstruction() {
+    this.allLoadedBool = true;
+    // tell angular to trigger change detection.
+    // necessary for Web Audio API or angular will wait for subsequent click
+    this.change.detectChanges(); 
+    setTimeout(() => {
+      this.silabasHowl.play('instruccion');
+    }, 2000);
   }
 
   reset() {
@@ -289,10 +310,12 @@ export class Bloques implements AfterViewInit {
     interact.maxInteractions(Infinity);
 
     let blockZIndex = 6;
-    let silableAudios = this.afs.silables;   
+    let silableAudios = this.silabasHowl;   
     
-    interact('.cubo', { // use selector context to bubble events and therefore enable re-use upon new blocks 
-                      // http://interactjs.io/docs/#selector-contexts
+    // use selector context to bubble events
+    // and therefore enable re-use upon new blocks 
+    // http://interactjs.io/docs/#selector-contexts
+    interact('.cubo', { 
         context: this.blockArea.nativeElement
       })
       // interact(cubo.nativeElement)
@@ -318,7 +341,7 @@ export class Bloques implements AfterViewInit {
           event.target.firstElementChild.style.zIndex = blockZIndex; // iphones
           blockZIndex++;
           let silable = event.target.firstElementChild.innerHTML;
-          silableAudios[silable].play();
+          silableAudios.play(silable);
       })
       .on('dragmove', function (event) {
           event.interaction.x += event.dx;
@@ -512,7 +535,6 @@ export class Bloques implements AfterViewInit {
   }
   
   volver() {
-    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 

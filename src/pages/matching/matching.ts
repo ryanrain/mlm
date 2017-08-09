@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener } from '@angular/core';
+import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener, ChangeDetectorRef } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/merge';
@@ -10,13 +10,15 @@ import { PalabrasCastillano } from '../../castillano/palabras.castillano';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { Maguito } from '../../building.blocks/maguito.component';
 
+import { Howl } from 'howler';
+
 @Component({
   selector: 'matching-game',
   template: `
   <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-    <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+    <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
     <ion-icon name="musical-notes"></ion-icon>
   </button>
   <div *ngIf="afs.isWeb && !allLoadedBool" id="loading">
@@ -26,7 +28,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
   
   <ion-content padding>
     
-    <img #bgImg class="bg-img" src="assets/fondos/FONDO6.png"> 
+    <img #bgImg class="bg-img" src="assets/fondos/FONDO6.jpg"> 
 
     <svg  xmlns="http://www.w3.org/2000/svg" #lines id="lines" viewBox="0 0 320 600"></svg>
     
@@ -52,6 +54,7 @@ export class Matching implements AfterViewInit {
   numberCorrectSoFar:number = 0;
   notYetRun:boolean;
 
+  paresHowl:Howl;
   bgLoaded:Observable<any>;
   instructionLoaded:Observable<any>;
   allLoaded:Observable<any>;
@@ -68,11 +71,27 @@ export class Matching implements AfterViewInit {
       public navCtrl: NavController,
       public castillano: PalabrasCastillano,
       public platform: Platform, 
-      public afs: AudioFileService
+      public afs: AudioFileService,
+      private change: ChangeDetectorRef
       ) {
       this.createWords();
 
-      this.afs.populatePageAudios('pares');
+      if (platform.is('cordova')) {
+        this.paresHowl = new Howl({
+          src: [
+            "assets/audios/pares/pares.webm",
+            "assets/audios/pares/pares.mp3"
+          ],
+          html5: true
+        });
+      } else {
+        this.paresHowl = new Howl({
+          src: [
+            "assets/audios/pares/pares.webm",
+            "assets/audios/pares/pares.mp3"
+          ]
+        });
+      }
   }
 
   ngAfterViewInit() {
@@ -85,38 +104,40 @@ export class Matching implements AfterViewInit {
 
     this.makeButtonsClickable(this.clickables); // first run
 
+    //
     // LOADING LOGIC
+    //
     if(this.afs.isWeb) {
+
+      // observables from load events of bg image and instruction audio
       this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
 
-      console.log('networkState: ', this.afs.instructions['pares'].networkState, 'readyState: ', this.afs.instructions['pares'].readyState, this.afs.instructions['pares'].buffered, 'currentSrc: ', this.afs.instructions['pares'].currentSrc) ;
-
-      if ( this.afs.instructions['pares'].networkState === 1 && this.afs.instructions['pares'].buffered.length === 0 && this.afs.instructions['pares'].currentSrc !== '' ) {
-        
-        console.log('wait to load instruction and bg ', this.afs.instructions['pares'].readyState);
-        this.instructionLoaded = Observable.fromEvent(this.afs.instructions['pares'], 'canplaythrough');
+      if ( this.paresHowl.state() === 'loading' ) {
+        this.instructionLoaded = Observable.fromEvent(this.paresHowl, 'load');
         this.allLoaded = Observable.zip(this.bgLoaded, this.instructionLoaded);
-
         this.allLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['pares']);
+          this.clearLoadingPlayInstruction();
         });
-
       } else {
-        
-        console.log('wait for bg only ', this.afs.instructions['pares'].readyState);
-        this.bgLoaded.subscribe(status => {
-          this.allLoadedBool = true;
-          this.afs.playWhenReady(this.afs.instructions['pares']);
-        });
-
-      } 
+        this.bgLoaded.subscribe(() => {
+          this.clearLoadingPlayInstruction();          
+        })
+      }
 
     } else {
-
-      this.afs.playWhenReady(this.afs.instructions['pares']);
-
+      this.clearLoadingPlayInstruction();
     }
+  }
+
+  clearLoadingPlayInstruction(){
+    this.allLoadedBool = true;
+    // tell angular to trigger change detection.
+    // necessary for Web Audio API or angular will wait for subsequent click
+    this.change.detectChanges(); 
+    
+    setTimeout(() => {
+      this.paresHowl.play();
+    },1000);
   }
 
   makeButtonsClickable(buttons:QueryList<ElementRef>) {
@@ -148,7 +169,7 @@ export class Matching implements AfterViewInit {
         let currentAttempt = clickEvent.target.getAttribute("data-word"),
             currentImgOrText = clickEvent.target.nodeName;
 
-        this.afs.playWhenReady(this.afs.words[currentAttempt]);
+        this.afs.palabrasHowl.play(this.afs.transliterate(currentAttempt));
         
         console.log(this.wordAttempted, currentAttempt, currentImgOrText);
 
@@ -176,7 +197,7 @@ export class Matching implements AfterViewInit {
             if ( this.wordAttempted === currentAttempt ) {
               console.log('if the next one is correct');
               this.numberCorrectSoFar++;
-              this.afs.playWhenReady(this.afs.bell);
+              this.afs.appHowl.play('bell');
               this.drawLine(clickEvent.target);              
               this.deselectAll();
               if(this.numberCorrectSoFar === 5) {
@@ -184,6 +205,7 @@ export class Matching implements AfterViewInit {
                   this.celebrate();
               }
             } else {
+              console.log('if the next one is incorrect');              
               setTimeout(()=>{
                 this.afs.playRandomIncorrectoAudio();
               }, 800);
@@ -294,7 +316,6 @@ export class Matching implements AfterViewInit {
   }
 
   volver() {
-    this.afs.playPause(this.afs.homePageButtons);
     this.navCtrl.pop();
   }
 
