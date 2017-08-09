@@ -27,7 +27,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
         <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
         <ion-icon name="musical-notes"></ion-icon>
       </button>
-      <div id="home-container" [class.show-content]="isMobileWeb || entradaEnded">
+      <div id="home-container" [class.show-content]="isMobileWeb || showContentBool">
         <img #bgImg class="bg-img" src="assets/fondos/FONDO4.jpg">
         <div id="mlm"><img src="assets/home/mlm.png"></div>
         <div id="menu-buttons">
@@ -37,10 +37,10 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
           <a (click)="openLink($event)" class="home-button" target="_blank" href="http://milibromagico.com.mx/">Sitio web</a>
           <a (click)="openLink($event)" class="home-button" target="_blank" href="https://www.youtube.com/channel/UCg9rOiFz4riAK-P-nkS4r7g">Videos</a>
           <a (click)="openLink($event)" class="home-button" target="_blank" href="http://milibromagico.com.mx/index.php/tienda-en-linea">Tienda <br>en linea</a>
-          <maguito [class.maguitohidden]="!entradaEnded"></maguito>
+          <maguito [class.maguitohidden]="!showContentBool"></maguito>
         </div>
       </div>
-      <div #entradaContainer id="entrada-container" [class.entrada-fade-out]="entradaEnded">
+      <div #entradaContainer id="entrada-container" [class.entrada-fade-out]="showContentBool">
         <video *ngIf="!isMobileWeb" #entradaVideo id="entrada" preload="auto" src="assets/home/entrada.mp4"></video>
       </div>
       <span id="creditos" (click)="openCredits()">Creditos</span>
@@ -85,8 +85,8 @@ export class HomePage implements AfterViewInit {
   entradaVideoLoaded:Observable<any>;
   backgroundMusicLoaded:Observable<any>;
   allLoaded:Observable<any>;
-  allLoadedBool:boolean;
-  entradaEnded:boolean;
+  allLoadedBool:boolean = false;
+  showContentBool:boolean;
 
   constructor(
     public navCtrl: NavController, 
@@ -96,8 +96,8 @@ export class HomePage implements AfterViewInit {
     private iab: InAppBrowser
     ) {
 
-    this.isMobileWeb = platform.is('mobileweb');
-    this.entradaEnded = false;
+    this.isMobileWeb = platform.is('mobileweb');  // for redundant use in template
+    this.showContentBool = false;
 
   }
 
@@ -107,47 +107,64 @@ export class HomePage implements AfterViewInit {
     // LOADING LOGIC
     //
 
-    // if not viewed in web browser, start video right away
-    if (!this.afs.isWeb ){
+    // CORDOVA
+    // if viewed as installed app, start video right away
+    if ( !this.afs.isWeb ){
+      this.allLoadedBool = true; // redundant
       this.startEntrada();
-    // if viewed in web browser, watch background image load
-    } else {
-      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
     }
 
-    if ( this.isMobileWeb ) {
+    // MOBILEWEB
+    // if viewed in a browser on a mobile device, skip the video but wait for bg load.
+    if ( this.platform.is('mobileweb') ) {
 
-      // don't show entrada
+      // watch for background image load
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+
+      // don't show entrada video
       this.bgLoaded.subscribe(() => {
-        console.log('allLoaded mobileweb');
         // remove loading
         this.allLoadedBool = true;
         // hide entrada video, show maguito below
-        this.endEntrada();
+        this.showContent();
+        console.log('allLoaded mobileweb');
       });
+    
+    }  
 
-    } else {
+    // LARGE-SCREEN WEB
+    // if viewed in web browser on conventional computer,
+    // wait for the background, video, and background music
+    if (this.platform.is('core')) {
 
-      // when entradaVideo finishes, hide entrada video, show maguito below
-      this.entradaVideo.nativeElement.addEventListener('ended', () => {
-        this.endEntrada();
-        // music
-        this.afs.playPauseBackgroundMusic();
-      });
-
-    }
-
-    if ( this.platform.is('core') ) {      
+      // watch for background image load event
+      this.bgLoaded = Observable.fromEvent(this.bgImg.nativeElement, 'load');
+  
+      // watch for video load event
       this.entradaVideoLoaded = Observable.fromEvent(this.entradaVideo.nativeElement, 'canplaythrough');
-
+      
+      // watch for background music load event
       this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusicHowl, 'load'); // usable here since will only load once.
 
+      // all together
       this.allLoaded = Observable.zip(this.bgLoaded, this.entradaVideoLoaded, this.backgroundMusicLoaded);
 
+      // and act on it.
       this.allLoaded.subscribe(status => {
-        console.log('allLoaded');
         this.allLoadedBool = true;
         this.startEntrada();
+        console.log('allLoaded');
+      });
+    }
+
+    // CORDOVA AND LARGE-SCREEN WEB
+    // everybody who saw the video, should hide it when it finishes, and start the music
+    if ( !this.platform.is('mobileweb') ) {    
+      // when entradaVideo finishes, hide entrada video, show maguito below
+      this.entradaVideo.nativeElement.addEventListener('ended', () => {
+        this.showContent();
+        // play music
+        this.afs.playPauseBackgroundMusic();
       });
     }
 
@@ -157,8 +174,8 @@ export class HomePage implements AfterViewInit {
       this.entradaVideo.nativeElement.play();
   }
 
-  endEntrada() {
-      this.entradaEnded = true;
+  showContent() {
+      this.showContentBool = true;
       setTimeout(()=> {
         this.entradaContainer.nativeElement.style.display = 'none';
       }, 1000)
