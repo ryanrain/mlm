@@ -1,9 +1,8 @@
-import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { NavController, AlertController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/throttleTime';
 
 import {interact} from 'interactjs';
 
@@ -16,6 +15,7 @@ var silabasSprite = require('../../assets/audios/silabas/silabasSprite.json');
 
 @Component({
   selector: 'bloques',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
   <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
@@ -181,7 +181,6 @@ export class Bloques implements AfterViewInit {
  
   ngAfterViewInit () {
     this.blocksQueryList.changes
-      .throttleTime(1000)
       .subscribe(blocks => {
         console.log('change');
         this.scatterBlocks(blocks);
@@ -258,6 +257,7 @@ export class Bloques implements AfterViewInit {
     this.reset();
     this.createSilables();
     this.preloadWordImage(this.wordHint.join(''));
+    this.change.detectChanges();    
   }
   
   preloadWordImage(word:string) {
@@ -310,7 +310,6 @@ export class Bloques implements AfterViewInit {
     interact.maxInteractions(Infinity);
 
     let blockZIndex = 6;
-    let silableAudios = this.silabasHowl;   
     
     // use selector context to bubble events
     // and therefore enable re-use upon new blocks 
@@ -332,7 +331,7 @@ export class Bloques implements AfterViewInit {
           }
         }
       })
-      .on('dragstart', function (event) {
+      .on('dragstart', (event) => {
           event.interaction.x = parseInt(event.target.getAttribute('data-x'), 10) || 0;
           event.interaction.y = parseInt(event.target.getAttribute('data-y'), 10) || 0;
           
@@ -341,15 +340,15 @@ export class Bloques implements AfterViewInit {
           event.target.firstElementChild.style.zIndex = blockZIndex; // iphones
           blockZIndex++;
           let silable = event.target.firstElementChild.innerHTML;
-          silableAudios.play(silable);
+          this.silabasHowl.play(this.afs.transliterate(silable));
       })
-      .on('dragmove', function (event) {
+      .on('dragmove', (event) => {
           event.interaction.x += event.dx;
           event.interaction.y += event.dy;
           event.target.style.left = event.interaction.x + 'px';
           event.target.style.top  = event.interaction.y + 'px';
       })
-      .on('dragend', function (event) {
+      .on('dragend', (event) => {
           event.target.setAttribute('data-x', event.interaction.x);
           event.target.setAttribute('data-y', event.interaction.y);
       })
