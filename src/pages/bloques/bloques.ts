@@ -64,6 +64,7 @@ export class Bloques implements AfterViewInit {
   word = ['','']
   wordHint:string[];
   updatedCurrentBlocks;
+  createSilablesCalled:boolean = false;
   silables = [];
 
   wordImage:string;
@@ -182,9 +183,11 @@ export class Bloques implements AfterViewInit {
   ngAfterViewInit () {
     this.blocksQueryList.changes
       .subscribe(blocks => {
-        console.log('change');
-        this.scatterBlocks(blocks);
-        this.updatedCurrentBlocks = blocks;
+        if ( this.createSilablesCalled ) {
+          this.updatedCurrentBlocks = blocks;
+          this.scatterBlocks(blocks);
+          this.createSilablesCalled = false;
+        }
       }
     );
     this.makeBlocksDraggable();
@@ -217,7 +220,7 @@ export class Bloques implements AfterViewInit {
   clearLoadingPlayInstruction() {
     this.allLoadedBool = true;
     // tell angular to trigger change detection.
-    // necessary for Web Audio API or angular will wait for subsequent click
+    // necessary when howler uses Web Audio API or angular will wait for subsequent click
     this.change.detectChanges(); 
     setTimeout(() => {
       this.silabasHowl.play('instruccion');
@@ -247,9 +250,11 @@ export class Bloques implements AfterViewInit {
         return silable !== this.wordHint[0] && silable !== this.wordHint[1];
       })
     ;
-
+    
     this.silables = this.wordHint.concat( randomSilables.slice(0,3) );
     
+    this.createSilablesCalled = true;
+
     this.alreadyRefreshed = false;
   }
 
@@ -257,7 +262,7 @@ export class Bloques implements AfterViewInit {
     this.reset();
     this.createSilables();
     this.preloadWordImage(this.wordHint.join(''));
-    this.change.detectChanges();    
+    this.change.detectChanges();
   }
   
   preloadWordImage(word:string) {
