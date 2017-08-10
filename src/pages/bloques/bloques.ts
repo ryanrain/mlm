@@ -72,7 +72,7 @@ export class Bloques implements AfterViewInit {
   
   blockColors = ['AMARILLO','AZUL','ROJO','VERDE'];
   activeDropZone:number;
-  alreadyRefreshed: boolean = false;
+  alertDismissed: boolean = false;
   notYetRun: boolean;
 
   bgLoaded:Observable<any>;
@@ -158,7 +158,7 @@ export class Bloques implements AfterViewInit {
               cssClass: 'primary',
               handler: () => {
                 this.newSilables();
-                this.alreadyRefreshed = true;
+                this.alertDismissed = true;
               }
             }
           ]
@@ -171,10 +171,12 @@ export class Bloques implements AfterViewInit {
           this.afs.palabrasHowl.play( this.afs.transliterate(successWord) );
         }, 3000);
         setTimeout(() => {
-          if(!this.alreadyRefreshed) {
+          if(!this.alertDismissed) {
             alert.dismiss();
             this.newSilables();
           }
+          // and reset
+          this.alertDismissed = false;          
         }, 6000);
       })
     ;
@@ -252,10 +254,7 @@ export class Bloques implements AfterViewInit {
     ;
     
     this.silables = this.wordHint.concat( randomSilables.slice(0,3) );
-    
     this.createSilablesCalled = true;
-
-    this.alreadyRefreshed = false;
   }
 
   newSilables() {
