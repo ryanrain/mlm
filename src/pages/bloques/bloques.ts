@@ -441,18 +441,23 @@ export class Bloques implements AfterViewInit {
   }
   
   ditchBlock(block){
+    // smooth css transition
     block.classList.add('long-transition');
-    let height = 30 + Math.random() * 4;
-    block.style.marginTop = height + 'vh';
-    let width = (Math.random() - 1) * 4;
-    block.style.marginLeft = width + 'vh';
-    setTimeout(() =>{
-      block.style.top = block.offsetTop + 'px';
-      block.style.left = block.offsetLeft + 'px';
+
+    // push away from drop areas by adding to absolute positions
+    // randomize to avoid all rejects being stacked exactly on top of each other
+    let newTop = parseInt(block.style.top) + 200 + Math.random() * 50;
+    let newLeft = parseInt(block.style.left) + (Math.random() - 0.5) * 50;
+    block.style.top = newTop + 'px';
+    block.style.left = newLeft + 'px';
+    
+    // once the css transition duration has ended,
+    setTimeout(() =>{    
+      // set the interactable data attributes in order for subsequent drags not to jump
       block.setAttribute('data-x', block.offsetLeft);
       block.setAttribute('data-y', block.offsetTop);
-      block.style.marginTop = '';
-      block.style.marginLeft = '';        
+
+      // and remove classes that would now interfere
       block.classList.remove('long-transition');
       block.classList.remove('currently-placed-block');
     },800);
@@ -473,7 +478,9 @@ export class Bloques implements AfterViewInit {
     // push blocks down
     this.blocksQueryList.forEach(block => {
       if (block.nativeElement.classList.contains('currently-placed-block')){
-        this.ditchBlock(block.nativeElement);
+        setTimeout(() => {
+          this.ditchBlock(block.nativeElement);
+        }, 10);
       }
     });
 
