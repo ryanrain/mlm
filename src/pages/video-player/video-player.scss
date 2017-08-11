@@ -4,11 +4,24 @@ page-video-player {
     color: darkgreen;
     text-align: center;
   }
+  .toolbar-content {
+    display: flex;
+    justify-content: space-between;
+  }
   .volume {
     left: auto;
     right: 12px;
     font-size: 2.2rem;
-    top: 10px;
+    top: 0;
+    position: relative;
+    text-shadow: none;
+    color: darkgreen;
+    padding:0;
+  }
+  #music-off {
+    top: 3px;
+    line-height: 2.2rem;
+    left: 6px;
   }
   #loader-circle {
     position: absolute;

@@ -3,14 +3,20 @@ videos {
         left: auto;
         right: 12px;
         font-size: 2.2rem;
-        top: 5px;
+        // top: 5px;
+        position: relative;
     }
     ion-header {
         display: flex;
-        .button {
+        .button, .nav-button {
             background: transparent;
             box-shadow: none;
-            text-shadow: 1px 1px darkgreen, -1px 1px darkgreen, 1px -1px darkgreen, -1px -1px darkgreen;
+            color: darkgreen;
+            text-shadow: none;
+            // text-shadow: 1px 1px darkgreen, -1px 1px darkgreen, 1px -1px darkgreen, -1px -1px darkgreen;
+        }
+        #music-off {
+            top: 0;
         }
     }
     .content, .toolbar-title {
@@ -45,6 +51,7 @@ videos {
         > *:first-child {
             height: 15vh;
             margin: 0 0 3vh 0;
+            width: 80%;
         }
         button {
             @extend .home-button;

@@ -9,11 +9,11 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
     <ion-header>
       <ion-navbar>
         <ion-title>{{ video.snippet.title }}</ion-title>
+        <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
+          <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+          <ion-icon name="musical-notes"></ion-icon>
+        </button>
       </ion-navbar>
-      <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-        <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
-        <ion-icon name="musical-notes"></ion-icon>
-      </button>
     </ion-header>
 
     <ion-content>
