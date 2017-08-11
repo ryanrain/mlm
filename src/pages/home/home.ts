@@ -70,8 +70,8 @@ export class HomePage implements AfterViewInit {
         component: Lectura
     },
     { 
-        title: 'Videos', 
-        audioFileName: 'lecturas',
+        title: 'Video Cuentos', 
+        audioFileName: 'videocuentos',
         component: Videos
     }
   ];

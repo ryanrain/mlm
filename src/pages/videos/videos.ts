@@ -9,11 +9,12 @@ import { Modal, NavController, Alert, Platform } from 'ionic-angular';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { VideoPlayerPage } from '../video-player/video-player';
 
+import { Howl } from 'howler';
 
-interface YoutubeResponse {
-  snippet: Array<any>;
-  title: string;
-}
+// interface YoutubeResponse {
+//   snippet: Array<any>;
+//   title: string;
+// }
 
 @Component({
   selector: 'videos',
@@ -58,7 +59,7 @@ interface YoutubeResponse {
     </ion-content>
   `
 })
-export class Videos {
+export class Videos implements AfterViewInit {
 
   playlistId: string = 'PLlDRAccUbAY8x0MnTkvLqQB9RbspCi4o0';
   googleAPIKey: string = 'AIzaSyDs8v5byR03viYXwf072r7gXLarXTZvzXI';
@@ -69,6 +70,7 @@ export class Videos {
   buttonText = 'Intentar de nuevo';
   intentando:boolean = false;
   @ViewChild('intentarButton') intentarButton:ElementRef;
+  videosHowl:Howl;
 
   constructor (
     public navCtrl:NavController, 
@@ -79,7 +81,9 @@ export class Videos {
       ) {
       
     if (platform.is('cordova')) {
+      // unknown, ethernet, wifi, 2g, 3g, 4g, cellular, none
       console.log(network.type);
+      
       // watch network for a connection
       let connectSubscription = this.network.onConnect().subscribe(() => {
         console.log('network connected!');
@@ -88,8 +92,34 @@ export class Videos {
         // prior to doing any api requests as well.
         setTimeout(() => {
           this.connection = this.network.type;
+          console.log(this.network.type);
+
+          if (this.network.type === '2g' ||
+            this.network.type === '3g' ||
+            this.network.type === '4g' ||
+            this.network.type === 'cellular' ||
+            this.network.type === 'unknown'
+          ) {            
+            this.videosHowl.play();
+          }
         }, 3000);
       });
+
+      this.videosHowl = new Howl({
+        src: [
+          "assets/audios/videos/videos.mp3"
+        ],
+        html5: true
+      });
+
+    } else {
+
+      this.videosHowl = new Howl({
+        src: [
+          "assets/audios/videos/videos.mp3"
+        ]
+      });
+
     }
 
 
@@ -98,9 +128,9 @@ export class Videos {
 
   }
   
-  // ngAfterViewInit () {
-  //   this.afs.playWhenReady(this.afs.instructions['lecturas']);
-  // }
+  ngAfterViewInit () {
+
+  }
 
 
   getYoutubePlaylist(): void {
