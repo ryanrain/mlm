@@ -39,6 +39,10 @@ matching-game {
                 align-self: flex-end;
                 border-radius: 20px;
                 background: rgba(white, 0.5);
+                cursor: pointer;
+            }
+            span {
+                cursor: pointer;
             }
         }
     }
@@ -60,7 +64,7 @@ matching-game {
     }
     #lines {
         position: absolute;
-        top: 3em;
+        top: 4em;
         left: 16px;
         path {
             stroke-width: 12px;
