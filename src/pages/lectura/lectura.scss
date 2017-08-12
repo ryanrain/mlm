@@ -1,19 +1,32 @@
 lecturas {
-    .volume {
-        left: auto;
-        right: 12px;
-        font-size: 2.2rem;
-        top: 5px;
-    }
-    ion-header {
+    ion-header.header {
         display: flex;
+        text-align: center;
+        * {
+            color: darkgreen;
+            text-shadow: none;
+        }
         .button {
             background: transparent;
             box-shadow: none;
-            text-shadow: 1px 1px darkgreen, -1px 1px darkgreen, 1px -1px darkgreen, -1px -1px darkgreen;
+        }
+        .volume {
+            position: relative;
+            left: auto;
+            right: 12px;
+            font-size: 2.2rem;
+            padding:0;
+            min-width: 4rem;
+            #music-off {
+                top: -2px;
+                left: 17px;
+            }
         }
     }
-
+    .bg-img {
+        position: fixed;
+        min-width: 100%;
+    }
     #lecturas-list {
         display: flex;
         flex-wrap: wrap;
@@ -25,6 +38,7 @@ lecturas {
             margin: 0 0 2em;
             background: rgba(white,.8);
             border-radius: 20px;
+            cursor: pointer;
         }
     }
     @media (min-width:500px) and (min-height:500px) {
