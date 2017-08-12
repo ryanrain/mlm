@@ -113,7 +113,7 @@ export class Lectura implements AfterViewInit {
     
     setTimeout(() => {
       this.lecturasHowl.play('instruccion');
-    },1000);
+    },2000);
   }
 
 
