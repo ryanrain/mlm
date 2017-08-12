@@ -73,6 +73,7 @@ bloques {
       width: $blockSize;
       padding-bottom: $blockSize;
       font-size: $blockSize / 4;
+      cursor: move;
       .platform-iphone.platform-mobileweb & {
         // width: 110px;
         // padding-bottom: 110px;
