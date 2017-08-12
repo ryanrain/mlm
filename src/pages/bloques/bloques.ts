@@ -29,7 +29,7 @@ var silabasSprite = require('../../assets/audios/silabas/silabasSprite.json');
     <maguito></maguito>
   </div>
 
-  <ion-content [ngClass]="{woohoo:(woohoo) }">
+  <ion-content>
 
     <img #bgImg class="bg-img" src="assets/fondos/FONDO1.jpg">
     
@@ -60,10 +60,8 @@ var silabasSprite = require('../../assets/audios/silabas/silabasSprite.json');
 
 export class Bloques implements AfterViewInit {
 
-  woohoo:boolean = false;
   word = ['','']
   wordHint:string[];
-  updatedCurrentBlocks;
   createSilablesCalled:boolean = false;
   silables = [];
 
@@ -100,6 +98,7 @@ export class Bloques implements AfterViewInit {
     this.createSilables();
     this.preloadWordImage(this.wordHint.join(''));
 
+    // AUDIO SETUP
     if (platform.is('cordova')) {
       this.silabasHowl = new Howl({
         src: [
@@ -119,6 +118,7 @@ export class Bloques implements AfterViewInit {
       });
     }
 
+    // SETUP CHECKING IF SILABLE COMBINATION IS A WORD
     this.wordStream
       .filter(attempt => { 
         if (attempt.indexOf('') < 0) { // complete words only
@@ -185,8 +185,8 @@ export class Bloques implements AfterViewInit {
   ngAfterViewInit () {
     this.blocksQueryList.changes
       .subscribe(blocks => {
+        // if the model has changed,
         if ( this.createSilablesCalled ) {
-          this.updatedCurrentBlocks = blocks;
           this.scatterBlocks(blocks);
           this.createSilablesCalled = false;
         }
@@ -194,6 +194,8 @@ export class Bloques implements AfterViewInit {
     );
     this.makeBlocksDraggable();
     this.createDropZones();
+    this.scatterBlocks(this.blocksQueryList);
+    // this.newSilables();
 
     //
     // LOADING LOGIC
@@ -232,7 +234,6 @@ export class Bloques implements AfterViewInit {
   reset() {
     
     this.word = ['',''];
-    this.woohoo = false;
 
     // remove active class from dropzones
     this.zonasDroppables.forEach((zona:ElementRef) => {
@@ -258,8 +259,9 @@ export class Bloques implements AfterViewInit {
   }
 
   newSilables() {
-    this.reset();
+    this.reset(); 
     this.createSilables();
+    // this.scatterBlocks(this.blocksQueryList);    
     this.preloadWordImage(this.wordHint.join(''));
     this.change.detectChanges();
   }
@@ -269,7 +271,7 @@ export class Bloques implements AfterViewInit {
   }
 
   hint(){
-    let blocks:QueryList<ElementRef> = this.updatedCurrentBlocks || this.blocksQueryList;
+    let blocks:QueryList<ElementRef> = this.blocksQueryList;
     blocks.forEach(block => {
       if(this.wordHint.indexOf(block.nativeElement.firstElementChild.innerHTML) >= 0) {
         block.nativeElement.classList.add('hint');
@@ -553,7 +555,7 @@ export class Bloques implements AfterViewInit {
     console.log(this.notYetRun);
     // debounced resize
     if ( this.notYetRun === true || typeof(this.notYetRun) === 'undefined') {
-      this.scatterBlocks(this.updatedCurrentBlocks || this.blocksQueryList);
+      this.scatterBlocks(this.blocksQueryList);
       this.notYetRun = false;
       setTimeout(()=>{
         this.notYetRun = true;
