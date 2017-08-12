@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { NavController, AlertController, Platform } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/zip';
@@ -86,18 +86,18 @@ export class HomePage implements AfterViewInit {
   backgroundMusicLoaded:Observable<any>;
   allLoaded:Observable<any>;
   allLoadedBool:boolean = false;
-  showContentBool:boolean;
+  showContentBool:boolean = false;
 
   constructor(
     public navCtrl: NavController, 
     public platform: Platform, 
     public afs: AudioFileService,
     private alertCtrl: AlertController,
-    private iab: InAppBrowser
+    private iab: InAppBrowser,
+    private change: ChangeDetectorRef
     ) {
 
     this.isMobileWeb = platform.is('mobileweb');  // for redundant use in template
-    this.showContentBool = false;
 
   }
 
@@ -111,6 +111,7 @@ export class HomePage implements AfterViewInit {
     // if viewed as installed app, start video right away
     if ( !this.afs.isWeb ){
       this.allLoadedBool = true; // redundant
+      this.change.detectChanges();      
       this.startEntrada();
     }
 
@@ -152,6 +153,7 @@ export class HomePage implements AfterViewInit {
       // and act on it.
       this.allLoaded.subscribe(status => {
         this.allLoadedBool = true;
+        this.change.detectChanges();
         this.startEntrada();
         console.log('allLoaded');
       });
@@ -178,7 +180,7 @@ export class HomePage implements AfterViewInit {
       this.showContentBool = true;
       setTimeout(()=> {
         this.entradaContainer.nativeElement.style.display = 'none';
-      }, 1000)
+      }, 1000);
   }
 
   openPage(page) {
