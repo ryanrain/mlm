@@ -10,7 +10,7 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
       <ion-navbar>
         <ion-title>{{ video.snippet.title }}</ion-title>
         <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
-          <span *ngIf="!afs.backgroundMusicPlaying"  id="music-off">\\\</span>
+          <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
           <ion-icon name="musical-notes"></ion-icon>
         </button>
       </ion-navbar>
@@ -18,7 +18,6 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
 
     <ion-content>
 
-      <img *ngIf="!ready" id="loader-circle" src="assets/maguito/loader.gif">
       <youtube-player 
         [videoId]="video.snippet.resourceId.videoId" 
         (ready)="savePlayer($event)"
@@ -31,7 +30,6 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
 })
 export class VideoPlayerPage {
 
-  ready:boolean = false;
   video:any;
   private player;
 
@@ -41,15 +39,11 @@ export class VideoPlayerPage {
     public afs: AudioFileService ) {
 
     // turn off music
-    this.pauseMusic();
-
-    this.video = navParams.get('video');
-  }
-
-  pauseMusic() {
     if (this.afs.backgroundMusicHowl.playing()) {
         this.afs.backgroundMusicHowl.pause();
     }
+
+    this.video = navParams.get('video');
   }
 
   playVideo() {
@@ -58,7 +52,7 @@ export class VideoPlayerPage {
   
   savePlayer(player) {
     this.player = player;
-    this.ready = true;
+    this.playVideo();
   }
   
   onStateChange(event) {
