@@ -99,24 +99,13 @@ export class Bloques implements AfterViewInit {
     this.preloadWordImage(this.wordHint.join(''));
 
     // AUDIO SETUP
-    if (platform.is('cordova')) {
       this.silabasHowl = new Howl({
-        src: [
-          "assets/audios/silabas/silabasSprite.webm",
-          "assets/audios/silabas/silabasSprite.mp3"
-        ],
-        sprite: silabasSprite.sprite,
-        html5: true
-      });
-    } else {
-        this.silabasHowl = new Howl({
-        src: [
-          "assets/audios/silabas/silabasSprite.webm",
-          "assets/audios/silabas/silabasSprite.mp3"
-        ],
-        sprite: silabasSprite.sprite
-      });
-    }
+      src: [
+        "assets/audios/silabas/silabasSprite.webm",
+        "assets/audios/silabas/silabasSprite.mp3"
+      ],
+      sprite: silabasSprite.sprite
+    });
 
     // SETUP CHECKING IF SILABLE COMBINATION IS A WORD
     this.wordStream

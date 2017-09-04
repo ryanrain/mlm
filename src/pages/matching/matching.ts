@@ -76,22 +76,12 @@ export class Matching implements AfterViewInit {
       ) {
       this.createWords();
 
-      if (platform.is('cordova')) {
-        this.paresHowl = new Howl({
-          src: [
-            "assets/audios/pares/pares.webm",
-            "assets/audios/pares/pares.mp3"
-          ],
-          html5: true
-        });
-      } else {
-        this.paresHowl = new Howl({
-          src: [
-            "assets/audios/pares/pares.webm",
-            "assets/audios/pares/pares.mp3"
-          ]
-        });
-      }
+      this.paresHowl = new Howl({
+        src: [
+          "assets/audios/pares/pares.webm",
+          "assets/audios/pares/pares.mp3"
+        ]
+      });
   }
 
   ngAfterViewInit() {

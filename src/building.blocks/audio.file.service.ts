@@ -30,54 +30,27 @@ export class AudioFileService {
             this.isWeb = false;
         }
 
-        if (platform.is('cordova')) {
-            this.appHowl = new Howl({
-                src: [
-                    "assets/audios/app/appSprite.webm",
-                    "assets/audios/app/appSprite.mp3"
-                ],
-                sprite: appSprite.sprite,
-                html5: true
-            });
+        this.appHowl = new Howl({
+            src: [
+                "assets/audios/app/appSprite.webm",
+                "assets/audios/app/appSprite.mp3"
+            ],
+            sprite: appSprite.sprite
+        });
 
-            this.palabrasHowl = new Howl({
-                src: [
-                    "assets/audios/palabras/palabrasSprite.webm",
-                    "assets/audios/palabras/palabrasSprite.mp3"
-                ],
-                sprite: palabrasSprite.sprite,
-                html5: true
-            });
+        this.palabrasHowl = new Howl({
+            src: [
+                "assets/audios/palabras/palabrasSprite.webm",
+                "assets/audios/palabras/palabrasSprite.mp3"
+            ],
+            sprite: palabrasSprite.sprite
+        });
 
-            this.backgroundMusicHowl = new Howl({
-                src: ['assets/audios/backgroundMusic/HappyBee_32.webm', 'assets/audios/backgroundMusic/HappyBee_32.mp3'],
-                loop: true,
-                volume: 0.2,
-                html5: true
-            });
-        } else {
-            this.appHowl = new Howl({
-                src: [
-                    "assets/audios/app/appSprite.webm",
-                    "assets/audios/app/appSprite.mp3"
-                ],
-                sprite: appSprite.sprite
-            });
-
-            this.palabrasHowl = new Howl({
-                src: [
-                    "assets/audios/palabras/palabrasSprite.webm",
-                    "assets/audios/palabras/palabrasSprite.mp3"
-                ],
-                sprite: palabrasSprite.sprite
-            });
-
-            this.backgroundMusicHowl = new Howl({
-                src: ['assets/audios/backgroundMusic/HappyBee_32.webm', 'assets/audios/backgroundMusic/HappyBee_32.mp3'],
-                loop: true,
-                volume: 0.2
-            });
-        }
+        this.backgroundMusicHowl = new Howl({
+            src: ['assets/audios/backgroundMusic/HappyBee_32.webm', 'assets/audios/backgroundMusic/HappyBee_32.mp3'],
+            loop: true,
+            volume: 0.1
+        });
 
     }
 

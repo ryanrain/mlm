@@ -59,24 +59,13 @@ export class Lectura implements AfterViewInit {
     private change: ChangeDetectorRef
       ) {
 
-    if (platform.is('cordova')) {
-      this.lecturasHowl = new Howl({
-        src: [
-          "assets/audios/lecturas/lecturasSprite.webm",
-          "assets/audios/lecturas/lecturasSprite.mp3"
-        ],
-        sprite: lecturasSprite.sprite,
-        html5: true
-      });
-    } else {
-      this.lecturasHowl = new Howl({
-        src: [
-          "assets/audios/lecturas/lecturasSprite.webm",
-          "assets/audios/lecturas/lecturasSprite.mp3"
-        ],
-        sprite: lecturasSprite.sprite
-      });
-    }
+    this.lecturasHowl = new Howl({
+      src: [
+        "assets/audios/lecturas/lecturasSprite.webm",
+        "assets/audios/lecturas/lecturasSprite.mp3"
+      ],
+      sprite: lecturasSprite.sprite
+    });
   }
   
   ngAfterViewInit () {

@@ -74,24 +74,13 @@ export class ElegirImagen implements AfterViewInit {
     ) {
     this.nuevaLetra(this.castillano.alfabeto);
 
-    if (platform.is('cordova')) {
-      this.letrasHowl = new Howl({
-        src: [
-          "assets/audios/letras/letrasSprite.webm",
-          "assets/audios/letras/letrasSprite.mp3"
-        ],
-        sprite: letrasSprite.sprite,
-        html5: true
-      });
-    } else {
-      this.letrasHowl = new Howl({
-        src: [
-          "assets/audios/letras/letrasSprite.webm",
-          "assets/audios/letras/letrasSprite.mp3"
-        ],
-        sprite: letrasSprite.sprite
-      });
-    }
+    this.letrasHowl = new Howl({
+      src: [
+        "assets/audios/letras/letrasSprite.webm",
+        "assets/audios/letras/letrasSprite.mp3"
+      ],
+      sprite: letrasSprite.sprite
+    });
 
   }
 
