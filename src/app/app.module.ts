@@ -27,7 +27,7 @@ import { LecturasContent } from '../pages/lectura/lecturas.content';
 // SERVICES
 import { AudioFileService } from '../building.blocks/audio.file.service';
 import { Maguito } from '../building.blocks/maguito.component';
-import { YoutubePlayerModule } from 'ng2-youtube-player';
+import { WindowTokenModule } from '../building.blocks/window';
 
 // CORDOVA PLUGINS
 import { InAppBrowser } from '@ionic-native/in-app-browser';
@@ -57,7 +57,7 @@ const cloudSettings: CloudSettings = {
     BrowserModule,
     CloudModule.forRoot(cloudSettings),
     HttpModule,
-    YoutubePlayerModule
+    WindowTokenModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
