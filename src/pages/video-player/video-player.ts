@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Inject, AfterViewInit } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
-
+import { WINDOW } from '../../building.blocks/window';
 
 @Component({
   selector: 'page-video-player',
@@ -18,25 +18,21 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
 
     <ion-content>
 
-      <youtube-player 
-        [videoId]="video.snippet.resourceId.videoId" 
-        (ready)="savePlayer($event)"
-        (change)="onStateChange($event)"
-      >
-      </youtube-player>
+      <div [id]="'player' + this.video.snippet.resourceId.videoId"></div>
 
     </ion-content>
   `
 })
-export class VideoPlayerPage {
+export class VideoPlayerPage implements AfterViewInit {
 
   video:any;
-  private player;
 
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams,
-    public afs: AudioFileService ) {
+    public afs: AudioFileService,
+    @Inject(WINDOW) public w: any
+    ) {
 
     // turn off music
     if (this.afs.backgroundMusicHowl.playing()) {
@@ -44,19 +40,90 @@ export class VideoPlayerPage {
     }
 
     this.video = navParams.get('video');
+    console.log(this.video);
+
+    w.videoCuentoId = this.video.snippet.resourceId.videoId;
+
+    // https://www.youtube.com/iframe_api
+    if (!w['YT']) {
+      w['YT'] = {loading: 0,loaded: 0};
+    }
+    if (!w['YTConfig']) {
+      w['YTConfig'] = {'host': 'http://www.youtube.com'};
+    }
+    if (!w.YT.loading) {
+      w.YT.loading = 1;
+      (function(){
+        var l = [];
+        w.YT.ready = function(f) {
+          if (w.YT.loaded) {
+            f();
+          } else {
+            l.push(f);
+          }
+        };
+        w.onYTReady = function() {
+          w.YT.loaded = 1;
+          for (var i = 0; i < l.length; i++) {
+            try {l[i]();} 
+            catch (e) {}
+          }
+        };
+        w.YT.setConfig = function(c) {
+          for (var k in c) {
+            if (c.hasOwnProperty(k)) {
+              w.YTConfig[k] = c[k];
+            }
+          }
+        };
+        var a = document.createElement('script');
+        a.type = 'text/javascript';
+        a.id = 'www-widgetapi-script';
+        a.src = 'https://s.ytimg.com/yts/jsbin/www-widgetapi-vflQKB5wA/www-widgetapi.js';a.async = true;
+        var b = document.getElementsByTagName('script')[0];
+        b.parentNode.insertBefore(a, b);
+      })();
+    }
+
+    // first run: create the function to be called upon API readiness, and load the vid
+    if (!w.onYouTubeIframeAPIReady) {
+      w.onYouTubeIframeAPIReady = function(){
+        w['player' + w.videoCuentoId] = new w.YT.Player('player' + w.videoCuentoId, {
+          events: {
+            'onReady': w.onPlayerReady,
+            'onStateChange': w.onPlayerStateChange
+          }, 
+          videoId: w.videoCuentoId
+        });
+        w.youTubeIframeAPIReady = true;
+        console.log('first run: youtube iframe api ready!'); 
+      }
+    } 
+
+    w.onPlayerReady = function(event){
+      console.log(event);
+      event.target.playVideo();
+    }
+
+    w.onPlayerStateChange = function(status){
+      console.log(status.data);
+    }  
+
   }
 
-  playVideo() {
-    this.player.playVideo();
-  }
-  
-  savePlayer(player) {
-    this.player = player;
-    this.playVideo();
-  }
-  
-  onStateChange(event) {
-    console.log(event.data);
+  ngAfterViewInit() {
+
+    // subsequent runs: create new player
+    if (this.w.youTubeIframeAPIReady === true) {
+      this.w['player' + this.w.videoCuentoId] = new this.w.YT.Player('player' + this.w.videoCuentoId, {
+        events: {
+          'onReady': this.w.onPlayerReady,
+          'onStateChange': this.w.onPlayerStateChange
+        }, 
+        videoId: this.w.videoCuentoId
+      });
+      console.log('subsequent runs: update player');
+    }
   }
 
 }

@@ -4,7 +4,7 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/retry';
 
 import { Network } from '@ionic-native/network';
-import { Modal, NavController, Alert, Platform } from 'ionic-angular';
+import { NavController, Platform } from 'ionic-angular';
 
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { VideoPlayerPage } from '../video-player/video-player';
@@ -83,6 +83,12 @@ export class Videos implements AfterViewInit {
     if (platform.is('cordova')) {
       // unknown, ethernet, wifi, 2g, 3g, 4g, cellular, none
       console.log(network.type);
+
+      this.videosHowl = new Howl({
+        src: [
+          "assets/audios/videos/instruccion.mp3"
+        ]
+      });
       
       // watch network for a connection
       let connectSubscription = this.network.onConnect().subscribe(() => {
@@ -105,22 +111,7 @@ export class Videos implements AfterViewInit {
         }, 3000);
       });
 
-      this.videosHowl = new Howl({
-        src: [
-          "assets/audios/videos/videos.mp3"
-        ],
-        html5: true
-      });
-
-    } else {
-
-      this.videosHowl = new Howl({
-        src: [
-          "assets/audios/videos/videos.mp3"
-        ]
-      });
-
-    }
+    } 
 
 
     this.getYoutubePlaylist();
@@ -178,7 +169,6 @@ export class Videos implements AfterViewInit {
   }
 
   openItem(video: any, $event) {
-    console.log($event);
     this.navCtrl.push(VideoPlayerPage, {
       video: video
     });

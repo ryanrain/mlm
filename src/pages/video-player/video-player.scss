@@ -8,6 +8,9 @@ page-video-player {
     display: flex;
     justify-content: space-between;
   }
+  .toolbar-content-ios {
+    flex-direction: row-reverse; // not sure why...
+  }
   .volume {
     left: auto;
     right: 12px;
