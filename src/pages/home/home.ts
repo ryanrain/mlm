@@ -114,8 +114,8 @@ export class HomePage implements AfterViewInit {
     //
 
     // CORDOVA
-    // if viewed as installed app, start video right away
-    if ( !this.afs.isWeb ){
+    // if viewed as installed app
+    if (this.platform.is('cordova')) {
       this.allLoadedBool = true; // redundant
       // this.startEntrada(); // no longer - can't load videos as a part of app without fancy dynamic load to sd card
       this.showContent();
@@ -123,14 +123,17 @@ export class HomePage implements AfterViewInit {
       
       this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusicHowl, 'load'); 
       this.backgroundMusicLoaded.subscribe(event => {
-        // play music
-        this.afs.playPauseBackgroundMusic();
         this.platform.ready().then(() => {
-          // Okay, so the platform is ready and our plugins are available.
-          // Here you can do any higher level native things you might need.
+          // play music
+          this.afs.appHowl.play('miLibroMagico');
+          // then start the background music
+          this.afs.appHowl.once('end', () => {
+            this.afs.playPauseBackgroundMusic();
+            this.change.detectChanges();          
+          });
           this.statusBar.styleDefault();
           this.splashScreen.hide();
-          this.change.detectChanges();      
+
         });
       })
       
