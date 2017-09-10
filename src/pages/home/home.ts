@@ -13,6 +13,8 @@ import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { Maguito } from '../../building.blocks/maguito.component';
 
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
 
 @Component({
   selector: 'page-home',
@@ -40,8 +42,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
           <maguito [class.maguitohidden]="!showContentBool"></maguito>
         </div>
       </div>
-      <div #entradaContainer id="entrada-container" [class.entrada-fade-out]="showContentBool">
-        <video *ngIf="!isMobileWeb" #entradaVideo id="entrada" preload="auto" src="assets/home/entrada.mp4"></video>
+      <div *ngIf="isCore" #entradaContainer id="entrada-container" [class.entrada-fade-out]="showContentBool">
+        <video #entradaVideo id="entrada" preload="auto" src="assets/home/entrada.mp4"></video>
       </div>
       <span id="creditos" (click)="openCredits()">Creditos</span>
     </ion-content>
@@ -77,6 +79,7 @@ export class HomePage implements AfterViewInit {
   ];
 
   isMobileWeb:boolean;
+  isCore:boolean;
   @ViewChild('bgImg') bgImg:ElementRef;
   bgLoaded:Observable<any>;
   @ViewChild('entradaContainer') entradaContainer:ElementRef;
@@ -94,10 +97,13 @@ export class HomePage implements AfterViewInit {
     public afs: AudioFileService,
     private alertCtrl: AlertController,
     private iab: InAppBrowser,
-    private change: ChangeDetectorRef
+    private change: ChangeDetectorRef,
+    private statusBar: StatusBar, 
+    private splashScreen: SplashScreen
     ) {
 
     this.isMobileWeb = platform.is('mobileweb');  // for redundant use in template
+    this.isCore = platform.is('core');  
 
   }
 
@@ -111,8 +117,23 @@ export class HomePage implements AfterViewInit {
     // if viewed as installed app, start video right away
     if ( !this.afs.isWeb ){
       this.allLoadedBool = true; // redundant
-      this.change.detectChanges();      
-      this.startEntrada();
+      // this.startEntrada(); // no longer - can't load videos as a part of app without fancy dynamic load to sd card
+      this.showContent();
+      this.change.detectChanges();
+      
+      this.backgroundMusicLoaded = Observable.fromEvent(this.afs.backgroundMusicHowl, 'load'); 
+      this.backgroundMusicLoaded.subscribe(event => {
+        // play music
+        this.afs.playPauseBackgroundMusic();
+        this.platform.ready().then(() => {
+          // Okay, so the platform is ready and our plugins are available.
+          // Here you can do any higher level native things you might need.
+          this.statusBar.styleDefault();
+          this.splashScreen.hide();
+          this.change.detectChanges();      
+        });
+      })
+      
     }
 
     // MOBILEWEB
@@ -157,11 +178,7 @@ export class HomePage implements AfterViewInit {
         this.startEntrada();
         console.log('allLoaded');
       });
-    }
-
-    // CORDOVA AND LARGE-SCREEN WEB
-    // everybody who saw the video, should hide it when it finishes, and start the music
-    if ( !this.platform.is('mobileweb') ) {    
+      
       // when entradaVideo finishes, hide entrada video, show maguito below
       this.entradaVideo.nativeElement.addEventListener('ended', () => {
         this.showContent();
@@ -178,9 +195,11 @@ export class HomePage implements AfterViewInit {
 
   showContent() {
       this.showContentBool = true;
-      setTimeout(()=> {
-        this.entradaContainer.nativeElement.style.display = 'none';
-      }, 1000);
+      if (this.isCore) {
+        setTimeout(()=> {
+          this.entradaContainer.nativeElement.style.display = 'none';
+        }, 1000);
+      }
   }
 
   openPage(page) {
