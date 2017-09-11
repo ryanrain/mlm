@@ -16,7 +16,7 @@ var lecturasSprite = require('../../assets/audios/lecturas/lecturasSprite.json')
   selector: 'lecturas',
   template: `
     <ion-header>
-      <button ion-button icon-only (click)="volver()">
+      <button ion-button icon-only (click)="afs.volver()">
         <ion-icon name="home"></ion-icon>
       </button>
       <ion-title>Lecturas</ion-title>
@@ -113,10 +113,6 @@ export class Lectura implements AfterViewInit {
     this.navCtrl.push(ItemDetailPage, {
       lectura: lectura
     });
-  }
-
-  volver() {
-    this.navCtrl.pop();
   }
 
 }

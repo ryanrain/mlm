@@ -4,7 +4,7 @@ import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
 
-import { NavController, Content, Platform } from 'ionic-angular';
+import { Content, Platform } from 'ionic-angular';
 
 import { PalabrasCastillano } from '../../castillano/palabras.castillano';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
@@ -15,7 +15,7 @@ import { Howl } from 'howler';
 @Component({
   selector: 'matching-game',
   template: `
-  <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button home" (click)="afs.volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button refresh" (click)="reset()"><ion-icon name="refresh"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
     <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
@@ -68,7 +68,6 @@ export class Matching implements AfterViewInit {
   @ViewChild('bgImg') bgImg:ElementRef;
 
   constructor(
-      public navCtrl: NavController,
       public castillano: PalabrasCastillano,
       public platform: Platform, 
       public afs: AudioFileService,
@@ -303,10 +302,6 @@ export class Matching implements AfterViewInit {
     array[i] = t;
     }
     return array;
-  }
-
-  volver() {
-    this.navCtrl.pop();
   }
 
   @HostListener('window:resize', ['$event'])

@@ -20,7 +20,7 @@ import { Howl } from 'howler';
   selector: 'videos',
   template: `
     <ion-header>
-      <button ion-button icon-only (click)="volver()">
+      <button ion-button icon-only (click)="afs.volver()">
         <ion-icon name="home"></ion-icon>
       </button>
       <ion-title>Cuentos Mágicos</ion-title>
@@ -172,10 +172,6 @@ export class Videos implements AfterViewInit {
     this.navCtrl.push(VideoPlayerPage, {
       video: video
     });
-  }
-
-  volver() {
-    this.navCtrl.pop();
   }
 
 }

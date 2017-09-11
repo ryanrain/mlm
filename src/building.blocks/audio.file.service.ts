@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { App, Platform } from 'ionic-angular';
+import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 import { Howl } from 'howler';
 
@@ -21,7 +22,11 @@ export class AudioFileService {
 
     isWeb:boolean;
 
-    constructor( public platform: Platform ) {
+    constructor( 
+        public platform: Platform,
+        public app: App,
+        private firebaseAnalytics: FirebaseAnalytics        
+    ) {
         console.log('ionic platforms: ', this.platform.platforms());
 
         if (platform.is('mobileweb') || platform.is('core')) {
@@ -81,6 +86,18 @@ export class AudioFileService {
             this.backgroundMusicHowl.play();
         } else {
             this.backgroundMusicHowl.pause();
+        }
+    }
+
+    volver() {
+        let nav = this.app.getActiveNav();
+        nav.pop();
+        if (this.platform.is('cordova')) {
+            this.platform.ready().then(() => {
+                this.firebaseAnalytics.setCurrentScreen('inicio')
+                    .then((res: any) => console.log(res))
+                    .catch((error: any) => console.error(error));
+            });
         }
     }
 

@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewChildren, AfterViewInit, QueryList, ElementRef, HostListener, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { NavController, AlertController, Platform } from 'ionic-angular';
+import { AlertController, Platform } from 'ionic-angular';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
@@ -17,7 +17,7 @@ var silabasSprite = require('../../assets/audios/silabas/silabasSprite.json');
   selector: 'bloques',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-  <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button home" (click)="afs.volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
     <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
     <ion-icon name="musical-notes"></ion-icon>
@@ -88,7 +88,6 @@ export class Bloques implements AfterViewInit {
   silabasHowl:Howl;
 
   constructor(
-    public navCtrl: NavController,
     private alertCtrl: AlertController,
     public castillano: SilabasCastillano, 
     public platform: Platform, 
@@ -169,6 +168,7 @@ export class Bloques implements AfterViewInit {
         }, 6000);
       })
     ;
+ 
   }
  
   ngAfterViewInit () {
@@ -533,10 +533,6 @@ export class Bloques implements AfterViewInit {
     array[i] = t;
     }
     return array;
-  }
-  
-  volver() {
-    this.navCtrl.pop();
   }
 
   @HostListener('window:resize', ['$event'])

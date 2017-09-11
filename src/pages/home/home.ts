@@ -15,6 +15,7 @@ import { Maguito } from '../../building.blocks/maguito.component';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 @Component({
   selector: 'page-home',
@@ -99,7 +100,8 @@ export class HomePage implements AfterViewInit {
     private iab: InAppBrowser,
     private change: ChangeDetectorRef,
     private statusBar: StatusBar, 
-    private splashScreen: SplashScreen
+    private splashScreen: SplashScreen,
+    private firebaseAnalytics: FirebaseAnalytics    
     ) {
 
     this.isMobileWeb = platform.is('mobileweb');  // for redundant use in template
@@ -134,9 +136,11 @@ export class HomePage implements AfterViewInit {
           this.statusBar.styleDefault();
           this.splashScreen.hide();
 
+          this.firebaseAnalytics.setCurrentScreen('inicio')
+            .then((res: any) => console.log(res))
+            .catch((error: any) => console.error(error));
         });
       })
-      
     }
 
     // MOBILEWEB
@@ -208,6 +212,13 @@ export class HomePage implements AfterViewInit {
   openPage(page) {
       this.afs.appHowl.play(page.audioFileName)
       this.navCtrl.push(page.component);
+      if (this.platform.is('cordova')) {
+        this.platform.ready().then(() => {
+          this.firebaseAnalytics.setCurrentScreen(page.title)
+            .then((res: any) => console.log(res))
+            .catch((error: any) => console.error(error));
+        });       
+      }
   }
 
   openCredits() {

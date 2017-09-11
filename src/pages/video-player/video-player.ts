@@ -1,7 +1,8 @@
 import { Component, Inject, AfterViewInit } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, Platform } from 'ionic-angular';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
 import { WINDOW } from '../../building.blocks/window';
+import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 @Component({
   selector: 'page-video-player',
@@ -31,6 +32,8 @@ export class VideoPlayerPage implements AfterViewInit {
     public navCtrl: NavController, 
     public navParams: NavParams,
     public afs: AudioFileService,
+    public platform: Platform,     
+    private firebaseAnalytics: FirebaseAnalytics,
     @Inject(WINDOW) public w: any
     ) {
 
@@ -108,6 +111,14 @@ export class VideoPlayerPage implements AfterViewInit {
     w.onPlayerStateChange = function(status){
       console.log(status.data);
     }  
+
+    if (this.platform.is('cordova')) {
+      this.platform.ready().then(() => {
+        this.firebaseAnalytics.setCurrentScreen( 'video: ' + this.video.snippet.title )
+          .then((res: any) => console.log(res))
+          .catch((error: any) => console.error(error));
+      });       
+    }      
 
   }
 

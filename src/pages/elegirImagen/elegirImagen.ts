@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/merge';
 import 'rxjs/add/operator/throttleTime';
 
-import { NavController, Platform } from 'ionic-angular';
+import { Platform } from 'ionic-angular';
 
 import { AlfabetoCastillano } from '../../castillano/alfabeto.castillano';
 import { LetraModel } from '../../models/letra.model';
@@ -19,7 +19,7 @@ var letrasSprite = require('../../assets/audios/letras/letrasSprite.json');
 @Component({
   selector: 'page-elegir-imagen',
   template: `
-  <button class="nav-button home" (click)="volver()"><ion-icon name="home"></ion-icon></button>
+  <button class="nav-button home" (click)="afs.volver()"><ion-icon name="home"></ion-icon></button>
   <button class="nav-button volume" (click)="afs.playPauseBackgroundMusic()">
     <span *ngIf="!afs.backgroundMusicHowl.playing()"  id="music-off">\\\</span>
     <ion-icon name="musical-notes"></ion-icon>
@@ -66,7 +66,6 @@ export class ElegirImagen implements AfterViewInit {
   letrasHowl:Howl;
 
   constructor(
-    public navCtrl: NavController,
     public castillano: AlfabetoCastillano,
     public platform: Platform, 
     public afs: AudioFileService,
@@ -274,11 +273,6 @@ export class ElegirImagen implements AfterViewInit {
     array[i] = t;
     }
     return array;
-  }
-
-
-  volver() {
-    this.navCtrl.pop();
   }
 
 }

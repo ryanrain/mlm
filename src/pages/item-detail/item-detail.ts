@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, Platform } from 'ionic-angular';
 import { LecturaModel } from '../../models/lectura.model';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
-
+import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 @Component({
   selector: 'page-item-detail',
@@ -63,12 +63,26 @@ export class ItemDetailPage {
   buttonText = 'LISTO';
   hitFinished = false;
 
-  constructor(public navCtrl: NavController, navParams: NavParams, public afs: AudioFileService ) {
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams, 
+    public afs: AudioFileService,
+    public platform: Platform,     
+    private firebaseAnalytics: FirebaseAnalytics    
+  ) {
     this.lectura = navParams.get('lectura');
     
     this.lectura.preguntas.forEach((pregunta) => {
       this.answersGiven.push(null);
     });
+
+    if (this.platform.is('cordova')) {
+      this.platform.ready().then(() => {
+        this.firebaseAnalytics.setCurrentScreen( 'lectura: ' + this.lectura.title )
+          .then((res: any) => console.log(res))
+          .catch((error: any) => console.error(error));
+      });       
+    }    
 
   }
 
