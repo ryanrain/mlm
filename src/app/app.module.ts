@@ -34,6 +34,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { Network } from '@ionic-native/network';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
+import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 const cloudSettings: CloudSettings = {
   'core': {
@@ -83,7 +84,8 @@ const cloudSettings: CloudSettings = {
     InAppBrowser,
     Network,
     SplashScreen,
-    StatusBar
+    StatusBar,
+    FirebaseAnalytics
   ]
 })
 export class AppModule {}
