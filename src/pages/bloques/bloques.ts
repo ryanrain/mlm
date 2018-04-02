@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import 'rxjs/add/operator/filter';
 
-import {interact} from 'interactjs';
+import {interact} from 'interact.js';
 
 import { SilabasCastillano } from '../../castillano/silabas.castillano';
 import { AudioFileService } from '../../building.blocks/audio.file.service';
