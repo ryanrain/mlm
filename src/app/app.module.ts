@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 // IONIC
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
+// import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 
 // APP
 import { MyApp } from './app.component';
@@ -36,11 +36,11 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
-const cloudSettings: CloudSettings = {
-  'core': {
-    'app_id': '90d21b23'
-  }
-};
+// const cloudSettings: CloudSettings = {
+//   'core': {
+//     'app_id': '90d21b23'
+//   }
+// };
 
 @NgModule({
   declarations: [
@@ -50,7 +50,7 @@ const cloudSettings: CloudSettings = {
     Bloques,
     Matching,
     Lectura,
-    ItemDetailPage, 
+    ItemDetailPage,
     Maguito,
     Videos,
     VideoPlayerPage
@@ -58,7 +58,7 @@ const cloudSettings: CloudSettings = {
   imports: [
     IonicModule.forRoot(MyApp),
     BrowserModule,
-    CloudModule.forRoot(cloudSettings),
+    // CloudModule.forRoot(cloudSettings),
     HttpModule,
     WindowTokenModule
   ],
@@ -73,14 +73,14 @@ const cloudSettings: CloudSettings = {
     ItemDetailPage,
     Videos,
     VideoPlayerPage
-  ],  
+  ],
   providers: [
-    {provide: ErrorHandler, useClass: IonicErrorHandler}, 
-    AlfabetoCastillano, 
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    AlfabetoCastillano,
     SilabasCastillano,
     PalabrasCastillano,
     LecturasContent,
-    AudioFileService, 
+    AudioFileService,
     InAppBrowser,
     Network,
     SplashScreen,
@@ -88,4 +88,4 @@ const cloudSettings: CloudSettings = {
     FirebaseAnalytics
   ]
 })
-export class AppModule {}
+export class AppModule { }
