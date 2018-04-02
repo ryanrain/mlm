@@ -4,8 +4,13 @@ import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 import { Howl } from 'howler';
 
-var appSprite = require('../assets/audios/app/appSprite.json');
-var palabrasSprite = require('../assets/audios/palabras/palabrasSprite.json');
+// var appSprite = require('../assets/audios/app/appSprite.json');
+// var palabrasSprite = require('../assets/audios/palabras/palabrasSprite.json');
+
+import * as appSprite from '../assets/audios/app/appSprite.json';
+import * as palabrasSprite from '../assets/audios/palabras/palabrasSprite.json';
+// const word = (<any>data).name;
+
 
 @Injectable()
 export class AudioFileService {
@@ -16,16 +21,16 @@ export class AudioFileService {
     incorrecto = {};
     instructions = {};
 
-    appHowl:Howl;
-    palabrasHowl:Howl;
-    backgroundMusicHowl:Howl;
+    appHowl: Howl;
+    palabrasHowl: Howl;
+    backgroundMusicHowl: Howl;
 
-    isWeb:boolean;
+    isWeb: boolean;
 
-    constructor( 
+    constructor(
         public platform: Platform,
         public app: App,
-        private firebaseAnalytics: FirebaseAnalytics        
+        private firebaseAnalytics: FirebaseAnalytics
     ) {
         console.log('ionic platforms: ', this.platform.platforms());
 
@@ -59,28 +64,28 @@ export class AudioFileService {
 
     }
 
-    transliterate(fileName:string) {
+    transliterate(fileName: string) {
         return fileName.replace('ñ', 'ni')
-            .replace('á','a')
-            .replace('é','e')
-            .replace('í','i')
-            .replace('ó','o')
-            .replace('ú','u');
+            .replace('á', 'a')
+            .replace('é', 'e')
+            .replace('í', 'i')
+            .replace('ó', 'o')
+            .replace('ú', 'u');
     }
 
-    playRandomBienAudio(){
+    playRandomBienAudio() {
         let randomBien = Math.round(Math.random() * 6.499).toString();
         this.appHowl.play(randomBien);
     }
 
-    playRandomIncorrectoAudio(){
+    playRandomIncorrectoAudio() {
         let randomIncorrect = 'incorrecto' + Math.round(Math.random()).toString(); // only two choices: 0 and 1
         console.log(randomIncorrect);
-        
+
         this.appHowl.play(randomIncorrect);
     }
 
-    playPauseBackgroundMusic(){
+    playPauseBackgroundMusic() {
         if (!this.backgroundMusicHowl.playing()) {
             // not use playWhenReady because want resume where left off...
             this.backgroundMusicHowl.play();
