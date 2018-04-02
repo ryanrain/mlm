@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
   <meta charset="UTF-8">
   <title>Mi Libro Mágico</title>
@@ -13,7 +14,7 @@
   <link rel="preconnect" href="//treelinemedia.com">
 
   <meta name="theme-color" content="#4e8ef7">
-  
+
   <!-- cordova.js required for cordova apps -->
   <script src="cordova.js"></script>
 
@@ -28,6 +29,7 @@
   <link href="build/main.css" rel="stylesheet">
 
 </head>
+
 <body>
 
   <!-- Ionic's root component and where the app will load -->
@@ -39,12 +41,16 @@
       </div>
     </ion-app>
   </div>
-  
+
   <!-- The polyfills js is generated during the build process -->
   <script src="build/polyfills.js"></script>
+
+  <!-- all code from node_modules directory is here -->
+  <script src="build/vendor.js"></script>
 
   <!-- The bundle js is generated during the build process -->
   <script src="build/main.js"></script>
 
 </body>
+
 </html>
