@@ -38,6 +38,7 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <resource-file src="GoogleService-Info.plist" />
     </platform>
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
@@ -66,4 +67,5 @@
     <engine name="android" spec="^7.0.0" />
     <engine name="ios" spec="4.5.4" />
     <plugin name="cordova-plugin-inappbrowser" spec="^2.0.2" />
+    <plugin name="cordova-support-google-services" spec="^1.0.0" />
 </widget>
