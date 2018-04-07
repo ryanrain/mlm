@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, Platform } from 'ionic-angular';
-import { LecturaModel } from '../../models/lectura.model';
-import { AudioFileService } from '../../building.blocks/audio.file.service';
-import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
+import { Component } from "@angular/core";
+import { NavController, NavParams, Platform } from "ionic-angular";
+import { LecturaModel } from "../../models/lectura.model";
+import { AudioFileService } from "../../building.blocks/audio.file.service";
+// import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
 @Component({
-  selector: 'page-item-detail',
+  selector: "page-item-detail",
   template: `
     <ion-header>
       <ion-navbar>
@@ -60,41 +60,39 @@ import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 export class ItemDetailPage {
   lectura: LecturaModel;
   answersGiven = [];
-  buttonText = 'LISTO';
+  buttonText = "LISTO";
   hitFinished = false;
 
   constructor(
-    public navCtrl: NavController, 
-    public navParams: NavParams, 
+    public navCtrl: NavController,
+    public navParams: NavParams,
     public afs: AudioFileService,
-    public platform: Platform,     
-    private firebaseAnalytics: FirebaseAnalytics    
-  ) {
-    this.lectura = navParams.get('lectura');
-    
-    this.lectura.preguntas.forEach((pregunta) => {
+    public platform: Platform
+  ) // private firebaseAnalytics: FirebaseAnalytics
+  {
+    this.lectura = navParams.get("lectura");
+
+    this.lectura.preguntas.forEach(pregunta => {
       this.answersGiven.push(null);
     });
 
-    if (this.platform.is('cordova')) {
-      this.platform.ready().then(() => {
-        this.firebaseAnalytics.setCurrentScreen( 'lectura: ' + this.lectura.title )
-          .then((res: any) => console.log(res))
-          .catch((error: any) => console.error(error));
-      });       
-    }    
-
+    // if (this.platform.is('cordova')) {
+    //   this.platform.ready().then(() => {
+    //     this.firebaseAnalytics.setCurrentScreen( 'lectura: ' + this.lectura.title )
+    //       .then((res: any) => console.log(res))
+    //       .catch((error: any) => console.error(error));
+    //   });
+    // }
   }
 
   checkAnswers() {
-    if ( this.hitFinished ) {
+    if (this.hitFinished) {
       this.navCtrl.pop();
     }
 
     // this.buttonText = 'Siguiente Lectura';
-    this.buttonText = 'Volver';
-    
+    this.buttonText = "Volver";
+
     this.hitFinished = true;
   }
-
 }

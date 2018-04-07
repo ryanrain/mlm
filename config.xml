@@ -61,11 +61,8 @@
     <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="15000" />
-    <plugin name="cordova-plugin-firebase-analytics" spec="^0.11.0">
-        <variable name="FIREBASE_VERSION" value="11.0.+" />
-    </plugin>
-    <engine name="android" spec="^7.0.0" />
-    <engine name="ios" spec="4.5.4" />
     <plugin name="cordova-plugin-inappbrowser" spec="^2.0.2" />
     <plugin name="cordova-support-google-services" spec="^1.0.0" />
+    <engine name="android" spec="^7.0.0" />
+    <engine name="ios" spec="4.5.4" />
 </widget>
