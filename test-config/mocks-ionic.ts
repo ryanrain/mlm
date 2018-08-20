@@ -2,9 +2,9 @@
 // import { SplashScreen } from '@ionic-native/splash-screen';
 
 export class PlatformMock {
-  public ready(): Promise<{String}> {
-    return new Promise((resolve) => {
-      resolve('READY');
+  public ready(): Promise<{ String }> {
+    return new Promise(resolve => {
+      resolve({ String: 'READY' });
     });
   }
 
@@ -13,7 +13,7 @@ export class PlatformMock {
   }
 
   public registerBackButtonAction(fn: Function, priority?: number): Function {
-    return (() => true);
+    return () => true;
   }
 
   public hasFocus(ele: HTMLElement): boolean {
@@ -33,7 +33,7 @@ export class PlatformMock {
       paddingLeft: '10',
       paddingTop: '10',
       paddingRight: '10',
-      paddingBottom: '10',
+      paddingBottom: '10'
     };
   }
 
@@ -42,7 +42,7 @@ export class PlatformMock {
   }
 
   public registerListener(ele: any, eventName: string, callback: any): Function {
-    return (() => true);
+    return () => true;
   }
 
   public win(): Window {
@@ -66,7 +66,7 @@ export class PlatformMock {
   }
 
   public platforms(): Array<string> {
-    return ['mockPlatform1','mockPlatform2'];
+    return ['mockPlatform1', 'mockPlatform2'];
   }
 }
 
