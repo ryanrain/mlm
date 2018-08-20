@@ -1,8 +1,8 @@
 {
   "name": "libromagico",
-  "app_id": "6c0f8a60",
-  "type": "ionic-angular",
   "integrations": {
     "cordova": {}
-  }
+  },
+  "type": "ionic-angular",
+  "pro_id": "6c0f8a60"
 }
