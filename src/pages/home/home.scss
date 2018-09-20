@@ -1,144 +1,149 @@
 page-home {
-    background-color: #b4e5df;
-    .volume {
-      left:auto;
-      right:0;
-    }
-    #home-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+  background-color: #b4e5df;
+  .volume {
+    left: auto;
+    right: 0;
+  }
+  #home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        // avoid initial flash of content
-        > * {
-            opacity: 0;
-        }
-        &.show-content {
-            > * {
-                opacity: 1;
-            }
-        }
-    }
-    #mlm {
-        height: 30vh;
-        width: 100%;
-        text-align: center; 
-        margin-top: 3vh;
-        img {
-            max-height: 100%;
-        }
-    }
-    #menu-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        margin: 3vh 0 0;
-        > div {
-            flex: 0 0 40%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            cursor:pointer;
-            font-size: 3vh;
-            border-radius: 20px;
-        }
-    }
-    #maguito-menu {
-        height: 20vh;
-        width: 100%;
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-around;
-        maguito {
-            height: 100%;
-        }
-        img {
-            height: 20vh;
-            width: auto;
-        }
-    }
-    .maguitohidden {
-        max-height: 1px;
-        overflow: hidden;
-    }
-    #entrada-container {
-        position:absolute;
-        left:0;
-        top:0;
-        text-align:center;
-        text-align: center;
-        transition: 1s all;
-        z-index: 15;
-        &.entrada-fade-out {
-            opacity: 0;
-        }
-    }
-    .show-content ~ #entrada-container {
-        display: none; // redundance
-    }
-
-    #entrada {
-        height: 100vh;
-        width: 75vh;
-        @media (max-aspect-ratio: 3/4) {
-            position: relative;
-            left: calc((100vw - 75vh) / 2);
-            // left: calc(-420px + 50vw);
-        }
-        // width: calc(100vh / 1.333);
-    }
-}
-#creditos {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    color: white;
-    text-shadow: 0.6px 0.6px darkgreen, -0.6px 0.6px darkgreen, 0.6px -0.6px darkgreen, -0.6px -0.6px darkgreen;
-    font-size: 2vh;
-    cursor: pointer;
-}
-.creditos-alert {
-    .alert-title{ 
-        #libro-magico-container & {
-            font-size: 2.4rem;
-        }
-    }
-    .alert-message {
-        overflow-y: auto;
-        text-align: left;
-        .ios & {
-            font-family: -apple-system, "Helvetica Neue", "Roboto", sans-serif;
-        }
-        .md & {
-            font-family: "Roboto", "Helvetica Neue", sans-serif;
-        }
-    }
-    button.alert-button .button-effect {
-        display: none;
-    }
-}
-.alert-button.cerrar-creditos {
     position: absolute;
     top: 0;
+    bottom: 0;
+    left: 0;
     right: 0;
-    border: 0;
-    min-width: auto;
-    color: black;
-    margin: 0;
-    ::after {
-        font-family: "Ionicons";
-        // content: "\f406"; // without circle
-        content: " \f14d";
-        display: inline-block;
-        padding: 0.3em;
-        font-size: 2rem;
+    // avoid initial flash of content
+    > * {
+      opacity: 0;
     }
+    &.show-content {
+      > * {
+        opacity: 1;
+      }
+    }
+  }
+  #mlm {
+    height: 30vh;
+    width: 100%;
+    text-align: center;
+    margin-top: 3vh;
+    img {
+      max-height: 100%;
+    }
+  }
+  #menu-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin: 3vh 0 0;
+    > div {
+      flex: 0 0 40%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      font-size: 3vh;
+      border-radius: 20px;
+    }
+  }
+  #maguito-menu {
+    height: 20vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    maguito {
+      height: 100%;
+    }
+    img {
+      height: 20vh;
+      width: auto;
+    }
+  }
+  .maguitohidden {
+    max-height: 1px;
+    overflow: hidden;
+  }
+  #entrada-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    text-align: center;
+    text-align: center;
+    transition: 1s all;
+    z-index: 15;
+    &.entrada-fade-out {
+      opacity: 0;
+    }
+  }
+  .show-content ~ #entrada-container {
+    display: none; // redundance
+  }
+
+  #entrada {
+    height: 100vh;
+    width: 75vh;
+    @media (max-aspect-ratio: 3/4) {
+      position: relative;
+      left: calc((100vw - 75vh) / 2);
+      // left: calc(-420px + 50vw);
+    }
+    // width: calc(100vh / 1.333);
+  }
+}
+#creditos {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  color: white;
+  text-shadow: 0.6px 0.6px darkgreen, -0.6px 0.6px darkgreen, 0.6px -0.6px darkgreen, -0.6px -0.6px darkgreen;
+  font-size: 2vh;
+  cursor: pointer;
+}
+.creditos-alert {
+  .alert-title {
+    #libro-magico-container & {
+      font-size: 2.4rem;
+    }
+  }
+  .alert-message {
+    overflow-y: auto;
+    text-align: left;
+    .ios & {
+      font-family: -apple-system, 'Helvetica Neue', 'Roboto', sans-serif;
+    }
+    .md & {
+      font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+    }
+  }
+  button.alert-button .button-effect {
+    display: none;
+  }
+}
+.alert-button.cerrar-creditos {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+  min-width: auto;
+  color: black;
+  margin: 0;
+  ::after {
+    font-family: 'Ionicons';
+    // content: "\f406"; // without circle
+    content: ' \f14d';
+    display: inline-block;
+    padding: 0.3em;
+    font-size: 2rem;
+  }
+}
+#paginaweb {
+  color: white;
+  font-size: 30px;
+  text-shadow: 1px 1px 2px #113102, -1px -1px 2px #113102;
 }
