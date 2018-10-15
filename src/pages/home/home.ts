@@ -10,7 +10,6 @@ import { Bloques } from '../bloques/bloques';
 import { ElegirImagen } from '../elegirImagen/elegirImagen';
 import { Lectura } from '../lectura/lectura';
 import { Matching } from '../matching/matching';
-import { Videos } from '../videos/videos';
 
 // import { FirebaseAnalytics } from '@ionic-native/firebase-analytics';
 
@@ -66,11 +65,6 @@ export class HomePage implements AfterViewInit {
       title: 'Lecturas de Comprensión',
       audioFileName: 'lecturas',
       component: Lectura
-    },
-    {
-      title: 'Video Cuentos',
-      audioFileName: 'videocuentos',
-      component: Videos
     }
   ];
 
